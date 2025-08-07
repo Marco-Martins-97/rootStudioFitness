@@ -57,19 +57,19 @@
             </section>
             <section id="plans">
                 <div class="plans-container">
-                    <a href="" class="plan-container">
+                    <a href="plans.php#personalized" class="plan-container">
                         <img src="imgs/content/treinoPersonalizado.jpg" alt="Treino Personalizado">
                         <h3>Treinos Personalizados</h3>
                     </a>
-                    <a href="" class="plan-container">
+                    <a href="plans.php#group" class="plan-container">
                         <img src="imgs/content/aulasGrupo.jpeg" alt="Aulas de Grupo">
                         <h3>Aulas de Grupo</h3>
                     </a>
-                    <a href="" class="plan-container">
+                    <a href="plans.php#" class="plan-container">
                         <img src="imgs/content/treinoTerapeitico.jpg" alt="Treino terapeutico">
                         <h3>Treino Terapeutico</h3>
                     </a>
-                    <a href="" class="plan-container">
+                    <a href="plans.php#" class="plan-container">
                         <img src="imgs/content/padel.jpeg" alt="Padel">
                         <h3>Padel</h3>
                     </a>

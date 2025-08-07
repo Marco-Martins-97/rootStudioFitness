@@ -1,0 +1,118 @@
+/* INFO - SECTION */
+#info{
+    min-height: 300px;
+}
+.info-container{
+    text-align: center;
+    max-width: 768px;
+    color: var(--PRIMARY-TXT-COLOR);
+    padding: 32px 24px;
+}
+.info-container h1{
+    font-size: 3rem;
+    margin-bottom: 60px;
+
+}
+.info-container p{
+    text-align: justify;
+}
+
+/* PLANS - SECTION */
+
+/* 
+    .plan-container
+    .plan-img-container
+        img
+    .plan-description
+        h3
+        p
+        button
+*/
+.plan-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 32px 24px;
+    gap: 32px;
+    flex-wrap: wrap;
+}
+
+.plan-img-container img{
+    width: 100%;
+    max-width: 768px;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px var(--SHADOW-COLOR);
+}
+
+.plan-description{
+    width: 100%;
+    max-width: 768px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    color: var(--PRIMARY-TXT-COLOR);
+    text-align: center;
+}
+
+.plan-description p{
+    font-size: 1.1rem;
+}
+
+.plan-description li{
+    text-align: left;
+}
+.no-bold-small {
+    font-weight: normal;
+    font-size: 0.8rem;
+}
+
+.plan-description button{
+    width: 100%;
+    background-color: var(--PRIMARY-BTN-COLOR);
+    color: var(--TERTIARY-TXT-COLOR);
+    border: none;
+    border-radius: 12px;
+    padding: 12px 24px;
+    font-weight: bold;
+    transition: background-color 0.8s ease;
+    letter-spacing: 1px;
+    cursor: pointer;
+}
+.plan-description button:hover{
+    background-color: var(--SECONDARY-BTN-COLOR);
+    color: var(--PRIMARY-TXT-COLOR);
+}
+
+/* 
+.text-container a{
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 12px;
+    background-color: var(--PRIMARY-BTN-COLOR);
+    color: var(--TERTIARY-TXT-COLOR);
+    transition: background-color 0.8s ease;
+}
+
+.text-container a:hover{
+    background-color: var(--SECONDARY-BTN-COLOR);
+    color: var(--PRIMARY-TXT-COLOR);
+}
+.text-container a{
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 12px;
+    background-color: var(--PRIMARY-BTN-COLOR);
+    color: var(--TERTIARY-TXT-COLOR);
+    transition: background-color 0.8s ease;
+}
+
+.text-container a:hover{
+    background-color: var(--SECONDARY-BTN-COLOR);
+    color: var(--PRIMARY-TXT-COLOR);
+} */
