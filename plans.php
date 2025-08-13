@@ -57,12 +57,13 @@
                         <ul>
                             <li>Treinos de 1 Hora</li>
                             <li>De 1 a 3 Treinos por Semana</li>
-                            <li>Acesso Livre ao Estudio (1x)</li>
+                            <li>Acesso Livre ao Estudio (1x) *</li>
                         </ul>
                         <h3>Individual</h3>
                         <p>A Partir de 22,5€ por Semana</p>
                         <h3>Grupos Reduzidos <span class="no-bold-small">(Maximo 3 Pessoas)</span></h3>
                         <p>A Partir de 35€ por Semana</p>
+                        <p class="disclaimer">*Dentro do horário estipulado</p>
                         <button>Adere Já</button>
                     </div>
                 </div>
@@ -75,67 +76,175 @@
                     <div class="plan-description">
                         <h2>Aulas de Grupo</h2>
                         <ul>
-                            <li>Treinos de 1 Hora</li>
-                            <li>De 1 a 3 Treinos por Semana</li>
-                            <li>Acesso Livre ao Estudio (1x)</li>
+                            <li>Aulas de 1 Hora</li>
+                            <li>2 Aulas por Semana *</li>
+                            <li>Grupos de 6 Pessoas</li>
                         </ul>
-                        <p>A Partir de 22,5€ por Semana</p>
+                        <p>Apenas 30€ por Mês</p>
+                        <p class="disclaimer">*Aulas Com Marcações Pre-Defenidas</p>
                         <button>Adere Já</button>
                     </div>
                 </div>
             </section>
-            <section id="group">
+            <section id="specialties">
                 <div class="plan-container">
                     <div class="plan-img-container">
-                        <img src="imgs/content/aulasGrupo.jpeg" alt="Aulas de Grupo">
+                        <img src="imgs/content/treinoTerapeitico.jpg" alt="Especialidades Adicionais">
                     </div>
                     <div class="plan-description">
-                        <h2>Aulas de Grupo</h2>
+                        <h2>Especialidades Adicionais</h2>
                         <ul>
-                            <li>Treinos de 1 Hora</li>
-                            <li>De 1 a 3 Treinos por Semana</li>
-                            <li>Acesso Livre ao Estudio (1x)</li>
+                            <li>Treino Terapêutico</li>
+                            <li>Padel</li>
+                            <li>Planos Adapatados para Rendimento e Recuperação</li>
                         </ul>
                         <p>A Partir de 22,5€ por Semana</p>
                         <button>Adere Já</button>
                     </div>
                 </div>
             </section>
-            <section id="group">
+            <section id="open-studio">
                 <div class="plan-container">
                     <div class="plan-img-container">
-                        <img src="imgs/content/aulasGrupo.jpeg" alt="Aulas de Grupo">
+                        <img src="imgs/content/estudio.png" alt="Acesso ao Estudio">
                     </div>
                     <div class="plan-description">
-                        <h2>Aulas de Grupo</h2>
+                        <h2>Acesso ao Estudio</h2>
                         <ul>
-                            <li>Treinos de 1 Hora</li>
-                            <li>De 1 a 3 Treinos por Semana</li>
-                            <li>Acesso Livre ao Estudio (1x)</li>
+                            <li>Acesso livre (4x) *</li>
                         </ul>
-                        <p>A Partir de 22,5€ por Semana</p>
+                        <p>Apenas 45€ por Mês</p>
+                        <p class="disclaimer">*Dentro do horário estipulado</p>
                         <button>Adere Já</button>
                     </div>
                 </div>
             </section>
-            <section id="group">
-                <div class="plan-container">
-                    <div class="plan-img-container">
-                        <img src="imgs/content/aulasGrupo.jpeg" alt="Aulas de Grupo">
-                    </div>
-                    <div class="plan-description">
-                        <h2>Aulas de Grupo</h2>
-                        <ul>
-                            <li>Treinos de 1 Hora</li>
-                            <li>De 1 a 3 Treinos por Semana</li>
-                            <li>Acesso Livre ao Estudio (1x)</li>
-                        </ul>
-                        <p>A Partir de 22,5€ por Semana</p>
-                        <button>Adere Já</button>
-                    </div>
+            <section id="application">
+                <div class="form-container">
+                    <h2>Formulário de Inscrição</h2>
+                    <form action="" method="post" id="application-form">
+                        <!-- Nome Completo -->
+                        <div class="field-container required">
+                            <div class="field">
+                                <label for="fullName">Nome Completo:</label>
+                                <input type="text" id="fullName" name="fullName" maxlength="255" require>
+                            </div>
+                            <div class="error"></div>
+                        </div>
+                        <!-- Data de Nascimento -->
+                        <div class="field-container required">
+                            <div class="field">
+                                <label for="birthDate">Data de Nascimento:</label>
+                                <input type="date" id="birthDate" name="birthDate" require>
+                            </div>
+                            <div class="error"></div>
+                        </div>
+                        <!-- Género -->
+                        <div class="field-container required">
+                            <div class="field">
+                                <label>Género:</label>
+                                <div class="gender-container">
+                                    <div class="gender-field">
+                                        <input type="radio" id="genderMale" name="gender" value="male">
+                                        <label for="genderMale">Masculino</label>
+                                    </div>
+                                    
+                                    <div class="gender-field">
+                                        <input type="radio" id="genderFemale" name="gender" value="female">
+                                        <label for="genderFemale">Feminino</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="error"></div>
+                        </div>
+                        <!-- Morada -->
+                        <div class="field-container required">
+                            <div class="field">
+                                <label for="address">Morada:</label>
+                                <input type="text" id="address" name="address" maxlength="255" required>
+                            </div>
+                            <div class="error"></div>
+                        </div>
+                        <!-- NIF -->
+                        <div class="field-container required">
+                            <div class="field">
+                                <label for="nif">NIF:</label>
+                                <input type="text" id="nif" name="nif" pattern="\d{9}" maxlength="9" required>
+                            </div>
+                            <div class="error"></div>
+                        </div>
+                        <!-- Telefone -->
+                        <div class="field-container required">
+                            <div class="field">
+                                <label for="tel">Telefone:</label>
+                                <input type="tel" id="tel" name="tel" pattern="\d{9}" maxlength="9" required>
+                            </div>
+                            <div class="error"></div>
+                        </div>
+                        <!-- Plano de Treino -->
+                        <div class="field-container required">
+                            <div class="field">
+                                <label for="training-plan">Plano de Treino:</label>
+                                <select id="training-plan" name="training-plan" required>
+                                    <option value="" disabled>Selecione um Plano</option>
+                                    <option value="personalized1">Individual</option>
+                                    <option value="personalized2">Grupos Reduzidos</option>
+                                    <option value="group">Aulas de Grupo</option>
+                                    <option value="terapy">Treino Terapêutico</option>
+                                    <option value="padel">Padel</option>
+                                    <option value="openStudio">Acesso ao Estudio</option>
+                                </select>
+                            </div>
+                            <div class="error"></div>
+                        </div>
+                        <!-- Experiência -->
+                        <div class="field-container required">
+                            <div class="field">
+                                <label for="experience">Experiência:</label>
+                                <select id="experience" name="experience" required>
+                                    <option value="" disabled>Selecione a sua Experiência</option>
+                                    <option value="beginner">Iniciante (nunca treinou)</option>
+                                    <option value="intermediate">Intermédio (já treinou antes)</option>
+                                    <option value="advanced">Avançado (treina regularmente)</option>
+                                </select>
+                            </div>
+                            <div class="error"></div>
+                        </div>
+                        <!-- Plano Alimentar -->
+                        <div class="field-container">
+                            <div class="checkbox-field">
+                                <input type="checkbox" id="nutrition-plan" name="nutrition-plan">
+                                <label for="nutrition-plan">Aderir ao Plano Alimentar</label>
+                            </div>
+                            <div class="error"></div>
+                        </div>
+                        <!-- Problemas de Saude -->
+                        <div class="field-container">
+                            <div class="health-field">
+                                <div class="checkbox-field">
+                                    <input type="checkbox" id="health-issues" name="health-issues">
+                                    <label for="health-issues">Tem algum problema de saúde?</label>
+                                </div>
+                                <textarea id="health-details" name="health-details" rows="3" placeholder="Detalhe os problemas de saude."></textarea>
+                            </div>
+                            <div class="error"></div>
+                        </div>
+                       
+                        <!-- Termos & Condições -->
+                        <div class="field-container required">
+                            <div class="checkbox-field">
+                                <input type="checkbox" id="terms" name="terms">
+                                <label for="terms">Aceito os <a href="termsAndConditions.php" target="_blank">Termos e Condições.</a></label>
+                            </div>
+                            <div class="error"></div>
+                        </div>
+
+
+                        <p class="form-disclaimer">Campos de preenchimento obrigatório.</p>
+                        <button type="submit">Enviar Inscrição</button>
+                    </form>
                 </div>
             </section>
-            
         </main>
         <footer>
             <img src="imgs/logo/iconOriginal.png" alt="Root Studio logo">

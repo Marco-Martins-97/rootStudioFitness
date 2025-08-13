@@ -65,11 +65,11 @@
                         <img src="imgs/content/aulasGrupo.jpeg" alt="Aulas de Grupo">
                         <h3>Aulas de Grupo</h3>
                     </a>
-                    <a href="plans.php#" class="plan-container">
+                    <a href="plans.php#specialties" class="plan-container">
                         <img src="imgs/content/treinoTerapeitico.jpg" alt="Treino terapeutico">
                         <h3>Treino Terapeutico</h3>
                     </a>
-                    <a href="plans.php#" class="plan-container">
+                    <a href="plans.php#specialties" class="plan-container">
                         <img src="imgs/content/padel.jpeg" alt="Padel">
                         <h3>Padel</h3>
                     </a>

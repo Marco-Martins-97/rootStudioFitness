@@ -18,16 +18,6 @@
 }
 
 /* PLANS - SECTION */
-
-/* 
-    .plan-container
-    .plan-img-container
-        img
-    .plan-description
-        h3
-        p
-        button
-*/
 .plan-container{
     display: flex;
     justify-content: center;
@@ -36,11 +26,13 @@
     padding: 32px 24px;
     gap: 32px;
     flex-wrap: wrap;
+    width: 100%;
+    max-width: 576px;
 }
 
 .plan-img-container img{
     width: 100%;
-    max-width: 768px;
+    /* max-width: 576px; */
     height: auto;
     border-radius: 12px;
     box-shadow: 0 4px 12px var(--SHADOW-COLOR);
@@ -48,7 +40,7 @@
 
 .plan-description{
     width: 100%;
-    max-width: 768px;
+    /* max-width: 576px; */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -56,18 +48,22 @@
     gap: 24px;
     color: var(--PRIMARY-TXT-COLOR);
     text-align: center;
-}
-
-.plan-description p{
     font-size: 1.1rem;
 }
 
 .plan-description li{
     text-align: left;
+    font-size: 1rem;
+
 }
+
 .no-bold-small {
     font-weight: normal;
-    font-size: 0.8rem;
+    font-size: 0.7rem;
+}
+
+.disclaimer{
+    font-size: 0.7em;
 }
 
 .plan-description button{
@@ -86,33 +82,168 @@
     background-color: var(--SECONDARY-BTN-COLOR);
     color: var(--PRIMARY-TXT-COLOR);
 }
+/* FORM - SECTION */
 
-/* 
-.text-container a{
-    padding: 12px 24px;
-    font-size: 1rem;
-    font-weight: bold;
+.form-container{
+    width: 100%;
+    max-width: 576px;
+    margin: 48px auto 48px auto;
+    background-color: var(--TERTIARY-BG-COLOR);
     border-radius: 12px;
-    background-color: var(--PRIMARY-BTN-COLOR);
-    color: var(--TERTIARY-TXT-COLOR);
-    transition: background-color 0.8s ease;
+    box-shadow: 0 0 10px var(--SHADOW-COLOR);
+    color: var(--PRIMARY-TXT-COLOR);
+    
 }
 
-.text-container a:hover{
+.form-container h2{
+    font-size: 2.5rem;
+    text-align: center;
+    background-color: var(--SECONDARY-BG-COLOR);
+    border-radius: 12px 12px 0 0;
+    padding: 16px;
+}
+
+.form-container form{
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 24px;
+}
+
+.field{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;  
+}
+
+.field label{
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.field input, .field select, .health-field textarea{
+    flex: 1;
+    width: 90%;
+    padding: 8px;
+    border: 1px solid var(--PRIMARY-BORDER-COLOR);
+    border-radius: 8px;
+    background-color: var(--PRIMARY-BG-COLOR);
+}
+.field input:focus:not([name="gender"]):not(#nutrition-plan), .health-field textarea:focus{
+    outline: 1px solid var(--PRIMARY-BORDER-COLOR);
+}
+
+.form-disclaimer{
+    text-align: left;
+    font-size: 0.7rem;
+    font-weight: bold;
+}
+
+.form-disclaimer::before, .field-container.required > .field > label::after, .field-container.required > .checkbox-field > label::after{
+    content: "*";
+    color: red;
+    font-size: 1.1rem;
+}
+
+.error{
+    display: none;
+    color: red;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-align: center;
+    padding-top: 3px;
+}
+
+.field-container.invalid .error{
+    display: block;
+}
+
+.form-container button{
+    background-color: var(--PRIMARY-BTN-COLOR);
+    color: var(--TERTIARY-TXT-COLOR);
+    border: none;
+    border-radius: 12px;
+    padding: 12px 24px;
+    font-weight: bold;
+    transition: background-color 0.8s ease;
+    letter-spacing: 1px;
+    cursor: pointer;
+}
+.form-container button:hover{
     background-color: var(--SECONDARY-BTN-COLOR);
     color: var(--PRIMARY-TXT-COLOR);
 }
-.text-container a{
-    padding: 12px 24px;
-    font-size: 1rem;
-    font-weight: bold;
-    border-radius: 12px;
-    background-color: var(--PRIMARY-BTN-COLOR);
-    color: var(--TERTIARY-TXT-COLOR);
-    transition: background-color 0.8s ease;
+
+/* FORM - GENDER */
+.gender-container{
+    display: flex;
+    gap: 32px;
 }
 
-.text-container a:hover{
-    background-color: var(--SECONDARY-BTN-COLOR);
+.gender-field{
+    display: flex;
+    align-items: center;
+}
+
+.gender-container label{
+    cursor: pointer;
+    padding-left: 8px;
+}
+
+/* FORM - NUTRITION */
+.checkbox-field{
+    text-align: center;
+}
+
+/* FORM - HEALTH */
+.health-field textarea{
+    width: 100%;
+    display: none;
+    margin-top: 16px;
+}
+.health-field:has(#health-issues:checked) textarea {
+    display: block;
+}
+/* FORM - TERMS */
+.field-container a{
+    font-weight: bold;
     color: var(--PRIMARY-TXT-COLOR);
-} */
+}
+
+
+
+@media (min-width: 768px) {
+    /* PLANS - SECTION */
+    .plan-container{
+        flex-direction: row;
+        flex-wrap: nowrap;
+        max-width: 1200px;
+    }
+    .plan-img-container{
+        width: 40%;
+    }
+    .plan-description{
+        width: 60%;
+    }
+    .plan-description button, .form-container button{
+        width: auto;
+        margin: auto;
+    }
+    /* FORM - SECTION */
+    .form-container{
+        max-width: 768px;
+    }
+    .field{
+        flex-direction: row;
+    }
+
+    .field input, .field select{
+        max-width: 70%;
+    }
+    
+    .error{
+        text-align: right;
+    }
+}
