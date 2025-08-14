@@ -233,7 +233,7 @@
                         <!-- Termos & Condições -->
                         <div class="field-container required">
                             <div class="checkbox-field">
-                                <input type="checkbox" id="terms" name="terms">
+                                <input type="checkbox" id="terms" name="terms" require>
                                 <label for="terms">Aceito os <a href="termsAndConditions.php" target="_blank">Termos e Condições.</a></label>
                             </div>
                             <div class="error"></div>

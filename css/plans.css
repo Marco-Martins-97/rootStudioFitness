@@ -11,10 +11,10 @@
 .info-container h1{
     font-size: 3rem;
     margin-bottom: 60px;
-
 }
 .info-container p{
     text-align: justify;
+    text-indent: 32px;
 }
 
 /* PLANS - SECTION */

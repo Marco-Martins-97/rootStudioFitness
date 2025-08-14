@@ -1,0 +1,148 @@
+/* HISTORY - SECTION */
+#history{
+    min-height: 300px;
+}
+.history-container{
+    text-align: center;
+    max-width: 768px;
+    color: var(--PRIMARY-TXT-COLOR);
+    padding: 32px 24px;
+}
+.history-container h1{
+    font-size: 3rem;
+    margin-bottom: 60px;
+}
+.history-container p{
+    text-align: justify;
+    text-indent: 32px;
+}
+
+/* PROFILE - SECTION */
+.img-text-container, .text-img-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 32px 24px;
+    gap: 32px;
+    flex-wrap: wrap;
+}
+
+.img-container img{
+    width: 100%;
+    height: auto;
+    max-height: 500px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px var(--SHADOW-COLOR);
+    object-fit: cover;
+}
+
+.text-container{
+    max-width: 768px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 24px;
+    color: var(--PRIMARY-TXT-COLOR);
+}
+
+.text-container h2{
+    font-size: 2rem;
+}
+
+.text-container p{
+    font-size: 1.1rem;
+    text-align: justify;
+    text-indent: 32px;
+}
+
+/* CONTACTS - SECTION */
+.contacts-container{
+    width: 100%;
+}
+.map{
+    width: 100%;
+    max-width: 768px;
+    height: 500px;
+    /* margin: auto;
+    margin-bottom: 2rem;
+    */
+    z-index: 1; 
+}
+
+
+
+
+
+/* FAQ - SECTION */
+
+.faq-container {
+/*   font-family: Arial, sans-serif;
+  background: #f9f9f9;
+  padding: 20px;
+  max-width: 700px;
+  margin: auto; */
+}
+
+/* .faq-container h2 {
+  text-align: center;
+  margin-bottom: 30px; */
+}
+
+.faq-item {
+/*   background: #fff;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); */
+}
+
+.faq-question {
+/*   padding: 15px;
+  cursor: pointer;
+  background: #eee;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center; */
+}
+
+.faq-answer {
+/*   max-height: 0;
+  overflow: hidden;
+  padding: 0 15px;
+  transition: all 0.3s ease;
+  background: #fff; */
+}
+
+.faq-answer.open {
+ /*  padding: 15px;
+  max-height: 500px; /* large enough for content */ */
+}
+
+.faq-item i {
+ /*  font-size: 18px;
+  transition: transform 0.3s ease; */
+}
+
+
+@media (min-width: 768px) {
+    /* PROFILE - SECTION */
+    .img-text-container{
+        flex-direction: row;
+        flex-wrap: nowrap;
+        max-width: 1200px;
+    }
+    .text-img-container{
+        flex-direction: row-reverse;
+        flex-wrap: nowrap;
+        max-width: 1200px;
+    }
+    .img-container img{
+        height: 100%;
+        width: auto;
+    }
+
+}
