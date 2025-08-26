@@ -45,8 +45,7 @@
             <section id="history">
                 <div class="history-container">
                     <h1>Root Studio Fitness</h1>
-                    <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Adipisci sed cum voluptate magnam, qui minima tenetur quasi dolore reiciendis voluptates amet repudiandae ducimus doloribus, blanditiis, at enim perspiciatis alias quas!</p>
-                    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Harum similique animi sed fugit esse deleniti accusantium fuga eligendi assumenda, cumque ad temporibus soluta perspiciatis non eum rem adipisci aliquam. Harum modi sapiente accusamus voluptatum!</p>
+                    <p>No domingo, dia 15 julho 2025, o Root abriu portas para uma novo capítulo. No Root, acreditamos que tudo começa com uma base sólida, e essa base somos nós. Esta equipa não é feita só de personal trainers. É feita de histórias, experiências, diferentes olhares sobre o corpo e o movimento. É feita de pessoas que escolhem estar presentes, ouvir, adaptar, motivar e caminhar ao lado de quem confia em nós. Cada um de nós traz algo único, mas partilhamos o mesmo propósito: ajudar-te a mover melhor, a viver com mais consciência e a reencontrar a tua raiz.</p>
                 </div>
             </section>
 
@@ -57,9 +56,9 @@
                     </div>
                     <div class="text-container">
                         <h2>João Figueiredo</h2>
-                        <p>Cada um de nós traz algo único, mas partilhamos o mesmo propósito: ajudar-te a mover melhor, a viver com mais consciência e a reencontrar a tua raiz.</p>
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quod, optio illum sequi maiores fugiat provident reiciendis perferendis inventore nisi incidunt expedita odit autem esse excepturi velit sit, consectetur totam voluptates.</p>
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Officia cumque possimus illo veritatis hic asperiores quibusdam minima repudiandae ab. Deserunt saepe veniam expedita dolore explicabo iste fugit. Dolores, sequi ipsam.</p>
+                        <p>Chamo-me João e sou o fundacor do Root, um estúdio que nasceu da minha história, da paixão pelo movimento e da convicção de que todo o progresso começa om uma base sólida, no corpo, na mente e na vida.</p>
+                        <p>Sou licenciado em ciências do desporto, com mestrado em ensino, pós-graduaçao em treino terapêutico e formação em pilates.</p>
+                        <p>Tive uma infância marcada pela obsidade, onde pesei mais de 130kg. Uma realidade que mudou quando decidi transformar a minha vida através do movimento. Cheguei aos 60Kg, e desde entãp nunca mais parei. Musculação, futebol, natação, padel...</p>
                     </div>
                 </div>
             </section>
@@ -71,9 +70,9 @@
                     </div>
                     <div class="text-container">
                         <h2>Sophie Rocha</h2>
-                        <p>Cada um de nós traz algo único, mas partilhamos o mesmo propósito: ajudar-te a mover melhor, a viver com mais consciência e a reencontrar a tua raiz.</p>
-                        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Molestiae, quae rerum! Iusto accusantium ipsa tempora molestiae facilis numquam, assumenda, unde eum architecto, tenetur dolores alias? Cum officia eos quaerat totam!</p>
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex vitae, quisquam error repellendus voluptas magnam culpa ipsa odit qui repellat quia veritatis odio iste! Quisquam corporis doloremque maxime enim libero.</p>
+                        <p>Olá, sou a Sophie e sempre vivi com o desporto no coração. Sou licenciada em gestão pública e mestre em gestão das organizações, mas foi durante a pandemia que a minha vida me desafiou a olhar para dentro, e decidir seguir o meu verdadeiro sonho de trabalharna área do exercício físico.</p>
+                        <p>Formei-me em técnica de exercício físico pela <a href="">@fitnessacademy</a>, onde obtive o meu títilo proficional. Desde então, especializei-me em aulas de grupo, e foi aí que encontrei a minha grande paixao, o step.</p>
+                        <p>Sou motiada por alegria, empatia e energia positiva. Gosto de criar um ambiente leve, onde o trino é mais do que esforço, é conecção, evolução e bem-estar.</p>
                     </div>
                 </div>
             </section>
@@ -82,11 +81,39 @@
                 <div class="contacts-container">
                     <div id="map" class="map"></div>
                     <div class="contact-info">
-                        <p>Lorem ipsum dolor sit amet.</p>
-                        <p>Lorem ipsum dolor sit amet.</p>
-                        <p>Lorem ipsum dolor sit amet.</p>
-                        <p>Lorem ipsum dolor sit amet.</p>
-                        <p>Lorem ipsum dolor sit amet.</p>
+                        <p>Morada: <a href="https://maps.app.goo.gl/ToG9UKXNECdGPDrY6" target="_blank">Travessa Doutor Francisco Sá Carneiro 150 fração 1 G, 4740-010 Esposende</a></p>
+                        <p>Telemovel: <a href="tel:+351925677310">+351 925 677 310</a></p>
+                        <p>Horários: 
+                            <div class="schedule-container">
+                                <div class="schedule">
+                                    <div class="day">Segunda-Feira:</div><div class="time">07h00 - 20h30</div>
+                                </div>
+                                <div class="schedule">
+                                    <div class="day">Terça-Feira:</div><div class="time">07h00 - 20h30</div>
+                                </div>
+                                <div class="schedule">
+                                    <div class="day">Quarta-Feira:</div><div class="time">07h00 - 20h30</div>
+                                </div>
+                                <div class="schedule">
+                                    <div class="day">Quinta-Feira:</div><div class="time">07h00 - 20h30</div>
+                                </div>
+                                <div class="schedule">
+                                    <div class="day">Sexta-Feira:</div><div class="time">07h00 - 20h30</div>
+                                </div>
+                                <div class="schedule">
+                                    <div class="day">Sábado:</div><div class="time">08h00 - 12h00</div>
+                                </div>
+                                <div class="schedule">
+                                    <div class="day">Domingo:</div><div class="time">Encerrado</div>
+                                </div>
+                            </div>
+                        </p>
+                        <p>
+                            <div class="social-container">
+                                <a href="https://instagram.com/root.studiofitness" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                                <a href="https://api.whatsapp.com/send?phone=351925677310" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                            </div>
+                        </p>
                     </div>
                 </div>
             </section>
@@ -97,29 +124,31 @@
                     <h3>FAQ</h3>
                     <div class="faq-item">
                         <div class="faq-question">
-                            Question 1?
+                            Quem Pode Treinar no Root?
                             <i class="fas fa-plus"></i>
                         </div>
                         <div class="faq-answer">
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nobis rem, aperiam totam reiciendis amet sapiente quibusdam vitae non aut eius id magnam quaerat odio consequuntur quis provident facere tempora quisquam?
+                            Toda a Gente, O Root foi criado para pessoas reais, com rotinas, dúvidas, objectivos e ritmos diferentes.
                         </div>
                     </div>
                     <div class="faq-item">
                         <div class="faq-question">
-                            Question 2?
-                            <i class="fas fa-minus"></i>
+                            Como Funciona o Acompanhamento dos Treinos?
+                            <i class="fas fa-plus"></i>
                         </div>
                         <div class="faq-answer">
-                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Distinctio delectus ab debitis voluptates quisquam quo itaque placeat cupiditate aliquid facilis architecto tempora, officia officiis. Laborum, libero. Maxime deleniti cupiditate adipisci!
+                            No Root, acretitamos que o verdadeiro progresso começa com uma base solida.
+                            Somos mais o que presonal trainers. Queremos ajudar-te a gostar de  te movimentar, a valorizar o proceso e a desafiar-te continuamente.
+                            Aqui, todos os treinos vão além do fisico, procuramos promover hábitos saudáveis, consistência corporal e autonomia.
                         </div>
                     </div>
                     <div class="faq-item">
                         <div class="faq-question">
-                            Question 3?
+                            Como  Posso Marcar o meu Treino?
                             <i class="fas fa-plus"></i>
                         </div>
                         <div class="faq-answer">
-                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique consectetur asperiores maxime libero. At, quo sit dolore dolores culpa aliquid velit, iure laudantium consequuntur perspiciatis tenetur ea dicta neque voluptate?
+                            Basta <a href="signup.php">registar</a> no site e enviar uma <a href="plans.php#application">candidatura</a>. Pode também enviar mensagem pelo <a href="https://api.whatsapp.com/send?phone=351925677310" target="_blank">WhatsApp</a> ou <a href="https://instagram.com/root.studiofitness" target="_blank">Instagram</a>.
                         </div>
                     </div>
 
@@ -141,5 +170,6 @@
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="js/navMenu.js"></script>
     <script src="js/map.js"></script>
+    <script src="js/about.js"></script>
 
 </html>

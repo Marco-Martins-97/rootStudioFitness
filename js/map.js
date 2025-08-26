@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     iconSize: [32, 32],
                     iconAnchor: [16, 32]
                 });
-                L.marker(userLoc, { icon: userIcon }).addTo(map).bindPopup("You are here");
+                L.marker(userLoc, { icon: userIcon }).addTo(map).bindPopup("Voce Está Aqui");
 
                 // Fit map to both markers
                 map.fitBounds([rootStudio, userLoc]);
