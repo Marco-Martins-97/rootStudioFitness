@@ -1,0 +1,128 @@
+main{
+    display: flex;
+}
+
+.form-container{
+    width: 100%;
+    max-width: 576px;
+    margin: 48px auto 48px auto;
+    background-color: var(--TERTIARY-BG-COLOR);
+    border-radius: 12px;
+    box-shadow: 0 0 10px var(--SHADOW-COLOR);
+    color: var(--PRIMARY-TXT-COLOR);
+    margin: auto;
+}
+
+.form-container h1{
+    font-size: 2.5rem;
+    text-align: center;
+    background-color: var(--SECONDARY-BG-COLOR);
+    border-radius: 12px 12px 0 0;
+    padding: 16px;
+}
+
+.form-container form{
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 24px;
+}
+
+.field{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;  
+}
+
+.field label{
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.field input{
+    flex: 1;
+    width: 90%;
+    padding: 8px;
+    border: 1px solid var(--PRIMARY-BORDER-COLOR);
+    border-radius: 8px;
+    background-color: var(--PRIMARY-BG-COLOR);
+}
+
+.field input:focus{
+    outline: 1px solid var(--PRIMARY-BORDER-COLOR);
+}
+
+.form-disclaimer{
+    text-align: left;
+    font-size: 0.7rem;
+    font-weight: bold;
+}
+
+.form-disclaimer::before, .field-container.required > .field > label::after{
+    content: "*";
+    color: red;
+    font-size: 1.1rem;
+}
+
+.error{
+    display: none;
+    color: red;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-align: center;
+    padding-top: 3px;
+}
+
+.field-container.invalid .error{
+    display: block;
+}
+
+.form-container button{
+    background-color: var(--PRIMARY-BTN-COLOR);
+    color: var(--TERTIARY-TXT-COLOR);
+    border: none;
+    border-radius: 12px;
+    padding: 12px 24px;
+    font-weight: bold;
+    transition: background-color 0.8s ease;
+    letter-spacing: 1px;
+    cursor: pointer;
+    margin: auto;
+}
+
+.form-container button:hover{
+    background-color: var(--SECONDARY-BTN-COLOR);
+    color: var(--PRIMARY-TXT-COLOR);
+}
+
+.link-container{
+    text-align: center;
+}
+.link-container a{
+    color: var(--PRIMARY-TXT-COLOR);
+    font-size: 0.9rem;
+    text-decoration: underline;
+}
+.link-container a:hover{
+    font-weight: bold;
+    margin: auto;
+}
+
+@media (min-width: 768px) {
+    .form-container{
+        max-width: 768px;
+    }
+    .field{
+        flex-direction: row;
+    }
+
+    .field input{
+        max-width: 70%;
+    }
+    
+    .error{
+        text-align: right;
+    }
+}
