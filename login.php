@@ -41,8 +41,8 @@
         </header>
         <main>
             <div class="form-container">
-                    <h1>Registar</h1>
-                    <form action="" method="post" id="signup-form">
+                    <h1>Entrar</h1>
+                    <form action="" method="post" id="login-form">
                         <!-- Email -->
                         <div class="field-container required">
                             <div class="field">
