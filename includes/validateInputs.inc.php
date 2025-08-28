@@ -93,6 +93,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             exit;
 
+        case 'loginEmail':
+            $error = '';
+            $value = trim($_POST['value'] ?? '');
+
+            if(isInputRequired($input) && isInputEmpty($value)){
+                $error = 'O email é obrigatório.';
+            } elseif (isEmailInvalid($value)){
+                $error = 'O email não é válido.';
+            }
+
+            if ($error) {
+                echo json_encode(['status' => 'invalid', 'message' => $error]);
+            } else {
+                echo json_encode(['status' => 'valid']);
+            }
+            exit;
+
+
         
 
 

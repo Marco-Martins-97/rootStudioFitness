@@ -1,3 +1,4 @@
+<?php require_once 'includes/configSession.inc.php';  ?>
 <!DOCTYPE html>
 <html lang="pt">
     <head>
@@ -41,25 +42,32 @@
             </nav>
         </header>
         <main>
-            <div class="form-container">
+            <div class="form-container <?php if (isset($_SESSION['loginError'])) { echo 'invalid'; } ?> ">
                     <h1>Entrar</h1>
-                    <form action="" method="post" id="login-form">
+                    <form action="includes/login.inc.php" method="post" id="login-form">
                         <!-- Email -->
-                        <div class="field-container required">
+                        <div class="field-container">
                             <div class="field">
-                                <label for="email">Email:</label>
-                                <input type="email" id="email" name="email" maxlength="255" require>
+                                <label for="loginEmail">Email:</label>
+                                <input type="email" id="loginEmail" name="loginEmail" maxlength="255">
                             </div>
                         </div>
                         <!-- Password -->
-                        <div class="field-container required">
+                        <div class="field-container">
                             <div class="field">
-                                <label for="pwd">Password:</label>
-                                <input type="password" id="pwd" name="pwd" maxlength="255" require>
+                                <label for="loginPwd">Password:</label>
+                                <input type="password" id="loginPwd" name="loginPwd" maxlength="255">
                             </div>
                         </div>
                         
-                        <div class="error">Email ou palavra-passe incorretos.</div>
+                        <div class="error">
+                            <?php 
+                                if (isset($_SESSION['loginError'])) { 
+                                    echo $_SESSION['loginError']; 
+                                    unset($_SESSION['loginError']);
+                                }
+                            ?>
+                        </div>
 
                         <button type="submit">Entrar</button>
                         <div class="link-container"><a href="signup.php">Registar</a></div>

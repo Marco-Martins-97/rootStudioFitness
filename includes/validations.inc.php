@@ -13,7 +13,7 @@ $pwdLength = 8;
 // Funções de Validação
 
 function isInputRequired($input){
-    $requiredFields = ['firstName','lastName','email','pwd','confPwd'];
+    $requiredFields = ['firstName','lastName','email','pwd','confPwd','loginEmail'];
     return in_array($input, $requiredFields);
 }
 

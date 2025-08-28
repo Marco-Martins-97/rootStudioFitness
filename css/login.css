@@ -54,8 +54,7 @@ main{
 }
 
 .error{
-    display: block;
-    /* display: none; */
+    display: none;
     color: red;
     font-size: 0.8rem;
     font-weight: bold;
@@ -63,6 +62,9 @@ main{
     padding-top: 3px;
 }
 
+.form-container.invalid .error{
+    display: block;
+}
 
 .form-container button{
     background-color: var(--PRIMARY-BTN-COLOR);
@@ -93,6 +95,28 @@ main{
 .link-container a:hover{
     font-weight: bold;
     margin: auto;
+}
+
+.popup{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+    z-index: 999;
+    font-size: 18px;
+    text-align: center;
+}
+
+.popup-fail{
+    background-color: red;
+}
+
+.popup-success{
+    background-color: green;
 }
 
 @media (min-width: 768px) {
