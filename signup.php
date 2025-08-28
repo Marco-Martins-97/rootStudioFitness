@@ -16,6 +16,8 @@
         <link rel="stylesheet" href="css/signup.css">
         <!-- Script -->
         <script src="https://kit.fontawesome.com/d132031da6.js?v=2" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
+        
     </head>
     <body>
         <header>
@@ -42,20 +44,20 @@
         <main>
             <div class="form-container">
                     <h1>Registar</h1>
-                    <form action="" method="post" id="signup-form">
+                    <form action="includes/signup.inc.php" method="post" id="signup-form">
                         <!-- Primeiro Nome -->
                         <div class="field-container required">
                             <div class="field">
                                 <label for="firstName">Nome:</label>
-                                <input type="text" id="firstName" name="firstName" maxlength="255" require>
+                                <input type="text" id="firstName" name="firstName" maxlength="255">
                             </div>
                             <div class="error"></div>
                         </div>
-                        <!-- Primeiro Nome -->
+                        <!-- Apelido -->
                         <div class="field-container required">
                             <div class="field">
                                 <label for="lastName">Apelido:</label>
-                                <input type="text" id="lastName" name="lastName" maxlength="255" require>
+                                <input type="text" id="lastName" name="lastName" maxlength="255">
                             </div>
                             <div class="error"></div>
                         </div>
@@ -63,7 +65,7 @@
                         <div class="field-container required">
                             <div class="field">
                                 <label for="email">Email:</label>
-                                <input type="email" id="email" name="email" maxlength="255" require>
+                                <input type="email" id="email" name="email" maxlength="255">
                             </div>
                             <div class="error"></div>
                         </div>
@@ -71,7 +73,7 @@
                         <div class="field-container required">
                             <div class="field">
                                 <label for="pwd">Password:</label>
-                                <input type="password" id="pwd" name="pwd" maxlength="255" require>
+                                <input type="password" id="pwd" name="pwd" minlength="8" maxlength="255">
                             </div>
                             <div class="error"></div>
                         </div>
@@ -79,7 +81,7 @@
                         <div class="field-container required">
                             <div class="field">
                                 <label for="confirmPwd">Confirmação de Password:</label>
-                                <input type="password" id="confirmPwd" name="confirmPwd" maxlength="255" require>
+                                <input type="password" id="confirmPwd" name="confirmPwd" minlength="8" maxlength="255">
                             </div>
                             <div class="error"></div>
                         </div>
@@ -103,4 +105,5 @@
 
     </body>
     <script src="js/navMenu.js"></script>
+    <script src="js/signupValidateForm.js"></script>
 </html>
