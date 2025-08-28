@@ -1,3 +1,4 @@
+<?php require_once 'includes/configSession.inc.php'; ?>
 <!DOCTYPE html>
 <html lang="pt">
     <head>
@@ -30,11 +31,29 @@
                     </div>
                     <div class="right-menu">
                         <a href="shop.php">Loja</a>
-
+                        <?php if(!isset($_SESSION["userId"])){ ?>
                             <div class="guest">
                                 <a href="login.php">Entrar</a>
                                 <a href="signup.php">Registar</a>
                             </div>
+                        <?php } else{ ?>
+                            <div class="dropdown-toggle">
+                                <i class="fas fa-chevron-down"></i>
+                                <?php echo $_SESSION['username']; ?>
+                            </div>
+                            <div class="dropdown">
+                                <a href="profile.php">Perfil</a>
+                                <?php if(isset($_SESSION["userRole"]) && $_SESSION["userRole"] === 'admin'){ ?>
+                                    <a href="shopAdmin.php">Administração Loja</a>
+                                    <a href="clientsAdmin.php">Administração Clientes</a>
+                                <?php } ?>
+                                <a href="profile.php">Encomendas</a>
+                                
+                                <form action="includes/logout.inc.php" method="post">
+                                    <button>Sair</button>
+                                </form>
+                            </div>
+                        <?php } ?>
                     </div>
                 </div>
             </nav>
@@ -76,7 +95,7 @@
                 </div>
             </section>
             <section id="video">
-                <div class="video-container">
+                <!-- <div class="video-container">
                     <iframe 
                         src="https://www.youtube.com/embed/XPSEZeGeeqk"
                         title="YouTube video player"
@@ -84,7 +103,7 @@
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                         allowfullscreen
                     ></iframe>
-                </div>
+                </div> -->
             </section>
         </main>
         <footer>

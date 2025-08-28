@@ -56,7 +56,7 @@ main{
 }
 
 .menu-active.submenu-active{
-    margin-top: 530px;
+    margin-top: 480px;
 }
 
 section{
@@ -299,6 +299,7 @@ footer img{
     .menu .dropdown a:hover{
         background-color: var(--SECONDARY-BG-COLOR);
         color: var(--SECONDARY-TXT-COLOR);
+        border: 1px solid var(--SECONDARY-TXT-COLOR);
     }
 
     footer > img {

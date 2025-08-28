@@ -1,4 +1,11 @@
-<?php require_once 'includes/configSession.inc.php';  ?>
+<?php 
+    require_once 'includes/configSession.inc.php'; 
+    
+    if(isset($_SESSION["userId"])){ 
+        header("Location: index.php"); 
+        exit;
+    }
+?>
 <!DOCTYPE html>
 <html lang="pt">
     <head>
