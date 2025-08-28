@@ -94,22 +94,32 @@ $(document).ready(function(){
     if (params.has("signup")) {
         const signupStatus = params.get("signup");
         let message = "";
+        let status = '';
 
         switch (signupStatus) {
             case "failed":
                 message = "Falha ao registar. Tente novamente.";
+                status = 'fail';
                 break;
             case "invalid":
                 message = "Dados inválidos. Confira e tente novamente.";
+                status = 'fail';
+                break;
+            case "success":
+                message = "Registo realizado com sucesso!";
+                status = 'success';
                 break;
         }
 
         //mostra popup
-        let sPopup = $(`<div class="popup popup-fail">${message}</div>`).appendTo("main");
+        let sPopup = $(`<div class="popup popup-${status}">${message}</div>`).appendTo("main");
         // remove popup depois de 3 segundo
         setTimeout(function(){
             sPopup.fadeOut(300, function(){ $(this).remove(); });
+            if (status === 'success') {window.location.href = "login.php";}
         }, 3000);
+        
+        
     }
 
 

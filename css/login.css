@@ -54,7 +54,8 @@ main{
 }
 
 .error{
-    display: none;
+    display: block;
+    /* display: none; */
     color: red;
     font-size: 0.8rem;
     font-weight: bold;
@@ -62,9 +63,6 @@ main{
     padding-top: 3px;
 }
 
-.field-container.invalid .error{
-    display: block;
-}
 
 .form-container button{
     background-color: var(--PRIMARY-BTN-COLOR);
@@ -109,7 +107,4 @@ main{
         max-width: 70%;
     }
     
-    .error{
-        text-align: right;
-    }
 }

@@ -105,5 +105,5 @@
 
     </body>
     <script src="js/navMenu.js"></script>
-    <script src="js/signupValidateForm.js"></script>
+    <script src="js/signup.js"></script>
 </html>

@@ -94,7 +94,7 @@ class Signup{
         // Criar utilizador
         if (!$this->errors){
             if ($this->createNewUser()){
-                header("Location: ../login.php?signup=success");
+                header("Location: ../signup.php?signup=success");
                 exit;
             } else {
                 header("Location: ../signup.php?signup=failed");

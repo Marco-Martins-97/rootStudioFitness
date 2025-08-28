@@ -16,6 +16,7 @@
         <link rel="stylesheet" href="css/login.css">
         <!-- Script -->
         <script src="https://kit.fontawesome.com/d132031da6.js?v=2" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
     </head>
     <body>
         <header>
@@ -49,7 +50,6 @@
                                 <label for="email">Email:</label>
                                 <input type="email" id="email" name="email" maxlength="255" require>
                             </div>
-                            <div class="error"></div>
                         </div>
                         <!-- Password -->
                         <div class="field-container required">
@@ -57,9 +57,9 @@
                                 <label for="pwd">Password:</label>
                                 <input type="password" id="pwd" name="pwd" maxlength="255" require>
                             </div>
-                            <div class="error"></div>
                         </div>
-                    
+                        
+                        <div class="error">Email ou palavra-passe incorretos.</div>
 
                         <button type="submit">Entrar</button>
                         <div class="link-container"><a href="signup.php">Registar</a></div>
@@ -79,4 +79,5 @@
 
     </body>
     <script src="js/navMenu.js"></script>
+    <script src="js/login.js"></script>
 </html>
