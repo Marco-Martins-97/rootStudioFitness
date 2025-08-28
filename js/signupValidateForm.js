@@ -1,3 +1,7 @@
+/* 
+    Este ficheiro faz a validação do formulario da pagina de registo
+*/
+
 function validateField(input){
     const name = $(input).attr('name');
     const value = $(input).val();
@@ -85,6 +89,30 @@ function validateAllFields(formId){
 
 $(document).ready(function(){
     const signupForm = $('#signup-form');
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.has("signup")) {
+        const signupStatus = params.get("signup");
+        let message = "";
+
+        switch (signupStatus) {
+            case "failed":
+                message = "Falha ao registar. Tente novamente.";
+                break;
+            case "invalid":
+                message = "Dados inválidos. Confira e tente novamente.";
+                break;
+        }
+
+        //mostra popup
+        let sPopup = $(`<div class="popup popup-fail">${message}</div>`).appendTo("main");
+        // remove popup depois de 3 segundo
+        setTimeout(function(){
+            sPopup.fadeOut(300, function(){ $(this).remove(); });
+        }, 3000);
+    }
+
+
     validateAllFields(signupForm);
 
     $('input[name="firstName"]').on('input', function(){ validateField(this); });
@@ -100,11 +128,11 @@ $(document).ready(function(){
         if(noEmptyFields(signupForm) && isFormValid(signupForm)){
 
             //cria um popup
-            let popup = $('<div class="form-popup">Formulário válido! ✅</div>').appendTo("main");
+            let fPopup = $('<div class="popup popup-success">Formulário válido! ✅</div>').appendTo("main");
 
             // remove popup depois de 1 segundo e envia o formulário
             setTimeout(function(){
-                popup.fadeOut(300, function(){ $(this).remove(); });
+                fPopup.fadeOut(300, function(){ $(this).remove(); });
                 signupForm.off('submit').submit();
             }, 1000);
         }

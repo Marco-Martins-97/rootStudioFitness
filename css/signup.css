@@ -111,12 +111,11 @@ main{
     margin: auto;
 }
 
-.form-popup{
+.popup{
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: green;
     color: white;
     padding: 15px 25px;
     border-radius: 10px;
@@ -124,6 +123,14 @@ main{
     z-index: 999;
     font-size: 18px;
     text-align: center;
+}
+
+.popup-fail{
+    background-color: red;
+}
+
+.popup-success{
+    background-color: green;
 }
 
 @media (min-width: 768px) {

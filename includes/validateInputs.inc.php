@@ -1,76 +1,13 @@
 <?php
+require_once 'validations.inc.php';
 /* 
-    Este ficheiro contem as validações de todos os inputs,
-    as funções que serão usadas com o php,
-    e tambem com ajax no javascript.
-    Permitindo reutilizar o mesmo codigo para todo o website,
-    ficando em um só lugar e de forma organizada.
-
+    Este ficheiro Faz a validaçao de todos os inputs do website via AJAX.
+    $input - esta é a variavel que vai selecionar qual será a validação realizada.
 */
 
-//GLOBAL Variables
-$requiredFields = ['firstName','lastName','email','pwd','confPwd'];
-$pwdLength = 8;
 
-// Funções de Validação
-
-function isInputRequired($input){
-    global $requiredFields;
-    return in_array($input, $requiredFields);
-}
-
-function isInputEmpty($value){
-    return $value === '' || $value === null;
-}
-
-function isNameInvalid($value){
-    return !preg_match("/^[a-zA-ZÀ-ÿ' -]+$/u", $value);
-}
-
-function isEmailInvalid($value) {
-    return !filter_var($value, FILTER_VALIDATE_EMAIL);
-}
-/* 
-function thisEmailExists($value) {  //limpa o input, conecta a base de dados, pesquisa se o email existe an base de dados e retorna true/false
-    $email = htmlspecialchars($value);
-    $dbh = new Dbh();
-    $conn = $dbh->connect();
-    $query = 'SELECT * FROM users WHERE email = :email;';
-    $stmt = $conn->prepare($query);
-    $stmt->bindParam(':email', $email);
-    $stmt->execute();
-    
-    return $stmt->fetch(PDO::FETCH_ASSOC) ? true : false;
-}
- */
-function isPwdShort($value){
-    global $pwdLength;
-    return strlen($value) < $pwdLength;
-}
-
-function isPwdNoMatch($pwd, $confPwd) {
-    return $pwd !== $confPwd;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Validações com AJAX
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
     if(!isset($_POST['input'])){
         echo json_encode(['status' => 'error', 'message' => 'Invalid Request']);
         exit;
@@ -122,8 +59,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $error = 'O email é obrigatório.';
             } elseif (isEmailInvalid($value)){
                 $error = 'O email não é válido.';
-            /* } elseif (thisEmailExists($value)) {
-                $error = 'Este email já se encontra em uso.'; */
+            } elseif (thisEmailExists(htmlspecialchars($value))) {
+                $error = 'Este email já se encontra em uso.';
             }
 
             if ($error) {
@@ -161,14 +98,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         default:
             echo json_encode(['status' => 'error', 'message' => 'Invalid Input']);
-            exit;
+            break;
     }
-
-
-
-
-
-} else {
+} else{
     echo json_encode(['status' => 'error', 'message' => 'Invalid Request']);
     exit;
 }
