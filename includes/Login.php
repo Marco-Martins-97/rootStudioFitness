@@ -34,7 +34,7 @@ class Login{
 
     private function returnError($message, $error){
         $_SESSION['loginError'] = $message;
-        header("Location: ../login.php?login=$error");
+        header('Location: ../login.php?login='.$error);
         exit;
     }
     
@@ -57,7 +57,8 @@ class Login{
         //Inicia a Sessão
         $this->createSessionData($userData);
 
-        header("Location: ../login.php?login=success");
+        
+        header('Location: ../index.php?login=success');
         exit;
 
     }

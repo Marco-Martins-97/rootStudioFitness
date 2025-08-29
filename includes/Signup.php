@@ -57,6 +57,8 @@ class Signup{
             $this->errors['firstName'] = 'empty';
         } elseif (isNameInvalid($this->firstName)){
             $this->errors['firstName'] = 'invalid';
+        } elseif (isLengthInvalid($this->firstName)){
+            $this->errors['firstName'] = 'toLong';
         } 
 
         // lastName
@@ -64,6 +66,8 @@ class Signup{
             $this->errors['lastName'] = 'empty';
         } elseif (isNameInvalid($this->lastName)){
             $this->errors['lastName'] = 'invalid';
+        } elseif (isLengthInvalid($this->lastName)){
+            $this->errors['lastName'] = 'toLong';
         }
 
         // Email
@@ -73,6 +77,8 @@ class Signup{
             $this->errors['email'] = 'invalid';
         } elseif (thisEmailExists($this->email)){
             $this->errors['email'] = 'taken';
+        } elseif (isLengthInvalid($this->email)){
+            $this->errors['email'] = 'toLong';
         }
 
         // Pwd
@@ -80,8 +86,12 @@ class Signup{
             $this->errors['pwd'] = 'empty';
         } elseif (isPwdShort($this->pwd)){
             $this->errors['pwd'] = 'short';
+        } elseif (isLengthInvalid($this->pwd)){
+            $this->errors['pwd'] = 'toLong';
         } elseif (isInputRequired('confPwd') && isInputEmpty($this->confPwd)){
             $this->errors['confPwd'] = 'empty';
+        } elseif (isLengthInvalid($this->confPwd)){
+            $this->errors['confPwd'] = 'toLong';
         } elseif (isPwdNoMatch($this->pwd, $this->confPwd)){
             $this->errors['confPwd'] = 'noMatch';
         }

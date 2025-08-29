@@ -17,6 +17,7 @@
         <link rel="stylesheet" href="css/main.css">
         <!-- Script -->
         <script src="https://kit.fontawesome.com/d132031da6.js?v=2" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
     </head>
     <body>
         <header>
@@ -119,4 +120,5 @@
 
     </body>
     <script src="js/navMenu.js"></script>
+    <script src="js/main.js"></script>
 </html>

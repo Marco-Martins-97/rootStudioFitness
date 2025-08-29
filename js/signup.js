@@ -134,11 +134,11 @@ $(document).ready(function(){
         if(noEmptyFields(signupForm) && isFormValid(signupForm)){
 
             //cria um popup
-            let fPopup = $('<div class="popup popup-success">Formulário válido! ✅</div>').appendTo("main");
+            let formPopup = $('<div class="popup popup-warn">Formulário válido! ✅</div>').appendTo("main");
 
             // remove popup depois de 1 segundo e envia o formulário
             setTimeout(function(){
-                fPopup.fadeOut(300, function(){ $(this).remove(); });
+                formPopup.fadeOut(300, function(){ $(this).remove(); });
                 signupForm.off('submit').submit();
             }, 1000);
         }

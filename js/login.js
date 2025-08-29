@@ -44,34 +44,30 @@ $(document).ready(function(){
 
     if (params.has('login')) {
         const loginStatus = params.get('login');
-        let message = '';
-        let status = '';
+        let loginMsg = '';
 
         switch (loginStatus) {
             case 'failed':
-                message = 'Erro na ligação à base de dados.';
-                status = 'fail';
+                loginMsg = 'Erro na ligação à base de dados.';
                 break;
             case 'empty':
-                message = 'Campos de preenchimento obrigatório!';
-                status = 'fail';
+                loginMsg = 'Campos de preenchimento obrigatório!';
                 break;
             case 'invalid':
-                message = 'Email ou palavra-passe incorretos.';
-                status = 'fail';
+                loginMsg = 'Email ou palavra-passe incorretos.';
                 break;
-            case 'success':
-                message = 'Login realizado com sucesso!';
-                status = 'success';
-                break;
+            /* case 'success':
+                loginMsg = 'Login realizado com sucesso!';
+                loginSts = 'success';
+                break; */
         }
 
         //mostra popup
-        let sPopup = $(`<div class='popup popup-${status}'>${message}</div>`).appendTo('main');
+        let loginPopup = $(`<div class='popup popup-fail'>${loginMsg}</div>`).appendTo('main');
         // remove popup depois de 3 segundo
         setTimeout(function(){
-            sPopup.fadeOut(300, function(){ $(this).remove(); });
-            if (status === 'success') {window.location.href = 'index.php';}
+            loginPopup.fadeOut(300, function(){ $(this).remove(); });
+                // if (loginSts === 'success') {window.location.href = 'index.php';}
         }, 3000);
     }
 
@@ -83,11 +79,11 @@ $(document).ready(function(){
         if(noEmptyFields(loginForm) && isFormValid(loginForm)){
 
             //cria um popup
-            let fPopup = $('<div class="popup popup-success">Formulário válido! ✅</div>').appendTo("main");
+            let formPopup = $('<div class="popup popup-warn">Formulário válido! ✅</div>').appendTo("main");
 
             // remove popup depois de 1 segundo e envia o formulário
             setTimeout(function(){
-                fPopup.fadeOut(300, function(){ $(this).remove(); });
+                formPopup.fadeOut(300, function(){ $(this).remove(); });
                 loginForm.off('submit').submit();
             }, 1000);
         }

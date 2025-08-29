@@ -25,6 +25,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $error = 'O nome é obrigatório.';
             } elseif (isNameInvalid($value)){
                 $error = 'O nome só pode conter letras e espaços.';
+            } elseif (isLengthInvalid($value)){
+                $error = 'O nome excede o limite de caracteres.';
             }
 
             if ($error) {
@@ -42,6 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $error = 'O apelido é obrigatório.';
             } elseif (isNameInvalid($value)){
                 $error = 'O apelido só pode conter letras e espaços.';
+            } elseif (isLengthInvalid($value)){
+                $error = 'O apelido excede o limite de caracteres.';
             }
 
             if ($error) {
@@ -61,6 +65,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $error = 'O email não é válido.';
             } elseif (thisEmailExists(htmlspecialchars($value))) {
                 $error = 'Este email já se encontra em uso.';
+            } elseif (isLengthInvalid($value)){
+                $error = 'O email excede o limite de caracteres.';
             }
 
             if ($error) {
@@ -79,9 +85,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $errors['pwd'] = 'A password é obrigatória.';
             } elseif (isPwdShort($valuePwd)){
                 $errors['pwd'] = 'A password deve ter pelo menos '.$pwdLength.' caracteres.';
+            } elseif (isLengthInvalid($valuePwd)){
+                $errors['pwd'] = 'A password excede o limite de caracteres.';
             }
             if(isInputRequired('confPwd') && isInputEmpty($valueConfPwd)){
                 $errors['confPwd'] = 'A confirmação da password é obrigatória.';
+            } elseif (isLengthInvalid($valueConfPwd)){
+                $errors['confPwd'] = 'A confirmação da password excede o limite de caracteres.';
             } elseif (isPwdNoMatch($valuePwd, $valueConfPwd)){
                 $errors['confPwd'] = 'As passwords não coincidem.';
             }
@@ -101,6 +111,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $error = 'O email é obrigatório.';
             } elseif (isEmailInvalid($value)){
                 $error = 'O email não é válido.';
+            } elseif (isLengthInvalid($value)){
+                $error = 'O email excede o limite de caracteres.';
             }
 
             if ($error) {

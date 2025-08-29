@@ -119,6 +119,11 @@ main{
     background-color: green;
 }
 
+.popup-warn{
+    background-color: yellow;
+    color: black;
+}
+
 @media (min-width: 768px) {
     .form-container{
         max-width: 768px;

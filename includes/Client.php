@@ -10,7 +10,6 @@ class Client{
         $this->conn = $dbh->connect();
     }
 
-
     private function showData($fullName, $birthDate, $gender, $userAddress, $nif, $phone, $trainingPlan, $experience, $nutritionPlan, $issues, $details, $terms){
         echo 'Name: '. $fullName.'<br>';
         echo 'Date: '. $birthDate.'<br>';
@@ -25,6 +24,7 @@ class Client{
         echo 'details: '. $details.'<br>';
         echo 'Terms: '. $terms.'<br>';
     }
+
     public function submitClientApplication($fullName, $birthDate, $gender, $userAddress, $nif, $phone, $trainingPlan, $experience, $nutritionPlan, $issues, $details, $terms){
         //validaçao dos dados
         require_once 'validations.inc.php';
