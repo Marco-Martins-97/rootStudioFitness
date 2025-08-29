@@ -89,30 +89,30 @@ $(document).ready(function(){
 
     if (params.has('signup')) {
         const signupStatus = params.get('signup');
-        let message = '';
-        let status = '';
+        let signupMsg = '';
+        let signupSts = '';
 
         switch (signupStatus) {
             case 'failed':
-                message = 'Falha ao registar. Tente novamente.';
-                status = 'fail';
+                signupMsg = 'Falha ao registar. Tente novamente.';
+                signupSts = 'fail';
                 break;
             case 'invalid':
-                message = 'Dados inválidos. Confira e tente novamente.';
-                status = 'fail';
+                signupMsg = 'Dados inválidos. Confira e tente novamente.';
+                signupSts = 'fail';
                 break;
             case 'success':
-                message = 'Registo realizado com sucesso!';
-                status = 'success';
+                signupMsg = 'Registo realizado com sucesso!';
+                signupSts = 'success';
                 break;
         }
 
         //mostra popup
-        let sPopup = $(`<div class='popup popup-${status}'>${message}</div>`).appendTo('main');
+        let signupPopup = $(`<div class='popup popup-${signupSts}'>${signupMsg}</div>`).appendTo('main');
         // remove popup depois de 3 segundo
         setTimeout(function(){
-            sPopup.fadeOut(300, function(){ $(this).remove(); });
-            if (status === 'success') {window.location.href = 'login.php';}
+            signupPopup.fadeOut(300, function(){ $(this).remove(); });
+            if (sts === 'success') {window.location.href = 'login.php';}
         }, 3000);
         
         

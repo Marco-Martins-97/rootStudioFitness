@@ -146,7 +146,7 @@
                         <div class="field-container required">
                             <div class="field">
                                 <label for="fullName">Nome Completo:</label>
-                                <input type="text" id="fullName" name="fullName" maxlength="255" require>
+                                <input type="text" id="fullName" name="fullName" maxlength="255">
                             </div>
                             <div class="error"></div>
                         </div>
@@ -154,7 +154,7 @@
                         <div class="field-container required">
                             <div class="field">
                                 <label for="birthDate">Data de Nascimento:</label>
-                                <input type="date" id="birthDate" name="birthDate" require>
+                                <input type="date" id="birthDate" name="birthDate">
                             </div>
                             <div class="error"></div>
                         </div>
@@ -180,7 +180,7 @@
                         <div class="field-container required">
                             <div class="field">
                                 <label for="address">Morada:</label>
-                                <input type="text" id="address" name="address" maxlength="255" required>
+                                <input type="text" id="address" name="address" maxlength="255">
                             </div>
                             <div class="error"></div>
                         </div>
@@ -188,7 +188,7 @@
                         <div class="field-container required">
                             <div class="field">
                                 <label for="nif">NIF:</label>
-                                <input type="text" id="nif" name="nif" pattern="\d{9}" maxlength="9" required>
+                                <input type="text" id="nif" name="nif" pattern="\d{9}" maxlength="9">
                             </div>
                             <div class="error"></div>
                         </div>
@@ -196,7 +196,7 @@
                         <div class="field-container required">
                             <div class="field">
                                 <label for="tel">Telefone:</label>
-                                <input type="tel" id="tel" name="tel" pattern="\d{9}" maxlength="9" required>
+                                <input type="tel" id="tel" name="tel" pattern="\d{9}" maxlength="9">
                             </div>
                             <div class="error"></div>
                         </div>
@@ -204,7 +204,7 @@
                         <div class="field-container required">
                             <div class="field">
                                 <label for="training-plan">Plano de Treino:</label>
-                                <select id="training-plan" name="training-plan" required>
+                                <select id="training-plan" name="training-plan">
                                     <option value="" disabled>Selecione um Plano</option>
                                     <option value="personalized1">Individual</option>
                                     <option value="personalized2">Grupos Reduzidos</option>
@@ -220,7 +220,7 @@
                         <div class="field-container required">
                             <div class="field">
                                 <label for="experience">Experiência:</label>
-                                <select id="experience" name="experience" required>
+                                <select id="experience" name="experience">
                                     <option value="" disabled>Selecione a sua Experiência</option>
                                     <option value="beginner">Iniciante (nunca treinou)</option>
                                     <option value="intermediate">Intermédio (já treinou antes)</option>

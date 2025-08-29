@@ -14,7 +14,8 @@
 }
 .info-container p{
     text-align: justify;
-    text-indent: 32px;
+    /* text-indent: 32px; */
+    line-height: 1.5;
 }
 
 /* PLANS - SECTION */
@@ -50,10 +51,11 @@
     text-align: center;
     font-size: 1.1rem;
 }
-
+    
 .plan-description li{
     text-align: left;
     font-size: 1rem;
+    padding-bottom: 5px;
 
 }
 

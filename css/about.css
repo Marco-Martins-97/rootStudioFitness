@@ -14,7 +14,8 @@
 }
 .history-container p{
     text-align: justify;
-    text-indent: 32px;
+    /* text-indent: 32px; */
+    line-height: 1.5;
 }
 
 /* PROFILE - SECTION */
@@ -55,7 +56,8 @@
 .text-container p{
     font-size: 1.1rem;
     text-align: justify;
-    text-indent: 32px;
+    /* text-indent: 32px; */
+    line-height: 1.5;
 }
 
 /* CONTACTS - SECTION */
@@ -177,6 +179,7 @@
   line-height: 1.5;
   color: var(--PRIMARY-TXT-COLOR);
   display: none;
+  text-align: justify;
 }
 
 .faq-item.open > .faq-answer{

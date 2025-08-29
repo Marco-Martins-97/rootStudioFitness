@@ -48,7 +48,8 @@
 .text-container p{
     font-size: 1.1rem;
     text-align: justify;
-    text-indent: 32px;
+    /* text-indent: 32px; */
+    line-height: 1.5;
 }
 
 .text-container a{

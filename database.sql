@@ -20,6 +20,8 @@ FLUSH PRIVILEGES;
 
 --SHOW GRANTS FOR 'root_guest'@'localhost';
 
+-- SELECT user, host, plugin, authentication_string FROM mysql.user;
+
 -- mysql -u root_admin -p
 
 -- use root_studio_fitness;
