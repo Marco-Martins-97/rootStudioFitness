@@ -56,14 +56,14 @@
                         <div class="field-container">
                             <div class="field">
                                 <label for="loginEmail">Email:</label>
-                                <input type="email" id="loginEmail" name="loginEmail" maxlength="255">
+                                <input type="email" id="loginEmail" name="loginEmail" maxlength="255" value="marco@email.pt">
                             </div>
                         </div>
                         <!-- Password -->
                         <div class="field-container">
                             <div class="field">
                                 <label for="loginPwd">Password:</label>
-                                <input type="password" id="loginPwd" name="loginPwd" maxlength="255">
+                                <input type="password" id="loginPwd" name="loginPwd" maxlength="255" value="12345678">
                             </div>
                         </div>
                         

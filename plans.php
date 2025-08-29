@@ -141,7 +141,13 @@
             <section id="application">
                 <div class="form-container">
                     <h2>Formulário de Inscrição</h2>
-                    <form action="" method="post" id="application-form">
+                    <?php if(!isset($_SESSION["userId"])){ ?>
+                        <div class="connect">
+                            <a href="login.php">Entrar</a>
+                            <a href="signup.php">Registar</a>
+                        </div>
+                    <?php } else{ ?>
+                    <form action="includes/application.inc.php" method="post" id="application-form">
                         <!-- Nome Completo -->
                         <div class="field-container required">
                             <div class="field">
@@ -161,7 +167,7 @@
                         <!-- Género -->
                         <div class="field-container required">
                             <div class="field">
-                                <label>Género:</label>
+                                <legend>Género:</legend>
                                 <div class="gender-container">
                                     <div class="gender-field">
                                         <input type="radio" id="genderMale" name="gender" value="male">
@@ -179,8 +185,8 @@
                         <!-- Morada -->
                         <div class="field-container required">
                             <div class="field">
-                                <label for="address">Morada:</label>
-                                <input type="text" id="address" name="address" maxlength="255">
+                                <label for="userAddress">Morada:</label>
+                                <input type="text" id="userAddress" name="userAddress" maxlength="255">
                             </div>
                             <div class="error"></div>
                         </div>
@@ -188,15 +194,15 @@
                         <div class="field-container required">
                             <div class="field">
                                 <label for="nif">NIF:</label>
-                                <input type="text" id="nif" name="nif" pattern="\d{9}" maxlength="9">
+                                <input type="text" id="nif" name="nif" pattern="[0-9]{9}" inputmode="numeric" maxlength="9">
                             </div>
                             <div class="error"></div>
                         </div>
                         <!-- Telefone -->
                         <div class="field-container required">
                             <div class="field">
-                                <label for="tel">Telefone:</label>
-                                <input type="tel" id="tel" name="tel" pattern="\d{9}" maxlength="9">
+                                <label for="phone">Telefone:</label>
+                                <input type="tel" id="phone" name="phone" pattern="[0-9]{9}" inputmode="numeric" maxlength="9" placeholder="+351">
                             </div>
                             <div class="error"></div>
                         </div>
@@ -205,7 +211,7 @@
                             <div class="field">
                                 <label for="training-plan">Plano de Treino:</label>
                                 <select id="training-plan" name="training-plan">
-                                    <option value="" disabled>Selecione um Plano</option>
+                                    <option value="" disabled selected>Selecione um Plano</option>
                                     <option value="personalized1">Individual</option>
                                     <option value="personalized2">Grupos Reduzidos</option>
                                     <option value="group">Aulas de Grupo</option>
@@ -221,7 +227,7 @@
                             <div class="field">
                                 <label for="experience">Experiência:</label>
                                 <select id="experience" name="experience">
-                                    <option value="" disabled>Selecione a sua Experiência</option>
+                                    <option value="" disabled selected>Selecione a sua Experiência</option>
                                     <option value="beginner">Iniciante (nunca treinou)</option>
                                     <option value="intermediate">Intermédio (já treinou antes)</option>
                                     <option value="advanced">Avançado (treina regularmente)</option>
@@ -252,7 +258,7 @@
                         <!-- Termos & Condições -->
                         <div class="field-container required">
                             <div class="checkbox-field">
-                                <input type="checkbox" id="terms" name="terms" require>
+                                <input type="checkbox" id="terms" name="terms"><!-- required -->
                                 <label for="terms">Aceito os <a href="termsAndConditions.php" target="_blank">Termos e Condições.</a></label>
                             </div>
                             <div class="error"></div>
@@ -262,6 +268,8 @@
                         <p class="form-disclaimer">Campos de preenchimento obrigatório.</p>
                         <button type="submit">Enviar Inscrição</button>
                     </form>
+
+                    <?php } ?>
                 </div>
             </section>
         </main>
