@@ -5,8 +5,10 @@ require_once 'validations.inc.php';
     $input - esta é a variavel que vai selecionar qual será a validação realizada.
 */
 
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+    header("Location: ../index.php");
+    exit;
+}
 
     if(!isset($_POST['input'])){
         echo json_encode(['status' => 'error', 'message' => 'Invalid Request']);
@@ -235,7 +237,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo json_encode(['status' => 'error', 'message' => 'Invalid Input']);
             break;
     }
-} else{
-    echo json_encode(['status' => 'error', 'message' => 'Invalid Request']);
-    exit;
-}

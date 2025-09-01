@@ -159,4 +159,13 @@ class Client{
         }
     }
 
+    public function loadApplications(){
+        $query = "SELECT * FROM clientApplications;";
+        $stmt = $this->conn->prepare($query);
+        $stmt -> execute();
+
+        $result = $stmt -> fetchAll(PDO::FETCH_ASSOC);
+        return $result;
+    }
+
 }

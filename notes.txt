@@ -1,0 +1,14 @@
+clientApplications
+    userId
+    fullName
+    birthDate
+    gender
+    userAddress
+    nif
+    phone
+    trainingPlan
+    experience
+    nutritionPlan
+    healthIssues
+    healthDetails
+    terms 
