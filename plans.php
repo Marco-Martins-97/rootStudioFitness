@@ -17,6 +17,7 @@
         <link rel="stylesheet" href="css/plans.css">
         <!-- Script -->
         <script src="https://kit.fontawesome.com/d132031da6.js?v=2" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
     </head>
     <body>
         <header>
@@ -83,7 +84,10 @@
                         <h3>Grupos Reduzidos <span class="no-bold-small">(Maximo 3 Pessoas)</span></h3>
                         <p>A Partir de 35€ por Semana</p>
                         <p class="disclaimer">*Dentro do horário estipulado</p>
-                        <button>Adere Já</button>
+                        <div class="btn-container">
+                            <button class="join-btn" data-option="1">Individual</button>
+                            <button class="join-btn" data-option="2">Grupos Reduzidos</button>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -101,7 +105,7 @@
                         </ul>
                         <p>Apenas 30€ por Mês</p>
                         <p class="disclaimer">*Aulas Com Marcações Pre-Defenidas</p>
-                        <button>Adere Já</button>
+                        <button class="join-btn" data-option="3">Adere Já</button>
                     </div>
                 </div>
             </section>
@@ -118,7 +122,10 @@
                             <li>Planos Adapatados para Rendimento e Recuperação</li>
                         </ul>
                         <p>A Partir de 22,5€ por Semana</p>
-                        <button>Adere Já</button>
+                        <div class="btn-container">
+                            <button class="join-btn" data-option="4">Terapêutico</button>
+                            <button class="join-btn" data-option="5">Padel</button>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -134,19 +141,14 @@
                         </ul>
                         <p>Apenas 45€ por Mês</p>
                         <p class="disclaimer">*Dentro do horário estipulado</p>
-                        <button>Adere Já</button>
+                        <button class="join-btn" data-option="6">Adere Já</button>
                     </div>
                 </div>
             </section>
             <section id="application">
                 <div class="form-container">
                     <h2>Formulário de Inscrição</h2>
-                    <?php if(!isset($_SESSION["userId"])){ ?>
-                        <div class="connect">
-                            <a href="login.php">Entrar</a>
-                            <a href="signup.php">Registar</a>
-                        </div>
-                    <?php } else{ ?>
+                    <?php if(isset($_SESSION["userRole"]) && $_SESSION["userRole"] === 'user'){ ?>
                     <form action="includes/application.inc.php" method="post" id="application-form">
                         <!-- Nome Completo -->
                         <div class="field-container required">
@@ -268,7 +270,11 @@
                         <p class="form-disclaimer">Campos de preenchimento obrigatório.</p>
                         <button type="submit">Enviar Inscrição</button>
                     </form>
-
+                    <?php } else{ ?>
+                        <div class="connect">
+                            <a href="login.php">Entrar</a>
+                            <a href="signup.php">Registar</a>
+                        </div>
                     <?php } ?>
                 </div>
             </section>
@@ -286,4 +292,5 @@
 
     </body>
     <script src="js/navMenu.js"></script>
+    <script src="js/plans.js"></script>
 </html>

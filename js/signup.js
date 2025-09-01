@@ -61,12 +61,13 @@ function validatePwds(){
 
 function noEmptyFields(formId){
     let emptyFields = false;
-    $(formId).find('input').each(function(){
-        if ($(this).val().trim() === ''){
+    $(formId).find('.field-container.required').each(function(){
+        let input = $(this).find('input').first();
+        if (input.val() === null || input.val().trim() === ''){
             emptyFields = true;
             $(this).closest('.field-container').addClass('invalid').find('.error').html('Campo de preenchimento obrigatório!');
         }
-    })
+    });
     return !emptyFields;
 }
 
@@ -132,7 +133,6 @@ $(document).ready(function(){
         e.preventDefault();
 
         if(noEmptyFields(signupForm) && isFormValid(signupForm)){
-
             //cria um popup
             let formPopup = $('<div class="popup popup-warn">Formulário válido! ✅</div>').appendTo("main");
 
@@ -141,6 +141,8 @@ $(document).ready(function(){
                 formPopup.fadeOut(300, function(){ $(this).remove(); });
                 signupForm.off('submit').submit();
             }, 1000);
+        } else {
+            console.error('Invalid Form!');
         }
     });
 

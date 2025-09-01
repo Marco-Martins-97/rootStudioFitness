@@ -60,8 +60,9 @@ function isDateInvalid($value){
 
 function isBirthInvalid($value){
     $todayDate = new DateTime('today');
+    $minDate = new DateTime('1900-01-01');
     $valueDate = new DateTime($value);
-    return $valueDate >= $todayDate;
+    return $valueDate > $todayDate || $valueDate < $minDate;
 }
 
 function isGenderInvalid($value){
@@ -73,7 +74,7 @@ function isAddressInvalid($value){
 }
 
 function isNifInvalid($value){
-    return !preg_match('/^\d{9}$/', $value);
+    return !preg_match('/^[0-9]{9}$/', $value);
 }
 
 //Apenas aceita numeros Portugueses

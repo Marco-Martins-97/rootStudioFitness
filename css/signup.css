@@ -110,7 +110,7 @@ main{
     font-weight: bold;
     margin: auto;
 }
-
+/* POPUP */
 .popup{
     position: fixed;
     top: 50%;

@@ -44,8 +44,6 @@ class Client{
             $this->errors['birthDate'] = 'invalid';
         } elseif (isBirthInvalid($birthDate)){
             $this->errors['birthDate'] = 'birthInvalid';
-        } elseif (isLengthInvalid($birthDate)){
-            $this->errors['birthDate'] = 'toLong';
         }
         //gender
         if (isInputRequired('gender') && isInputEmpty($gender)){
