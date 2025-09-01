@@ -22,10 +22,10 @@ function validateField(input){
 }
 
 function validatePwds(){
-    const pwd = $('input[name="pwd"]').val();
-    const confPwd = $('input[name="confirmPwd"]').val();
-    const fieldPwd = $('input[name="pwd"]').closest('.field-container');
-    const fieldConfPwd = $('input[name="confirmPwd"]').closest('.field-container');
+    const pwd = $('#pwd').val();
+    const confPwd = $('#confirmPwd').val();
+    const fieldPwd = $('#pwd').closest('.field-container');
+    const fieldConfPwd = $('#confirmPwd').closest('.field-container');
 
     $.post('includes/validateInputs.inc.php', {input: 'createPwd', valuePwd: pwd, valueConfPwd: confPwd}, function(response){
         if (response.status === 'error'){
@@ -122,10 +122,10 @@ $(document).ready(function(){
 
     validateAllFields(signupForm);
 
-    $('input[name="firstName"]').on('input', function(){ validateField(this); });
-    $('input[name="lastName"]').on('input', function(){ validateField(this); });
-    $('input[name="email"]').on('input', function(){ validateField(this); });
-    $('input[name="pwd"], input[name="confirmPwd"]').on('input', function(){ validatePwds(); });
+    $('#firstName').on('input', function(){ validateField(this); });
+    $('#lastName').on('input', function(){ validateField(this); });
+    $('#email').on('input', function(){ validateField(this); });
+    $('#pwd, #confirmPwd').on('input', function(){ validatePwds(); });
 
 
 

@@ -2,16 +2,16 @@
 require_once 'Dbh.php';
 
 /* 
-    Este ficheiro contem as funções para todas as validações,
-    as funções que serão usadas com o php, e tambem com ajax.
+    Este ficheiro contem as funções de todas as validações.
+    As funções que serão usadas com o php, e tambem com ajax.
     Permitindo reutilizar o mesmo codigo para todo o website,
     ficando em um só lugar e de forma organizada.
 
 */
 
 $pwdLength = 8; //minimo de caracters da password
-// Funções de Validação
 
+// Funções de Validação
 function isInputRequired($input){
     $requiredFields = ['firstName','lastName','email','pwd','confPwd','loginEmail','fullName','birthDate','gender','userAddress','nif','phone','trainingPlan','experience','terms'];
     return in_array($input, $requiredFields);
@@ -36,12 +36,12 @@ function isEmailInvalid($value) {
 function thisEmailExists($value) {  //conecta a base de dados, pesquisa se o email existe an base de dados e retorna true/false
     $dbh = new Dbh();
     $conn = $dbh->connect();
-    $query = 'SELECT * FROM users WHERE email = :email;';
+    $query = 'SELECT EXISTS(SELECT 1 FROM users WHERE email = :email)';
     $stmt = $conn->prepare($query);
     $stmt->bindParam(':email', $value);
     $stmt->execute();
     
-    return $stmt->fetch(PDO::FETCH_ASSOC) ? true : false;
+    return (bool) $stmt->fetchColumn();
 }
 
 function isPwdShort($value){
@@ -77,7 +77,7 @@ function isNifInvalid($value){
     return !preg_match('/^[0-9]{9}$/', $value);
 }
 
-//Apenas aceita numeros Portugueses
+//Apenas aceita numeros Portugueses, ou que contenha 9 digitos e começe por 2 ou 9.
 function isPhoneInvalid($value){
     return !preg_match('/^[29]\d{8}$/', $value);
 }

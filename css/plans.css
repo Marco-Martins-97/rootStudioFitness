@@ -243,6 +243,14 @@
     color: var(--PRIMARY-TXT-COLOR);
 }
 
+.form-unavailable{
+    width: 100%;
+    padding: 24px 36px;
+}
+.form-unavailable h3{
+    text-align: center;
+}
+
 /* POPUP */
 .popup{
     position: fixed;

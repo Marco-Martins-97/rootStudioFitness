@@ -148,7 +148,10 @@
             <section id="application">
                 <div class="form-container">
                     <h2>Formulário de Inscrição</h2>
-                    <?php if(isset($_SESSION["userRole"]) && $_SESSION["userRole"] === 'user'){ ?>
+                    <?php 
+                        if(isset($_SESSION["userRole"])){  
+                            if($_SESSION["userRole"] === 'user' && !isset($_SESSION["userApplied"])){ 
+                    ?>
                     <form action="includes/application.inc.php" method="post" id="application-form">
                         <!-- Nome Completo -->
                         <div class="field-container required">
@@ -270,7 +273,19 @@
                         <p class="form-disclaimer">Campos de preenchimento obrigatório.</p>
                         <button type="submit">Enviar Inscrição</button>
                     </form>
-                    <?php } else{ ?>
+                    <?php } else if($_SESSION["userRole"] === 'user' && isset($_SESSION["userApplied"])){ ?>
+                        <div class="form-unavailable">
+                            <h3>Candidatura já foi enviada, aguarde confirmação.</h3>
+                        </div>
+                    <?php } else if($_SESSION["userRole"] === 'client'){ ?>
+                        <div class="form-unavailable">
+                            <h3>Já é um Cliente!</h3>
+                        </div>
+                    <?php } else { ?>
+                        <div class="form-unavailable">
+                            <h3>Não é Possivel Increver!</h3>
+                        </div>
+                    <?php } } else{  ?>
                         <div class="connect">
                             <a href="login.php">Entrar</a>
                             <a href="signup.php">Registar</a>

@@ -1,4 +1,5 @@
 <?php
+require_once 'configSession.inc.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $fullName = htmlspecialchars(trim($_POST['fullName']));
@@ -10,14 +11,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $trainingPlan = htmlspecialchars(trim($_POST["training-plan"] ?? ''));
     $experience = htmlspecialchars(trim($_POST["experience"] ?? ''));
     $nutritionPlan = isset($_POST['nutrition-plan']) ? 'yes' : 'no';
-    $issues = isset($_POST['health-issues']) ? 'yes' : 'no';
-    $details = htmlspecialchars(trim($_POST["health-details"]));
+    $healthIssues = isset($_POST['health-issues']) ? 'yes' : 'no';
+    $healthDetails = htmlspecialchars(trim($_POST["health-details"]));
     $terms = isset($_POST['terms']) ? 'yes' : 'no';
+
+    $userId = $_SESSION['userId'];
 
     try { 
         require_once 'Client.php';
         $signup = new Client();
-        $signup -> submitClientApplication($fullName, $birthDate, $gender, $userAddress, $nif, $phone, $trainingPlan, $experience, $nutritionPlan, $issues, $details, $terms);
+        $signup -> submitClientApplication($userId, $fullName, $birthDate, $gender, $userAddress, $nif, $phone, $trainingPlan, $experience, $nutritionPlan, $healthIssues, $healthDetails, $terms);
         
     } catch (PDOException $e) {
         die ('Query Falhou: '.$e->getMessage());

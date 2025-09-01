@@ -26,10 +26,22 @@ class Login{
         return $result;
     }
 
+    private function hasUserApplied($userId){
+        $query = 'SELECT EXISTS(SELECT 1 FROM clientApplications WHERE userId = :userId)';
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':userId', $userId);
+        $stmt->execute();
+    
+        return (bool) $stmt->fetchColumn();
+    }
+
     private function createSessionData($userData){
         $_SESSION['userId'] = $userData['id'];
         $_SESSION['userRole'] = $userData['userRole'];
         $_SESSION['username'] = $userData['firstName'].' '.$userData['lastName'];
+        if ($this->hasUserApplied($userData['id'])){
+            $_SESSION['userApplied'] = true;
+        }
     }
 
     private function returnError($message, $error){

@@ -10,7 +10,37 @@ class Client{
         $this->conn = $dbh->connect();
     }
 
-    private function showData($fullName, $birthDate, $gender, $userAddress, $nif, $phone, $trainingPlan, $experience, $nutritionPlan, $issues, $details, $terms){
+    private function hasUserApplied($userId){
+        $query = 'SELECT EXISTS(SELECT 1 FROM clientApplications WHERE userId = :userId)';
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':userId', $userId);
+        $stmt->execute();
+    
+        return (bool) $stmt->fetchColumn();
+    }
+
+    private function saveUserApplication($userId, $fullName, $birthDate, $gender, $userAddress, $nif, $phone, $trainingPlan, $experience, $nutritionPlan, $healthIssues, $healthDetails, $terms){
+        $query = "INSERT INTO clientApplications (userId, fullName, birthDate, gender, userAddress, nif, phone, trainingPlan, experience, nutritionPlan, healthIssues, healthDetails, terms) 
+                    VALUES (:userId, :fullName, :birthDate, :gender, :userAddress, :nif, :phone, :trainingPlan, :experience, :nutritionPlan, :healthIssues, :healthDetails, :terms)";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':userId', $userId);
+        $stmt->bindParam(':fullName', $fullName);
+        $stmt->bindParam(':birthDate', $birthDate);
+        $stmt->bindParam(':gender', $gender);
+        $stmt->bindParam(':userAddress', $userAddress);
+        $stmt->bindParam(':nif', $nif);
+        $stmt->bindParam(':phone', $phone);
+        $stmt->bindParam(':trainingPlan', $trainingPlan);
+        $stmt->bindParam(':experience', $experience);
+        $stmt->bindParam(':nutritionPlan', $nutritionPlan);
+        $stmt->bindParam(':healthIssues', $healthIssues);
+        $stmt->bindParam(':healthDetails', $healthDetails);
+        $stmt->bindParam(':terms', $terms);
+        return $stmt->execute();
+    }
+
+    private function showData($userId, $fullName, $birthDate, $gender, $userAddress, $nif, $phone, $trainingPlan, $experience, $nutritionPlan, $healthIssues, $healthDetails, $terms){
+        echo 'ID: '. $userId.'<br>';
         echo 'Name: '. $fullName.'<br>';
         echo 'Date: '. $birthDate.'<br>';
         echo 'Gender: '. $gender.'<br>';
@@ -20,12 +50,12 @@ class Client{
         echo 'Plan: '. $trainingPlan.'<br>';
         echo 'experience: '. $experience.'<br>';
         echo 'nutrition: '. $nutritionPlan.'<br>';
-        echo 'issues: '. $issues.'<br>';
-        echo 'details: '. $details.'<br>';
+        echo 'healthIssues: '. $healthIssues.'<br>';
+        echo 'healthDetails: '. $healthDetails.'<br>';
         echo 'Terms: '. $terms.'<br>';
     }
 
-    public function submitClientApplication($fullName, $birthDate, $gender, $userAddress, $nif, $phone, $trainingPlan, $experience, $nutritionPlan, $issues, $details, $terms){
+    public function submitClientApplication($userId, $fullName, $birthDate, $gender, $userAddress, $nif, $phone, $trainingPlan, $experience, $nutritionPlan, $healthIssues, $healthDetails, $terms){
         //validaçao dos dados
         require_once 'validations.inc.php';
         
@@ -87,15 +117,15 @@ class Client{
         if (isInputRequired('nutritionPlan') && isNotChecked($nutritionPlan)){
             $this->errors['nutritionPlan'] = 'notChecked';
         } 
-        //issues
-        if (isInputRequired('issues') && isNotChecked($issues)){
-            $this->errors['issues'] = 'notChecked';
+        //healthIssues
+        if (isInputRequired('healthIssues') && isNotChecked($healthIssues)){
+            $this->errors['healthIssues'] = 'notChecked';
         } 
-        //details
-        if (isInputRequired('details') && isInputEmpty($details)){
-            $this->errors['details'] = 'empty';
-        } elseif (!isInputEmpty($details) && isDescriptionInvalid($details)){
-            $this->errors['details'] = 'invalid';
+        //healthDetails
+        if (isInputRequired('healthDetails') && isInputEmpty($healthDetails)){
+            $this->errors['healthDetails'] = 'empty';
+        } elseif (!isInputEmpty($healthDetails) && isDescriptionInvalid($healthDetails)){
+            $this->errors['healthDetails'] = 'invalid';
         }
         //terms
         if (isInputRequired('terms') && isNotChecked($terms)){
@@ -109,20 +139,24 @@ class Client{
         
 
         if (!$this->errors){
-            /* if ($this->createNewUser()){
-                header('Location: ../plans.php?application=success');
+            // duplicados
+            if ($this->hasUserApplied($userId)){
+                header('Location: ../plans.php?application=duplicated#application');
+                exit;
+            }
+
+            // Salva Os Dados na Base de dados
+            if ($this->saveUserApplication($userId, $fullName, $birthDate, $gender, $userAddress, $nif, $phone, $trainingPlan, $experience, $nutritionPlan, $healthIssues, $healthDetails, $terms)){
+                header('Location: ../plans.php?application=success#application');
                 exit;
             } else {
-                header('Location: ../plans.php?application=failed');
+                header('Location: ../plans.php?application=failed#application');
                 exit;
-            } */
-           $this->showData($fullName, $birthDate, $gender, $userAddress, $nif, $phone, $trainingPlan, $experience, $nutritionPlan, $issues, $details, $terms);
+            }
         } else {
-           /*  header('Location: ../plans.php?application=invalid');
-            exit; */
-            print_r($this->errors);
+            header('Location: ../plans.php?application=invalid#application');
+            exit;
         }
-
     }
 
 }

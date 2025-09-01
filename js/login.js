@@ -56,10 +56,6 @@ $(document).ready(function(){
             case 'invalid':
                 loginMsg = 'Email ou palavra-passe incorretos.';
                 break;
-            /* case 'success':
-                loginMsg = 'Login realizado com sucesso!';
-                loginSts = 'success';
-                break; */
         }
 
         //mostra popup
@@ -71,7 +67,7 @@ $(document).ready(function(){
         }, 3000);
     }
 
-    $('input[name="loginEmail"]').on('input', function(){ validateField(this); });
+    $('#loginEmail').on('input', function(){ validateField(this); });
 
     loginForm.on('submit', function(e){
         e.preventDefault();
