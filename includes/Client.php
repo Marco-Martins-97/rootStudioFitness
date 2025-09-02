@@ -160,7 +160,7 @@ class Client{
     }
 
     public function loadApplications(){
-        $query = "SELECT * FROM clientApplications;";
+        $query = "SELECT ca.*, u.firstName, u.lastName, CONCAT(u.firstName, ' ', u.lastName) AS username FROM clientApplications ca INNER JOIN users u ON ca.userId = u.id";
         $stmt = $this->conn->prepare($query);
         $stmt -> execute();
 

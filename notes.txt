@@ -1,4 +1,5 @@
 clientApplications
+    username
     userId
     fullName
     birthDate

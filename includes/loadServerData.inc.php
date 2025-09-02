@@ -36,20 +36,21 @@ switch ($action) {
 
             foreach ($applicationsData as $applicationData) {
                 $applications[] = [
-                    "applicationId" => $applicationData["id"],  
-                    "fullName" => $applicationData["fullName"],  
-                    "birthDate" => $applicationData["birthDate"],  
-                    "gender" => $applicationData["gender"],  
-                    "userAddress" => $applicationData["userAddress"],  
-                    "nif" => $applicationData["nif"],  
-                    "phone" => $applicationData["phone"],  
-                    "trainingPlan" => $applicationData["trainingPlan"],  
-                    "experience" => $applicationData["experience"],  
-                    "nutritionPlan" => $applicationData["nutritionPlan"],  
-                    "healthIssues" => $applicationData["healthIssues"],  
-                    "healthDetails" => $applicationData["healthDetails"],  
-                    "status" => $applicationData["applicationStatus"],
-                    "submissionDate" => $applicationData["submitted_at"],
+                    'username' => $applicationData['username'],
+                    'applicationId' => $applicationData['id'],  
+                    'fullName' => $applicationData['fullName'],  
+                    'birthDate' => $applicationData['birthDate'],  
+                    'gender' => $applicationData['gender'],  
+                    'userAddress' => $applicationData['userAddress'],  
+                    'nif' => $applicationData['nif'],  
+                    'phone' => $applicationData['phone'],  
+                    'trainingPlan' => $applicationData['trainingPlan'],  
+                    'experience' => $applicationData['experience'],  
+                    'nutritionPlan' => $applicationData['nutritionPlan'],  
+                    'healthIssues' => $applicationData['healthIssues'],  
+                    'healthDetails' => $applicationData['healthDetails'],  
+                    'status' => $applicationData['applicationStatus'],
+                    'submissionDate' => $applicationData['submitted_at'],
                 ];
             }
             echo json_encode(['status' => 'success', 'data' => $applications]);

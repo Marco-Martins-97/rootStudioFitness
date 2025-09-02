@@ -1,0 +1,274 @@
+.applications-container{
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	/* justify-content: center; */
+	align-items: center;
+	gap: 32px;
+	padding: 32px 24px;
+}
+
+.application-container{
+  	width: 100%;
+  	max-width: 768px;
+  	color: var(--PRIMARY-TXT-COLOR);
+  	overflow: hidden;
+  	transition: all 0.3s ease;
+  	/* border: 2px solid var(--SECONDARY-BG-COLOR);
+	border-radius: 16px; */
+}
+
+.application-title{
+	display: flex;
+	justify-content: space-between;
+	padding: 12px 24px;
+	background-color: var(--SECONDARY-BG-COLOR);
+	border-radius: 12px 12px 0 0;
+	cursor: pointer;
+	border-bottom: 2px double var(--PRIMARY-BG-COLOR);
+	/* arrow */
+	position: relative;
+}
+
+.application-arrow{
+	position: absolute;
+	width: 32px;
+	height: 32px;
+	bottom: -16px;
+	left: 50%;
+	background-color: var(--SECONDARY-BG-COLOR);
+	border-radius: 50%;
+	transform: translateX(-50%);
+
+}
+.application-arrow i{
+	width: 100%;
+	height: 100%; 
+	text-align: center;
+	line-height: 32px;
+	transition: transform 0.3s ease;
+}
+
+.application-title:hover, .application-title:hover > .application-arrow{
+	background-color: var(--TERTIARY-BG-COLOR);
+	color: var(--SECONDARY-TXT-COLOR);
+}
+
+.application-title p{
+	font-size: 0.8rem;
+	font-weight: bold;
+}
+
+.application-status{
+	margin: auto 0;
+	font-size: 1.1rem;
+	font-weight: bold;
+}
+
+.application-status p{
+	font-size: 1.1rem;
+	font-weight: bold;
+}
+
+.pending{
+	color: #F4A300;
+	/* color: #E4B04C; */
+}
+.Accepted{
+	color: #3BA55C;
+	/* color: #5FA777; */
+}
+.Declined{
+	color: #D64545;
+	/* color: #C96363; */
+}
+
+.application-data{
+	display: none;
+	flex-direction: column;
+	padding: 0 12px;
+	box-shadow: inset 2px 0 var(--SECONDARY-BG-COLOR), inset -2px 0 var(--SECONDARY-BG-COLOR);
+	padding-top: 16px;
+	overflow: hidden;
+}
+
+.data-container{
+	display: flex;
+	align-items: center;
+	padding: 5px 0;
+	font-size: 0.9rem;
+}
+.data-container span{
+	width: 120px;
+	font-weight: bold;
+	flex-shrink: 0;
+}
+.data-container p{
+	text-align: justify;
+}
+
+.data-container .details{
+	align-items: normal;
+}
+
+.application-container.open > .application-data{
+	display: flex;
+}
+.application-container.open > .application-title{
+	border-bottom: none;
+}
+.application-container.open .application-arrow i {
+  transform: rotate(180deg);
+}
+
+.application-btns{
+	/* background-color: var(--SECONDARY-BG-COLOR); */
+	border-radius: 0 0 12px 12px;
+	display: flex;
+}
+
+.application-btns button{
+	/* border-radius: 0 0 12px 12px; */
+	padding: 12px 24px;
+	width: 100%;
+	background-color: var(--SECONDARY-BG-COLOR);
+	border: none;
+	font-size: 1.1rem;
+	font-weight: bold;
+	color: var(--PRIMARY-TXT-COLOR);
+	cursor: pointer;
+}
+.application-btns button:hover{
+	background-color: var(--SECONDARY-BTN-COLOR);
+	color: var(--SECONDARY-TXT-COLOR);
+}
+
+#accept-btn{
+	border-radius: 0 0 0 12px;
+}
+#reject-btn{
+	border-radius: 0 0 12px 0;
+}
+
+@media (min-width: 768px) {
+	.data-container span{
+		width: 150px;
+	}	
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* .applications-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  padding: 2rem;
+}
+
+.application-container {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  padding: 1.5rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.application-container:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+.application-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.application-title h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.application-info p {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0.2rem 0;
+}
+
+.application-data p {
+  margin: 0.4rem 0;
+  font-size: 0.95rem;
+  color: #444;
+  text-align:justify;
+}
+
+.application-data span {
+  font-weight: 600;
+  color: #222;
+}
+
+.application-container button {
+  margin: 0.5rem 0.3rem 0 0;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.accept-btn {
+  background-color: #4CAF50;
+  color: #fff;
+}
+
+.accept-btn:hover {
+  background-color: #43a047;
+  transform: scale(1.05);
+}
+
+.reject-btn {
+  background-color: #e53935;
+  color: #fff;
+}
+
+.reject-btn:hover {
+  background-color: #d32f2f;
+  transform: scale(1.05);
+}
+ */

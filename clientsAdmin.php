@@ -1,4 +1,10 @@
-<?php require_once 'includes/configSession.inc.php'; ?>
+<?php
+    require_once 'includes/configSession.inc.php';
+    if(!isset($_SESSION["userRole"]) && $_SESSION["userRole"] !== "admin"){ 
+        header("Location: index.php"); 
+        exit;
+    }
+?>
 <!DOCTYPE html>
 <html lang="pt">
     <head>
