@@ -63,7 +63,34 @@ switch ($action) {
         }
         break;
 
+        case 'loadProfile':
+            if(!isset($_SESSION["userRole"])){  //verifica e o utilizador esta logado 
+                echo json_encode(['status' => 'error', 'message' => 'Login required']);
+                exit;
+            } 
 
+            try {
+                require_once "ProfileHandler.php";
+                $profile = new Profile();
+
+                $userId = $_SESSION['userId'];
+
+                $userData = $profile->loadUserData($userId);
+                $clientData = null;
+                if ($_SESSION["userRole"] === 'client'){
+                    $clientData = $profile->loadClientData($userId);
+                }
+                
+                echo json_encode(['status' => 'success', 'userData' => $userData, 'clientData' => $clientData]);
+                exit;
+    
+            } catch (PDOException $e) {
+                error_log("Database error: " . $e->getMessage()); // Log interno
+                echo json_encode(['status' => 'error', 'message' => 'Erro na ligação ao servidor.']);
+                exit;
+            }
+            break;
+        
 
 
 
