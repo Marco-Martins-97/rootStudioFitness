@@ -1,6 +1,6 @@
 function loadApplications(){
     $.post('includes/loadServerData.inc.php', {action: 'loadClientApplications'}, function(response){
-        console.log(response);
+        // console.log(response);
 
         if (!response || typeof response !== 'object') {
             console.error('Invalid JSON response:', response);
@@ -34,14 +34,13 @@ function loadApplications(){
             'group': 'Aulas de Grupo',
             'terapy': 'Treino Terapêutico',
             'padel': 'Padel',
-            'openStudio': 'Acesso ao Estudio',
+            'openStudio': 'Acesso ao Estúdio',
         };
 
         applications.forEach(application => {
-            //Substitui as variaveis or palavras em portugues
-
             const applicationStatus = application.status;
-
+            
+            //Substitui as variaveis or palavras em portugues
             for (let key in application) {
                 if (typeof application[key] === 'string') {
                     // Replace all words based on the replacements map
@@ -51,9 +50,6 @@ function loadApplications(){
                     }
                 }
             }
-
-
-
 
             // cria o HTML com os dados
             HTMLcontent += `
@@ -71,26 +67,26 @@ function loadApplications(){
                     <div class="application-data">
                         <div class="data-container"><span>Nome Completo:</span><p>${application.fullName}</p></div>
                         <div class="data-container"><span>Data de Nascimento:</span><p>${application.birthDate}</p></div>
-                        <div class="data-container"><span>Genero:</span><p>${application.gender}</p></div>
+                        <div class="data-container"><span>Gênero:</span><p>${application.gender}</p></div>
                         <div class="data-container"><span>Morada:</span><p>${application.userAddress}</p></div>
                         <div class="data-container"><span>Nif:</span><p>${application.nif}</p></div>
                         <div class="data-container"><span>Telefone:</span><p>${application.phone}</p></div>
                         <div class="data-container"><span>Plano de Treino:</span><p>${application.trainingPlan}</p></div>
-                        <div class="data-container"><span>Experiencia:</span><p>${application.experience}</p></div>
+                        <div class="data-container"><span>Experiência:</span><p>${application.experience}</p></div>
                         <div class="data-container"><span>Plano Alimentar:</span><p>${application.nutritionPlan}</p></div>
-                        <div class="data-container"><span>Problemas de Saude:</span><p>${application.healthIssues}</p></div>
-                        <div class="data-container"><span class="details">Detalhes de Saude:</span><p>${application.healthDetails}</p></div>
+                        <div class="data-container"><span>Problemas de Saúde:</span><p>${application.healthIssues}</p></div>
+                        <div class="data-container"><span class="details">Detalhes de Saúde:</span><p>${application.healthDetails}</p></div>
                     </div>
+                    <div class="application-btns">
             `;
             if(applicationStatus === 'pending'){
                 HTMLcontent += `
-                    <div class="application-btns">
-                        <button id="accept-btn" data-id="${application.applicationId}">Aceitar</button>
-                        <button id="reject-btn" data-id="${application.applicationId}">Recusar</button>
-                    </div>
+                    <button id="accept-btn" data-id="${application.applicationId}">Aceitar</button>
+                    <button id="reject-btn" data-id="${application.applicationId}">Recusar</button>
                 `;
             }
             HTMLcontent += `
+                    </div>
                 </div>
             `;
         });
@@ -126,23 +122,36 @@ function toggleApplication(){
     }); */
 }
 
+function reviewApplication(applicationId, review){
+    $.post('includes/saveServerData.inc.php', {action: 'reviewApplication', applicationId: applicationId, review: review}, function(response){
+        console.log(response);
+        if (response.status === 'error') {
+            console.warn('Server error:', response.message || 'Unknown error');
+        } else if (response.status !== 'success') {
+            console.warn('Failed To Execute!');
+        } else {
+            console.log(`Application - Id= "${applicationId}", changed to ${review} with ${response.status}`);
+        }
+       
+        loadApplications(); 
+    }, 'json').fail(function () {
+        console.error('Erro na ligação ao servidor.');
+    });
+}
+
 
 $(document).ready(function(){
     loadApplications();
     toggleApplication();
 
-
-
-   /*  $(document).on('click', '#accept-btn', function() {
-        const applicationId = $(this).data('id');
-        reviewApplication(applicationId, 'accepted');
-        // loadApplications();
-    });
+    $(document).on('click', '#accept-btn', function() {
+         const applicationId = $(this).data('id');
+         reviewApplication(applicationId, 'accepted');
+     });
 
     $(document).on('click', '#reject-btn', function() {
         const applicationId = $(this).data('id');
         reviewApplication(applicationId, 'rejected');
-        // loadApplications();
-    }); */
+    });
 
 });

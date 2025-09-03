@@ -172,7 +172,7 @@
                         <!-- Género -->
                         <div class="field-container required">
                             <div class="field">
-                                <legend>Género:</legend>
+                                <legend>Gênero:</legend>
                                 <div class="gender-container">
                                     <div class="gender-field">
                                         <input type="radio" id="genderMale" name="gender" value="male">
@@ -222,7 +222,7 @@
                                     <option value="group">Aulas de Grupo</option>
                                     <option value="terapy">Treino Terapêutico</option>
                                     <option value="padel">Padel</option>
-                                    <option value="openStudio">Acesso ao Estudio</option>
+                                    <option value="openStudio">Acesso ao Estúdio</option>
                                 </select>
                             </div>
                             <div class="error"></div>

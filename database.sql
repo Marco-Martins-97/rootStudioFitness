@@ -56,3 +56,21 @@ CREATE TABLE clientApplications (
     PRIMARY KEY (id),
     FOREIGN KEY (userId) REFERENCES users(id)
 );
+
+CREATE TABLE clients (
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    userId INT NOT NULL,
+    fullName VARCHAR(255) NOT NULL,
+    birthDate DATE NOT NULL,
+    gender VARCHAR(8) NOT NULL,
+    userAddress VARCHAR(255) NOT NULL,
+    nif VARCHAR(9) NOT NULL,
+    phone VARCHAR(9) NOT NULL,
+    trainingPlan VARCHAR(16) NOT NULL,
+    experience VARCHAR(16) NOT NULL,
+    nutritionPlan VARCHAR(3) NOT NULL,
+    healthIssues VARCHAR(3) NOT NULL,
+    healthDetails TEXT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (userId) REFERENCES users(id)
+);
