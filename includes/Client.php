@@ -12,7 +12,7 @@ class Client{
 
     //Carrega dados da base de dados
     public function loadApplications(){
-        $query = "SELECT ca.*, u.firstName, u.lastName, CONCAT(u.firstName, ' ', u.lastName) AS username FROM clientApplications ca INNER JOIN users u ON ca.userId = u.id";
+        $query = "SELECT ca.*, u.firstName, u.lastName, CONCAT(u.firstName, ' ', u.lastName) AS username FROM clientApplications ca INNER JOIN users u ON ca.userId = u.id ORDER BY ca.submitted_at DESC";
         $stmt = $this->conn->prepare($query);
         $stmt -> execute();
 
@@ -60,7 +60,7 @@ class Client{
 
     // Verifica se exite na base de dados
     private function hasUserApplied($userId){
-        $query = 'SELECT EXISTS(SELECT 1 FROM clientApplications WHERE userId = :userId)';
+        $query = 'SELECT EXISTS(SELECT 1 FROM clientApplications WHERE userId = :userId AND applicationStatus IN ("pending", "accepted"))';
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':userId', $userId);
         $stmt->execute();
@@ -223,6 +223,7 @@ class Client{
 
             // Salva Os Dados na Base de dados
             if ($this->saveUserApplication($userId, $fullName, $birthDate, $gender, $userAddress, $nif, $phone, $trainingPlan, $experience, $nutritionPlan, $healthIssues, $healthDetails, $terms)){
+                $_SESSION['userApplied'] = true;
                 header('Location: ../plans.php?application=success#application');
                 exit;
             } else {

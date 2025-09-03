@@ -27,7 +27,7 @@ class Login{
     }
 
     private function hasUserApplied($userId){
-        $query = 'SELECT EXISTS(SELECT 1 FROM clientApplications WHERE userId = :userId AND applicationStatus = "pending" OR applicationStatus = "accepted")';
+        $query = 'SELECT EXISTS(SELECT 1 FROM clientApplications WHERE userId = :userId AND applicationStatus IN ("pending", "accepted"))';
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':userId', $userId);
         $stmt->execute();
