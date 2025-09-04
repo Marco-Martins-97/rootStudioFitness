@@ -30,4 +30,10 @@ class Profile{
         return $result;
     }
 
+    public function updateField($field, $value){
+        // return 'Field: '.$field.' Value: '.$value;
+        // return ['status' => 'error', 'message' => 'Failed'];
+        return ['status' => 'success'];
+    }
+
 }

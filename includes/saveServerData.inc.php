@@ -51,6 +51,30 @@ switch ($action) {
         }
         break;
 
+    case 'saveProfileField':
+        if(!isset($_SESSION["userRole"])){  //verifica e o utilizador esta logado 
+            echo json_encode(['status' => 'error', 'message' => 'Login required']);
+            exit;
+        }
+
+        $field = getPost('field');
+        $value = getPost('value');
+
+        try {
+            require_once "ProfileHandler.php";
+            $profile = new Profile();
+            $res = $profile->updateField($field, $value);
+
+            echo json_encode($res);
+            exit;
+
+        } catch (PDOException $e) {
+            error_log("Database error: " . $e->getMessage()); // Log interno
+            echo json_encode(['status' => 'error', 'message' => 'Erro na ligação ao servidor.']);
+            exit;
+        }
+        break;
+
 
     default:
         echo json_encode(['status' => 'error', 'message' => 'Invalid Action']);

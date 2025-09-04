@@ -13,13 +13,19 @@
     border-radius: 12px 12px 0 0;
 }
 
-.profile-header h2{
+.username-container{
     font-size: 1.5rem;
+    display: flex;
+    padding: 0;
+    gap: 12px;
 }
+/* .username-container p{
+    padding: 0;
+} */
 
 .profile-header p{
     font-weight: bold;
-    padding-left: 12px;
+    /* padding-left: 12px; */
 }
 
 .profile-body{
@@ -30,13 +36,6 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
-}
-
-.profile-body p{
-    width: 100%;
-    padding: 4px 8px;
-    cursor: pointer;
-    font-weight: bold;
 }
 
 .profile-body p{
