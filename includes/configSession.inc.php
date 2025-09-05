@@ -14,7 +14,8 @@ session_set_cookie_params([
 //inicia a sessao
 session_start();
 
-$interval = 1800; // 30min
+// $interval = 1800; // 30min
+$interval = 18000; // Teste
 
 
 //regenera a id da sessão a cada 30 min

@@ -19,14 +19,13 @@
     padding: 0;
     gap: 12px;
 }
-/* .username-container p{
-    padding: 0;
-} */
-
-.profile-header p{
+.username-container .editable{
     font-weight: bold;
-    /* padding-left: 12px; */
 }
+
+/* .profile-header p{
+    font-weight: bold;
+} */
 
 .profile-body{
     width: 100%;
@@ -38,13 +37,13 @@
     gap: 8px;
 }
 
-.profile-body p{
+/* .profile-body p{
     width: 100%;
     padding: 4px 8px;
     cursor: pointer;
     font-weight: bold;
-}
+} */
 
-.profile-body .value{
+/* .profile-body .value{
     font-weight: normal;
-}
+} */
