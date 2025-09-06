@@ -96,6 +96,10 @@ function isNotChecked($value) {
     return $value !== 'yes';
 }
 
+function isYesOrNo($value) {
+    return $value !== 'yes' && $value !== 'no';
+}
+
 function isDescriptionInvalid($value) {
     return !preg_match('/^[\p{L}\p{N}\s.,()-]+$/u', $value);
 }

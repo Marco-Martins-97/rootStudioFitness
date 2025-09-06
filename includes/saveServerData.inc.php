@@ -60,9 +60,15 @@ switch ($action) {
         $field = getPost('field');
         $value = getPost('value');
 
+        if(empty($field) || empty($value)){
+            echo json_encode(['status' => 'error', 'message' => 'Missing data']);
+            exit;
+        }
+
+        $userId = $_SESSION['userId'];
         try {
             require_once "ProfileHandler.php";
-            $profile = new Profile();
+            $profile = new Profile($userId);
             $res = $profile->updateField($field, $value);
 
             echo json_encode($res);

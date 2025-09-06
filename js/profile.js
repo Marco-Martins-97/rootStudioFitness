@@ -17,17 +17,30 @@ function loadProfile(){
 
         let HTMLcontent = '';
 
-       
+
         HTMLcontent += `
             <div class="profile-header">
-                <div class='username-container'>
-                    <div class='editable username first' data-field='firstName'><span class="value">${userProfile.firstName}</span></div>
-                    <div class='editable username last' data-field='lastName'><span class="value">${userProfile.lastName}</span></div>
+                <div class='editable'>
+                    <div class='username-container'>
+                        <div class='field' data-field='firstName'>
+                            <label></label>
+                            <span class='value'>${userProfile.firstName}</span>
+                        </div>
+                        <div class='field' data-field='lastName'>
+                            <label></label>
+                            <span class='value'>${userProfile.lastName}</span>
+                        </div>
+                    </div>
                 </div>
-                <p>${userProfile.userRole}</p>
+                <div class='role'>${userProfile.userRole}</div>
             </div>
             <div class="profile-body">
-                <div class='editable' data-field='email'>Email: <span class="value">${userProfile.email}</span></div>
+                <div class='editable'>
+                    <div class='field' data-field='email'>
+                        <label>Email:</label>
+                        <span class='value'>${userProfile.email}</span>
+                    </div>
+                </div>
         `;
         // Reset PWD
 
@@ -35,7 +48,7 @@ function loadProfile(){
         const fieldsConfig = [
             {field: 'firstName', label: '', type: 'input', inputType: 'text'},
             {field: 'lastName', label: '', type: 'input', inputType: 'text'},
-            {field: 'email', label: 'Email', type: 'input', inputType: 'email'},
+            {field: 'email', label: 'Email', type: 'input', inputType: 'text'},
             {field: 'fullName', label: 'Nome Completo', type: 'input', inputType: 'text'},
             {field: 'birthDate', label: 'Data de Nascimento', type: 'input', inputType: 'date'},
             {field: 'gender', label: 'Gênero', type: 'select', options: [
@@ -71,7 +84,6 @@ function loadProfile(){
 
         if (response.clientData !== null){
             const clientProfile = response.clientData;
-
             // Cria as linhas com os Dados
             $.each(fieldsConfig, function(_, f){
                 const field = f.field;
@@ -79,10 +91,8 @@ function loadProfile(){
                 const value = clientProfile[field] ?? '';
                 const label = f.label ?? field;
                 let displayValue = '';
-                
                 //nao mostra os dados do utilizador apenas os de cliente
                 if (field !== 'email' && field !== 'firstName' && field !== 'lastName'){
-
                     if (type === 'select'){
                         const selected = f.options.find(opt => opt.value === value);
                         displayValue = selected ? selected.label : selected;
@@ -90,10 +100,16 @@ function loadProfile(){
                         displayValue = value;
                     }
 
-                    HTMLcontent += `<div class='editable' data-field='${field}'>${label}: <span class="value">${displayValue}</span></div>`;
+                    HTMLcontent += `<div class='editable'>
+                                        <div class='field' data-field='${field}'>
+                                            <label>${label}:</label>
+                                            <span class='value'>${displayValue}</span>
+                                        </div>
+                                    </div>`;
                 }
+                
+               
             });
-
         }
 
         HTMLcontent += '</div>';
@@ -108,32 +124,36 @@ function loadProfile(){
 }
 
 function editField(fieldsConfig){
-    $('.profile-container').off('click', '.editable').on('click', '.editable', function(){
+    $('.profile-container').off('click', '.field').on('click', '.field', function(){
         const $this = $(this);
         const wrapper = $this.find('.value');
         const $value = wrapper.text().trim();
         const $field = $this.data('field');
-
-        // prvine de criar um input ja existente
+        const editable = $this.closest('.editable');
+        
+        // previne de criar um input ja existente
         if($this.find('input, select, textarea').length > 0) return;
 
-        // procura no array fieldsConfig pelos dados do field correspondente clicado, caso naão enconte nao faz nada
+        // procura no array fieldsConfig pelos dados do field correspondente clicado, caso não enconte, nao faz nada
         const fieldConf = fieldsConfig.find(f => f.field === $field);
         if (!fieldConf) return;
 
-        
         // cria o input
         let $input;
         if (fieldConf.type === 'input'){
-            
             $input = $('<input>', {
-                class: 'edit-input',
                 type: fieldConf.inputType || 'text',
                 value: $value
             });
         }
+        if (fieldConf.type === 'textarea'){
+            $input = $('<input>', {
+                placeholder: fieldConf.placeholder || '',
+                value: $value
+            });
+        }
         if (fieldConf.type === 'select'){
-            $input = $('<select>', { class: 'edit-input' });
+            $input = $('<select>');
             fieldConf.options.forEach(opt => {
                 const $opt = $('<option>', {
                     value: opt.value,
@@ -143,158 +163,162 @@ function editField(fieldsConfig){
                 $input.append($opt);
             });
         }
-        if (fieldConf.type === 'textarea'){
-            $input = $('<textarea>', {
-                class: 'edit-input',
-                placeholder: fieldConf.placeholder || '',
-                text: $value
-            });
+
+        // apenas continua se o $input tiver sido criado
+        if (!$input) return;
+
+
+        // Entra em Modo de edição
+        wrapper.replaceWith($input);    // troca o valor pelo $input
+        $input.focus();                 // foca no input
+        $this.addClass('notSaved');     // Add a variavel que indica que o valor nao está salvo
+        // cria a div erro e insere no local correto
+        const $error = $('<div>', { class: 'error' });
+        if($field === 'firstName' || $field === 'lastName'){
+            if(!editable.find('.error').length){
+                $error.insertAfter(editable.find('.username-container'));
+            }
+            // editable.find('.error').remove();
+            // $error.insertAfter(editable.find('.username-container'));
+            //ajusta a larura do input ao texto (apenas para username)
+            resizeInput();
+
+        } else {
+            $error.insertAfter($this);
+        }
+        // coloca o cursor no final do input (nao aplicavel em selects e data de nascimento)
+        setTimeout(() => {
+            if ($input.is('input, textarea') && $field !== 'birthDate') {
+                const len = $input.val().length;
+                $input[0].setSelectionRange(len, len);
+            }
+        }, 0);
+
+        function resizeInput(){
+            const $span = $('<span>').css({ visibility: 'hidden', position: 'absolute', whiteSpace: 'pre', font: $input.css('font') }).text($input.val() || $input.attr('placeholder') || '').appendTo('body');
+            $input.width($span.width() + 2);
+            $span.remove();
+        }
+        if($field === 'firstName' || $field === 'lastName'){
+            $input.on("input", resizeInput);// atualza a largura conforme vai escrevendo
         }
 
-        // troca o span pelo input
-        if (!$input) return;
-        wrapper.replaceWith($input);
-        const $error = $('<div>', { class: 'error' }).insertAfter($input);
-        $input.focus();
-
-
-        $input.on('blur keyup', function(e){
-            if (e.key === 'Escape') {
-                $(this).replaceWith(wrapper);
-                $error.remove();
+        $input.on('blur change keyup', function(e){
+            if (e.key === 'Escape') {   //cancela as alteraçoes e sai do modo de ediçao
+                cancelEdit(wrapper);
                 return;
             }
-
-            if(e.type === 'blur' || e.key === 'Enter'){
+            if(e.type === 'blur' || e.type === 'change' || e.key === 'Enter'){
                 let newValue = $input.val().trim();
-                if(newValue === $value){
-                    $(this).replaceWith(wrapper);
-                    $error.remove();
+                if(newValue === $value){    //cancela as alteraçoes e sai do modo de ediçao caso o valor seja igual
+                    cancelEdit(wrapper);
                     return;
                 }
 
-                //Validar Field
-                //Se retornar true(valido) - salva o valor
-                //Caso contrario permanece em editar e mostra erro
                 validateField($this, function(isValid){
                     if(!isValid) return;
                     
-
-
                     //SALVAR NOVO INPUT
-
-
-
-
-
-
-
-
-
-
-
-
-                    // troca o input pelo span com o novo valor
-                    if (fieldConf.type === 'select'){
-                        const selected = fieldConf.options.find(opt => opt.value === newValue);
-                        newValue = selected ? selected.label : newValue;
-                    }
-
-                    const $newSpan = $('<span>', { class: 'value', text: newValue });
-                    $input.replaceWith($newSpan);
-                    $error.remove();
-                
-                });
-                
-                // NORMAL
-                // if (!validateField($this)){ 
-                //     return;
-                // }
-
-
-
-                
-
-            /* 
-            if(e.type === 'blur' || e.key === 'Enter'){
-                const newValue = input.val().trim();
-                if(newValue === value){
-                    $this.html(value);
-                    return;
-                }
-
-                const $errorDiv = $this.find('.error');
-
-                //Validar Field
-                $.post('includes/validateInputs.inc.php', {input: field, value: newValue}, function(response){
-                    if (response.status === 'error'){
-                        console.error('Erro:', response.message);
-                    }
-
-                    if (response.status === 'invalid'){
-                        console.warn('Input Invalido:', response.message);
-                        $errorDiv.text(response.message);
-                        input.addClass('invalid');
-                        return;
-                    }
-                    $errorDiv.text('');
-                    input.removeClass('invalid');
-
-                    // Confirma alteração
-                    if(field === 'email'){
-                        const confirmChange = window.confirm(`Alterar o email para: ${newValue}`);
-                        if (!confirmChange){
-                            $this.html(value);
-                            return;
+                    saveField($this, function(isSaved){
+                        if(!isSaved) return;
+                    
+                        // troca o input pelo span com o novo valor
+                        if (fieldConf.type === 'select'){
+                            const selected = fieldConf.options.find(opt => opt.value === newValue);
+                            newValue = selected ? selected.label : newValue;
                         }
-                    }
 
-                    // Salvar field
-                    $.post('includes/saveServerData.inc.php', {action: 'saveProfileField', field: field, value: newValue}, function(response){
-                        if (response.status === 'error') {
-                            $this.html(value);
-                            console.error('Erro:', response.message);
-                        } else if (res.status !== 'success') {
-                            $this.html(value);
-                        } else {
-                            $this.html(newValue);
-                        } 
-                        
-                            // $this.replaceWith(`<span class="value">${value}</span>`);
-                            // console.warn('Server error:', res.message || 'Unknown error');
-                          
-                            // $this.replaceWith(`<span class="value">${value}</span>`);
-                            // console.warn('Failed To save!');
-                          
-                            // $this.replaceWith(`<span class="value">${newValue}</span>`);
-                            // console.log(`Field "${field}" changed to: ${newValue}`);
-                       
-    
-                    }, 'json').fail(function () {
-                        $this.html(value);
-                        console.error('Erro ao validar os dados.');
+                        const $newSpan = $('<span>', { class: 'value', text: newValue });
+                        cancelEdit($newSpan);
                     });
-
-
-                }, 'json').fail(function () {
-                    $this.html(value);
-                    console.error('Erro ao validar os dados.');
+                
                 });
 
-                
-                */
+
+
+
             }
         });
+
+        function cancelEdit(val){
+            $input.replaceWith(val);
+            $error.remove();
+            $this.removeClass('notSaved');
+        }
     });
+
+
 }
 
 function validateField($this, callback){
+    const field = $this.data('field');
+    const editable = $this.closest('.editable');
+    const error = editable.find('.error');
+    const input = $this.find('input, select, textarea');
+    const value = input.val();
+
+
+    $.post('includes/validateInputs.inc.php', {input: field, value: value}, function(response){
+        if (response.status === 'error'){
+            console.error('Erro:', response.message);   //Motra o erro no console
+            callback(false);
+            return;
+        }
+        if (response.status === 'invalid'){
+            console.warn('Input Invalido:', response.message);
+            error.text(response.message);
+            callback(false);
+            return;
+        }
+
+        callback(true);
+
+    }, 'json').fail(function () {
+        console.error('Erro ao validar os dados.');
+        error.text('Erro ao validar os dados.');
+        callback(false);
+    });
+}
+
+function saveField($this, callback){
+    const field = $this.data('field');
+    const editable = $this.closest('.editable');
+    const error = editable.find('.error');
+    const input = $this.find('input, select, textarea');
+    const value = input.val();
+
+
+    $.post('includes/saveServerData.inc.php', {action: 'saveProfileField', field: field, value: value}, function(response){
+        console.log(response);
+    
+        if (response.status === 'error'){
+            console.error('Erro:', response.message);
+            callback(false);
+            return;
+        }
+        if (response.status !== 'success'){
+            console.warn('Falha ao salvar.');
+            callback(false);
+            return;
+        }
+
+       
+        callback(true);
+
+    }, 'json').fail(function () {
+        console.error('Erro na ligação ao servidor.');
+        error.text('Erro na ligação ao servidor.');
+        callback(false);
+    }); 
+}
+
+function saveField2($this, callback){
     const field = $this.data('field');
     const error = $this.find('.error');
     const input = $this.find('input, select, textarea');
     const value = input.val();
 
-    $.post('includes/validateInputs.inc.php', {input: field, value: value}, function(response){
+    $.post('includes/saveServerData.inc.php', {action: 'saveProfileField', input: field, value: value}, function(response){
         if (response.status === 'error'){
             console.error('Erro:', response.message);   //Motra o erro no console
             callback(false);
@@ -317,35 +341,35 @@ function validateField($this, callback){
         callback(false);
     });
 }
-/* NORMAL
+// NORMAL
 
-function validateField($this){
-    const field = $this.data('field');
-    const error = $this.find('.error');
-    const input = $this.find('input');
-    const value = input.val();
+// function validateField($this){
+//     const field = $this.data('field');
+//     const error = $this.find('.error');
+//     const input = $this.find('input');
+//     const value = input.val();
 
-    $.post('includes/validateInputs.inc.php', {input: field, value: value}, function(response){
-        if (response.status === 'error'){
-            console.error('Erro:', response.message);   //Motra o erro no console
-            return false;
-        }
-        if (response.status === 'invalid'){
-            console.warn('Input Invalido:', response.message);
-            error.text(response.message);
-            $this.addClass('invalid');
-            return false;
-        }
+//     $.post('includes/validateInputs.inc.php', {input: field, value: value}, function(response){
+//         if (response.status === 'error'){
+//             console.error('Erro:', response.message);   //Motra o erro no console
+//             return false;
+//         }
+//         if (response.status === 'invalid'){
+//             console.warn('Input Invalido:', response.message);
+//             error.text(response.message);
+//             $this.addClass('invalid');
+//             return false;
+//         }
 
-        $this.removeClass('invalid');
-        return true;
+//         $this.removeClass('invalid');
+//         return true;
 
-    }, 'json').fail(function () {
-        console.error('Erro ao validar os dados.');
-        error.text('Erro ao validar os dados.');
-        return false;
-    });
-} */
+//     }, 'json').fail(function () {
+//         console.error('Erro ao validar os dados.');
+//         error.text('Erro ao validar os dados.');
+//         return false;
+//     });
+// }
 
 $(document).ready(function(){
     loadProfile();

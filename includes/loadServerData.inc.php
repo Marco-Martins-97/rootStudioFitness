@@ -71,14 +71,13 @@ switch ($action) {
 
             try {
                 require_once "ProfileHandler.php";
-                $profile = new Profile();
-
                 $userId = $_SESSION['userId'];
 
-                $userData = $profile->loadUserData($userId);
+                $profile = new Profile($userId);
+                $userData = $profile->loadUserData();
                 $clientData = null;
                 if ($_SESSION["userRole"] === 'client'){
-                    $clientData = $profile->loadClientData($userId);
+                    $clientData = $profile->loadClientData();
                 }
                 
                 echo json_encode(['status' => 'success', 'userData' => $userData, 'clientData' => $clientData]);

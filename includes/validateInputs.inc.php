@@ -31,11 +31,10 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
                 $error = 'O nome excede o limite de caracteres.';
             }
 
-            if ($error) {
-                echo json_encode(['status' => 'invalid', 'message' => $error]);
-            } else {
-                echo json_encode(['status' => 'valid']);
-            }
+            echo json_encode($error 
+                ? ['status' => 'invalid', 'message' => $error] 
+                : ['status' => 'valid']
+            );
             exit;
 
         case 'lastName':
@@ -50,11 +49,10 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
                 $error = 'O apelido excede o limite de caracteres.';
             }
 
-            if ($error) {
-                echo json_encode(['status' => 'invalid', 'message' => $error]);
-            } else {
-                echo json_encode(['status' => 'valid']);
-            }
+            echo json_encode($error 
+                ? ['status' => 'invalid', 'message' => $error] 
+                : ['status' => 'valid']
+            );
             exit;
 
         case 'email':
@@ -71,11 +69,10 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
                 $error = 'O email excede o limite de caracteres.';
             }
 
-            if ($error) {
-                echo json_encode(['status' => 'invalid', 'message' => $error]);
-            } else {
-                echo json_encode(['status' => 'valid']);
-            }
+            echo json_encode($error 
+                ? ['status' => 'invalid', 'message' => $error] 
+                : ['status' => 'valid']
+            );
             exit;
 
         case 'createPwd':
@@ -117,11 +114,10 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
                 $error = 'O email excede o limite de caracteres.';
             }
 
-            if ($error) {
-                echo json_encode(['status' => 'invalid', 'message' => $error]);
-            } else {
-                echo json_encode(['status' => 'valid']);
-            }
+            echo json_encode($error 
+                ? ['status' => 'invalid', 'message' => $error] 
+                : ['status' => 'valid']
+            );
             exit;
 
         case 'fullName':
@@ -136,11 +132,10 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
                 $error = 'O nome excede o limite de caracteres.';
             }
 
-            if ($error) {
-                echo json_encode(['status' => 'invalid', 'message' => $error]);
-            } else {
-                echo json_encode(['status' => 'valid']);
-            }
+            echo json_encode($error 
+                ? ['status' => 'invalid', 'message' => $error] 
+                : ['status' => 'valid']
+            );
             exit;
 
         case 'birthDate':
@@ -155,11 +150,10 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
                 $error = 'A data de nascimento é inválida.';
             }
 
-            if ($error) {
-                echo json_encode(['status' => 'invalid', 'message' => $error]);
-            } else {
-                echo json_encode(['status' => 'valid']);
-            }
+            echo json_encode($error 
+                ? ['status' => 'invalid', 'message' => $error] 
+                : ['status' => 'valid']
+            );
             exit;
         
         case 'userAddress':
@@ -174,11 +168,10 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
                 $error = 'A morada excede o limite de caracteres.';
             }
 
-            if ($error) {
-                echo json_encode(['status' => 'invalid', 'message' => $error]);
-            } else {
-                echo json_encode(['status' => 'valid']);
-            }
+            echo json_encode($error 
+                ? ['status' => 'invalid', 'message' => $error] 
+                : ['status' => 'valid']
+            );
             exit;
         
         case 'nif':
@@ -191,11 +184,10 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
                 $error = 'O nif não é válido.';
             }
 
-            if ($error) {
-                echo json_encode(['status' => 'invalid', 'message' => $error]);
-            } else {
-                echo json_encode(['status' => 'valid']);
-            }
+            echo json_encode($error 
+                ? ['status' => 'invalid', 'message' => $error] 
+                : ['status' => 'valid']
+            );
             exit;
 
         case 'phone':
@@ -208,14 +200,14 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
                 $error = 'O telefone não é válido.';
             }
 
-            if ($error) {
-                echo json_encode(['status' => 'invalid', 'message' => $error]);
-            } else {
-                echo json_encode(['status' => 'valid']);
-            }
+            echo json_encode($error 
+                ? ['status' => 'invalid', 'message' => $error] 
+                : ['status' => 'valid']
+            );
             exit;
         
         case 'health-details':
+        case 'healthDetails':
             $error = '';
             $value = trim($_POST['value'] ?? '');
 
@@ -223,12 +215,69 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
                 $error = 'A descrição contém caracteres inválidos.';
             }
 
-            if ($error) {
-                echo json_encode(['status' => 'invalid', 'message' => $error]);
-            } else {
-                echo json_encode(['status' => 'valid']);
-            }
+            echo json_encode($error 
+                ? ['status' => 'invalid', 'message' => $error] 
+                : ['status' => 'valid']
+            );
             exit;
+        
+        case 'gender':
+            $error = '';
+            $value = trim($_POST['value'] ?? '');
+
+            if (isGenderInvalid($value)){
+                $error = 'O gênero escolhido não é válido.';
+            }
+
+            echo json_encode($error 
+                ? ['status' => 'invalid', 'message' => $error] 
+                : ['status' => 'valid']
+            );
+            exit;
+        
+        case 'trainingPlan':
+            $error = '';
+            $value = trim($_POST['value'] ?? '');
+
+            if (isTrainingPlanInvalid($value)){
+                $error = 'O plano de treino escolhido não é válido.';
+            }
+
+            echo json_encode($error 
+                ? ['status' => 'invalid', 'message' => $error] 
+                : ['status' => 'valid']
+            );
+            exit;
+        
+        case 'experience':
+            $error = '';
+            $value = trim($_POST['value'] ?? '');
+
+            if (isExperienceInvalid($value)){
+                $error = 'A experiência escolhida não é válida.';
+            }
+
+            echo json_encode($error 
+                ? ['status' => 'invalid', 'message' => $error] 
+                : ['status' => 'valid']
+            );
+            exit;
+        
+        case 'nutritionPlan':
+        case 'healthIssues':
+            $error = '';
+            $value = trim($_POST['value'] ?? '');
+
+            if (isYesOrNo($value)){
+                $error = 'A opção escolhida não é válida.';
+            }
+
+            echo json_encode($error 
+                ? ['status' => 'invalid', 'message' => $error] 
+                : ['status' => 'valid']
+            );
+            exit;
+        
         
 
 
