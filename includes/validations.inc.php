@@ -1,5 +1,6 @@
 <?php
 require_once 'Dbh.php';
+require_once 'configSession.inc.php';
 
 /* 
     Este ficheiro contem as funções de todas as validações.
@@ -42,6 +43,29 @@ function thisEmailExists($value) {  //conecta a base de dados, pesquisa se o ema
     $stmt->execute();
     
     return (bool) $stmt->fetchColumn();
+}
+
+function isPwdWrong($value, $userId = null) {  //conecta a base de dados, pesquisa se a pwd está correta e retorna true/false
+    if ($userId ===  null){ // verifica se foi providenciado um userId
+        if (!isset($_SESSION['userId'])){   // verifica se o está logado
+            return true;
+        }
+        $userId = $_SESSION['userId'];  //atribui ao userId o id do user logado
+    }
+
+    $dbh = new Dbh();
+    $conn = $dbh->connect();
+    $query = 'SELECT pwd FROM users WHERE id = :userId;';
+    $stmt = $conn->prepare($query);
+    $stmt->bindParam(':userId', $userId);
+    $stmt->execute();
+    
+    $userData = $stmt->fetch();
+
+    if (!$userData) {
+        return true; // usuário não encontrado é considerado senha errada
+    }
+    return !password_verify($value, $userData['pwd']);
 }
 
 function isPwdShort($value){

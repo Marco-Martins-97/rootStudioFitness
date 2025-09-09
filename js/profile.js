@@ -95,7 +95,7 @@ function loadProfile(){
                 if (field !== 'email' && field !== 'firstName' && field !== 'lastName'){
                     if (type === 'select'){
                         const selected = f.options.find(opt => opt.value === value);
-                        displayValue = selected ? selected.label : selected;
+                        displayValue = selected ? selected.label : value;
                     } else {
                         displayValue = value;
                     }
@@ -147,7 +147,7 @@ function editField(fieldsConfig){
             });
         }
         if (fieldConf.type === 'textarea'){
-            $input = $('<input>', {
+            $input = $('<textarea>', {
                 placeholder: fieldConf.placeholder || '',
                 value: $value
             });
@@ -203,40 +203,120 @@ function editField(fieldsConfig){
             $input.on("input", resizeInput);// atualza a largura conforme vai escrevendo
         }
 
+        let disableBlur = false;    // esta variavel previne que os eventos no input seja ativados multiplas vezes pelo blur
+
         $input.on('blur change keyup', function(e){
+            console.log('Event triggered:', e.type, e.key || 'no key'); 
             if (e.key === 'Escape') {   //cancela as alteraçoes e sai do modo de ediçao
                 cancelEdit(wrapper);
                 return;
             }
-            if(e.type === 'blur' || e.type === 'change' || e.key === 'Enter'){
+
+            if (disableBlur) return;
+
+            // if(e.type === 'blur' || e.type === 'change' || e.key === 'Enter'){
+            if(($input.is('input, textarea') && (e.type === 'blur' || e.key === 'Enter')) || ($input.is('select') && e.type === 'change')) {
+
                 let newValue = $input.val().trim();
                 if(newValue === $value){    //cancela as alteraçoes e sai do modo de ediçao caso o valor seja igual
                     cancelEdit(wrapper);
                     return;
                 }
 
+                // valida o input
                 validateField($this, function(isValid){
                     if(!isValid) return;
-                    
-                    //SALVAR NOVO INPUT
-                    saveField($this, function(isSaved){
-                        if(!isSaved) return;
-                    
-                        // troca o input pelo span com o novo valor
-                        if (fieldConf.type === 'select'){
-                            const selected = fieldConf.options.find(opt => opt.value === newValue);
-                            newValue = selected ? selected.label : newValue;
+
+                    disableBlur = true;
+
+                    if($field === 'email'){
+                        const password = prompt('Para alterar o email, digite sua senha:');
+
+                        if (!password) {
+                            console.warn('É necessário a password para alterar o email');
+                            alert('É necessário a password para alterar o email');
+                            cancelEdit(wrapper);
+                            return;
                         }
 
-                        const $newSpan = $('<span>', { class: 'value', text: newValue });
-                        cancelEdit($newSpan);
-                    });
-                
+                        validationRequest('confPwd', password, function(response){
+                            if (response.status === 'error'){
+                                console.error('Erro:', response.message);
+                                alert('Erro na validação da senha');
+                                cancelEdit(wrapper);
+                                return;
+                            }
+                            if (response.status === 'invalid'){
+                                console.warn('Input Invalido:', response.message);
+                                alert(response.message || 'Senha inválida');
+                                cancelEdit(wrapper);
+                                return;
+                            }
+                            
+                            //SALVAR NOVO INPUT
+                            saveField($this, function(isSaved){
+                                if(!isSaved) return;
+                            
+                                // troca o input pelo span com o novo valor
+                                const $newSpan = $('<span>', { class: 'value', text: newValue });
+                                cancelEdit($newSpan);
+                            });
+                        });
+                    /* } else if($field === 'changePwd'){
+                        const password = prompt('Para alterar o email, digite sua senha:');
+
+                        if (!password) {
+                            console.warn('É necessário a password para alterar o email');
+                            alert('É necessário a password para alterar o email');
+                            cancelEdit(wrapper);
+                            return;
+                        }
+
+                        validationRequest('confPwd', password, function(response){
+                            if (response.status === 'error'){
+                                console.error('Erro:', response.message);
+                                alert('Erro na validação da senha');
+                                cancelEdit(wrapper);
+                                return;
+                            }
+                            if (response.status === 'invalid'){
+                                console.warn('Input Invalido:', response.message);
+                                alert(response.message || 'Senha inválida');
+                                cancelEdit(wrapper);
+                                return;
+                            }
+                            
+                            //SALVAR NOVO INPUT
+                            saveField($this, function(isSaved){
+                                if(!isSaved) return;
+                            
+                                // troca o input pelo span com o novo valor
+                                const $newSpan = $('<span>', { class: 'value', text: newValue });
+                                cancelEdit($newSpan);
+                            });
+                        }); */
+                    } else {
+                        //SALVAR NOVO INPUT
+                        saveField($this, function(isSaved){
+                            if(!isSaved) return;
+                        
+                            // pega o valor da option selecionada
+                            if (fieldConf.type === 'select'){
+                                const selected = fieldConf.options.find(opt => opt.value === newValue);
+                                newValue = selected ? selected.label : newValue;
+                            }
+                            
+                            // troca o input pelo span com o novo valor
+                            const $newSpan = $('<span>', { class: 'value', text: newValue });
+                            cancelEdit($newSpan);
+                            
+                        });
+                    }
+                    
+                    
+                    
                 });
-
-
-
-
+                disableBlur = false;
             }
         });
 
@@ -250,7 +330,42 @@ function editField(fieldsConfig){
 
 }
 
+function validationRequest(field, value, callback) {
+    $.post('includes/validateInputs.inc.php', { input: field, value: value }, function (response) {
+        callback(response);
+    }, 'json').fail(function (jqXHR, textStatus, errorThrown) {
+        callback({ status: 'error', message: textStatus || 'Request failed', details: errorThrown
+        });
+    });
+}
+
 function validateField($this, callback){
+    const field = $this.data('field');
+    const editable = $this.closest('.editable');
+    const error = editable.find('.error');
+    const input = $this.find('input, select, textarea');
+    const value = input.val();
+
+
+    validationRequest(field, value, function (response) {
+        if (response.status === 'error'){
+            console.error('Erro:', response.message);   //Motra o erro no console
+            error.text(response.message || 'Erro ao validar os dados.');
+            callback(false);
+            return;
+        }
+        if (response.status === 'invalid'){
+            console.warn('Input Invalido:', response.message);
+            error.text(response.message);
+            callback(false);
+            return;
+        }
+
+        callback(true);
+    });
+}
+
+/* function validateField($this, callback){
     const field = $this.data('field');
     const editable = $this.closest('.editable');
     const error = editable.find('.error');
@@ -278,7 +393,7 @@ function validateField($this, callback){
         error.text('Erro ao validar os dados.');
         callback(false);
     });
-}
+} */
 
 function saveField($this, callback){
     const field = $this.data('field');
@@ -289,13 +404,13 @@ function saveField($this, callback){
 
 
     $.post('includes/saveServerData.inc.php', {action: 'saveProfileField', field: field, value: value}, function(response){
-        console.log(response);
     
         if (response.status === 'error'){
             console.error('Erro:', response.message);
             callback(false);
             return;
         }
+
         if (response.status !== 'success'){
             console.warn('Falha ao salvar.');
             callback(false);
@@ -312,64 +427,7 @@ function saveField($this, callback){
     }); 
 }
 
-function saveField2($this, callback){
-    const field = $this.data('field');
-    const error = $this.find('.error');
-    const input = $this.find('input, select, textarea');
-    const value = input.val();
 
-    $.post('includes/saveServerData.inc.php', {action: 'saveProfileField', input: field, value: value}, function(response){
-        if (response.status === 'error'){
-            console.error('Erro:', response.message);   //Motra o erro no console
-            callback(false);
-            return;
-        }
-        if (response.status === 'invalid'){
-            console.warn('Input Invalido:', response.message);
-            error.text(response.message);
-            $this.addClass('invalid');
-            callback(false);
-            return;
-        }
-
-        $this.removeClass('invalid');
-        callback(true);
-
-    }, 'json').fail(function () {
-        console.error('Erro ao validar os dados.');
-        error.text('Erro ao validar os dados.');
-        callback(false);
-    });
-}
-// NORMAL
-
-// function validateField($this){
-//     const field = $this.data('field');
-//     const error = $this.find('.error');
-//     const input = $this.find('input');
-//     const value = input.val();
-
-//     $.post('includes/validateInputs.inc.php', {input: field, value: value}, function(response){
-//         if (response.status === 'error'){
-//             console.error('Erro:', response.message);   //Motra o erro no console
-//             return false;
-//         }
-//         if (response.status === 'invalid'){
-//             console.warn('Input Invalido:', response.message);
-//             error.text(response.message);
-//             $this.addClass('invalid');
-//             return false;
-//         }
-
-//         $this.removeClass('invalid');
-//         return true;
-
-//     }, 'json').fail(function () {
-//         console.error('Erro ao validar os dados.');
-//         error.text('Erro ao validar os dados.');
-//         return false;
-//     });
-// }
 
 $(document).ready(function(){
     loadProfile();

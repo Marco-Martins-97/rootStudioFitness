@@ -60,54 +60,101 @@ class Profile{
                 }
                 break;
             case 'lastName':
-                if (isInputRequired('lastName') && isInputEmpty($value)){
-                    $this->errors['lastName'] = 'empty';
+                if (isInputRequired($field) && isInputEmpty($value)){
+                    $this->errors[$field] = 'empty';
                 } elseif (isNameInvalid($value)){
-                    $this->errors['lastName'] = 'invalid';
+                    $this->errors[$field] = 'invalid';
                 } elseif (isLengthInvalid($value)){
-                    $this->errors['lastName'] = 'toLong';
+                    $this->errors[$field] = 'toLong';
                 }
                 break;
             case 'email':
-                if (isInputRequired('email') && isInputEmpty($value)){
-                    $this->errors['email'] = 'empty';
+                if (isInputRequired($field) && isInputEmpty($value)){
+                    $this->errors[$field] = 'empty';
                 } elseif (isEmailInvalid($value)){
-                    $this->errors['email'] = 'invalid';
+                    $this->errors[$field] = 'invalid';
                 } elseif (thisEmailExists($value)){
-                    $this->errors['email'] = 'taken';
+                    $this->errors[$field] = 'taken';
                 } elseif (isLengthInvalid($value)){
-                    $this->errors['email'] = 'toLong';
+                    $this->errors[$field] = 'toLong';
                 }
                 break;
             case 'fullName':
-                if (isInputRequired('fullName') && isInputEmpty($value)){
-                    $this->errors['fullName'] = 'empty';
+                if (isInputRequired($field) && isInputEmpty($value)){
+                    $this->errors[$field] = 'empty';
                 } elseif (isNameInvalid($value)){
-                    $this->errors['fullName'] = 'invalid';
+                    $this->errors[$field] = 'invalid';
                 } elseif (isLengthInvalid($value)){
-                    $this->errors['fullName'] = 'toLong';
+                    $this->errors[$field] = 'toLong';
                 }
                 break;
             case 'birthDate':
-                if (isInputRequired('birthDate') && isInputEmpty($value)){
-                    $this->errors['birthDate'] = 'empty';
+                if (isInputRequired($field) && isInputEmpty($value)){
+                    $this->errors[$field] = 'empty';
                 } elseif (isDateInvalid($value)){
-                    $this->errors['birthDate'] = 'invalid';
+                    $this->errors[$field] = 'invalid';
                 } elseif (isBirthInvalid($value)){
-                    $this->errors['birthDate'] = 'birthInvalid';
+                    $this->errors[$field] = 'birthInvalid';
                 }
                 break;
             case 'gender':
-                if (isInputRequired('gender') && isInputEmpty($value)){
-                    $this->errors['gender'] = 'empty';
+                if (isInputRequired($field) && isInputEmpty($value)){
+                    $this->errors[$field] = 'empty';
                 } elseif (isGenderInvalid($value)){
-                    $this->errors['gender'] = 'invalid';
+                    $this->errors[$field] = 'invalid';
                 }
                 break;
-            
-
-                //COMPLETAR CLIENTS.PHP- submitClientApplication
-
+            case 'userAddress':
+                if (isInputRequired($field) && isInputEmpty($value)){
+                    $this->errors[$field] = 'empty';
+                } elseif (isAddressInvalid($value)){
+                    $this->errors[$field] = 'invalid';
+                } elseif (isLengthInvalid($value)){
+                    $this->errors[$field] = 'toLong';
+                }
+                break;
+            case 'nif':
+                if (isInputRequired($field) && isInputEmpty($value)){
+                    $this->errors[$field] = 'empty';
+                } elseif (isNifInvalid($value)){
+                    $this->errors[$field] = 'invalid';
+                }
+                break;
+            case 'phone':
+                if (isInputRequired($field) && isInputEmpty($value)){
+                    $this->errors[$field] = 'empty';
+                } elseif (isPhoneInvalid($value)){
+                    $this->errors[$field] = 'invalid';
+                }
+                break;
+            case 'trainingPlan':
+                if (isInputRequired($field) && isInputEmpty($value)){
+                    $this->errors[$field] = 'empty';
+                } elseif (isTrainingPlanInvalid($value)){
+                    $this->errors[$field] = 'invalid';
+                }
+                break;
+            case 'experience':
+                if (isInputRequired($field) && isInputEmpty($value)){
+                    $this->errors[$field] = 'empty';
+                } elseif (isExperienceInvalid($value)){
+                    $this->errors[$field] = 'invalid';
+                }
+                break;
+            case 'nutritionPlan':
+            case 'healthIssues':
+            case 'terms':
+                if (isInputRequired($field) && isNotChecked($value)){
+                    $this->errors[$field] = 'notChecked';
+                }
+                break;
+            case 'healthDetails':
+                if (isInputRequired($field) && isInputEmpty($value)){
+                    $this->errors[$field] = 'empty';
+                } elseif (!isInputEmpty($value) && isDescriptionInvalid($value)){
+                    $this->errors[$field] = 'invalid';
+                }
+                break;
 
             default:
                 $this->errors['field'] = 'invalid';
@@ -126,21 +173,14 @@ class Profile{
                 return ['status' => 'error', 'message' => 'Failed to save'];
             }
         } else {
-            return ['status' => 'error', 'message' => 'has Erros'];
+            // Envias os erros na mensagem
+            $message = '';
+            foreach($this->errors as $field => $error){
+                $message .= "$field: $error, ";
+            }
+            $message = rtrim($message, ', ');   //remove o ', ' no final
+
+            return ['status' => 'error', 'message' => $message];
         }
-        //validate field
-
-        //if field  = fistName, lastName, email - save in users
-        //else save in clients
-
-        //updateUserField
-        //updateClientField
-
-
-
-        // return 'Field: '.$field.' Value: '.$value;
-        // return ['status' => 'error', 'message' => 'Failed'];
-        // return ['status' => 'success', 'userid' => $this->userId, 'field' => $field, 'value' => $value ,'errors' => $this->errors ];
     }
-
 }

@@ -101,6 +101,20 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
                 echo json_encode(['status' => 'valid']);
             }
             exit;
+        
+        case 'confPwd':
+            $error = '';
+            $value = htmlspecialchars(trim($_POST['value']) ?? '');
+
+            if(isPwdWrong($value)){
+                $error = 'A password não está correta.';
+            }
+
+            echo json_encode($error 
+                ? ['status' => 'invalid', 'message' => $error] 
+                : ['status' => 'valid']
+            );
+            exit;
 
         case 'loginEmail':
             $error = '';
