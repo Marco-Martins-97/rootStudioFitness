@@ -17,9 +17,8 @@ function loadProfile(){
 
         let HTMLcontent = '';
 
-
         HTMLcontent += `
-            <div class="profile-header">
+            <div class='profile-header'>
                 <div class='editable'>
                     <div class='username-container'>
                         <div class='field' data-field='firstName'>
@@ -34,7 +33,7 @@ function loadProfile(){
                 </div>
                 <div class='role'>${userProfile.userRole}</div>
             </div>
-            <div class="profile-body">
+            <div class='profile-body'>
                 <div class='editable'>
                     <div class='field' data-field='email'>
                         <label>Email:</label>
@@ -107,8 +106,6 @@ function loadProfile(){
                                         </div>
                                     </div>`;
                 }
-                
-               
             });
         }
 
@@ -138,7 +135,7 @@ function editField(fieldsConfig){
         const fieldConf = fieldsConfig.find(f => f.field === $field);
         if (!fieldConf) return;
 
-        // cria o input
+        // cria o $input
         let $input;
         if (fieldConf.type === 'input'){
             $input = $('<input>', {
@@ -178,8 +175,6 @@ function editField(fieldsConfig){
             if(!editable.find('.error').length){
                 $error.insertAfter(editable.find('.username-container'));
             }
-            // editable.find('.error').remove();
-            // $error.insertAfter(editable.find('.username-container'));
             //ajusta a larura do input ao texto (apenas para username)
             resizeInput();
 
@@ -200,13 +195,13 @@ function editField(fieldsConfig){
             $span.remove();
         }
         if($field === 'firstName' || $field === 'lastName'){
-            $input.on("input", resizeInput);// atualza a largura conforme vai escrevendo
+            $input.on("input", resizeInput);// atualiza a largura conforme vai escrevendo
         }
 
         let disableBlur = false;    // esta variavel previne que os eventos no input seja ativados multiplas vezes pelo blur
 
         $input.on('blur change keyup', function(e){
-            console.log('Event triggered:', e.type, e.key || 'no key'); 
+            // console.log('Event triggered:', e.type, e.key || 'no key'); 
             if (e.key === 'Escape') {   //cancela as alteraçoes e sai do modo de ediçao
                 cancelEdit(wrapper);
                 return;
@@ -230,39 +225,28 @@ function editField(fieldsConfig){
                     disableBlur = true;
 
                     if($field === 'email'){
-                        const password = prompt('Para alterar o email, digite sua senha:');
-
-                        if (!password) {
-                            console.warn('É necessário a password para alterar o email');
-                            alert('É necessário a password para alterar o email');
-                            cancelEdit(wrapper);
-                            return;
-                        }
-
-                        validationRequest('confPwd', password, function(response){
-                            if (response.status === 'error'){
-                                console.error('Erro:', response.message);
-                                alert('Erro na validação da senha');
+                        confirmPwdModal(function(isValid){
+                            if (!isValid){
+                                console.warn('As alteraçoes foram Canceladas.');
                                 cancelEdit(wrapper);
                                 return;
-                            }
-                            if (response.status === 'invalid'){
-                                console.warn('Input Invalido:', response.message);
-                                alert(response.message || 'Senha inválida');
-                                cancelEdit(wrapper);
-                                return;
-                            }
-                            
-                            //SALVAR NOVO INPUT
-                            saveField($this, function(isSaved){
+                                
+                            } else {
+                                //SALVA NOVO INPUT
+                                saveField($this, function(isSaved){
                                 if(!isSaved) return;
-                            
-                                // troca o input pelo span com o novo valor
-                                const $newSpan = $('<span>', { class: 'value', text: newValue });
-                                cancelEdit($newSpan);
-                            });
+                                    // troca o input pelo span com o novo valor
+                                    const $newSpan = $('<span>', { class: 'value', text: newValue });
+                                    cancelEdit($newSpan);
+                                });
+                            }
                         });
-                    /* } else if($field === 'changePwd'){
+
+                       
+                        //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+                    } else if($field === 'changePwd'){
+                        console.log($field);
+                    /* 
                         const password = prompt('Para alterar o email, digite sua senha:');
 
                         if (!password) {
@@ -330,7 +314,59 @@ function editField(fieldsConfig){
 
 }
 
-function validationRequest(field, value, callback) {
+function confirmPwdModal(callback){
+    const modal =  `<div class='modal' id='pwdModal'>
+                        <div class='modal-content'>
+                            <span id='close-pwd-modal'>&times;</span>
+                            <h2>Para alterar o email, digite sua password:</h2>
+                            <div class='field-container'>
+                                <div class='field'>
+                                    <label for='field-pwd'>Password:</label>
+                                    <input type='password' name='field-pwd' id='fieldPwd'>
+                                </div>
+                                <div class="error"></div>
+                            </div>
+                            <div class='btn-container'>
+                                <button id='save'>Salvar</button>
+                                <button id='cancel'>Cancelar</button>
+                            </div>
+                        </div>
+                    </div>`;
+    $('main').append(modal);
+
+    $('#close-pwd-modal, #cancel').on('click', function() {
+        $('#pwdModal').remove(); // remove o modal
+        callback(false);
+    });
+
+    $('#save').on('click', function() {
+        const pwd = $('#fieldPwd').val().trim();
+        const error = $('.error');
+
+        //valida a password
+        $.post('includes/validateInputs.inc.php', {input: 'confPwd', value: pwd}, function(response){
+            if (response.status === 'error'){
+                console.error('Erro:', response.message);   //Motra o erro no console
+                return;
+            }
+            if (response.status === 'invalid'){
+                console.warn('Input Invalido:', response.message);
+                error.text(response.message);
+                return;
+            }
+
+            error.text('');
+            $('#pwdModal').remove(); // remove o modal
+            callback(true);
+
+        }, 'json').fail(function () {
+            console.error('Erro ao validar os dados.');
+            error.text('Erro ao validar os dados.');
+        });
+    });
+}
+
+/* function validationRequest(field, value, callback) {
     $.post('includes/validateInputs.inc.php', { input: field, value: value }, function (response) {
         callback(response);
     }, 'json').fail(function (jqXHR, textStatus, errorThrown) {
@@ -363,9 +399,9 @@ function validateField($this, callback){
 
         callback(true);
     });
-}
+} */
 
-/* function validateField($this, callback){
+function validateField($this, callback){
     const field = $this.data('field');
     const editable = $this.closest('.editable');
     const error = editable.find('.error');
@@ -393,7 +429,7 @@ function validateField($this, callback){
         error.text('Erro ao validar os dados.');
         callback(false);
     });
-} */
+}
 
 function saveField($this, callback){
     const field = $this.data('field');
@@ -416,7 +452,6 @@ function saveField($this, callback){
             callback(false);
             return;
         }
-
        
         callback(true);
 
