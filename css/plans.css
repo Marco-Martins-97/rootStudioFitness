@@ -279,6 +279,13 @@
     color: black;
 }
 
+.validSub{
+    color: green;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-align: center;
+}
+
 
 @media (min-width: 768px) {
     /* PLANS - SECTION */

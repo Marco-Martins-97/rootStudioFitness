@@ -81,6 +81,32 @@ switch ($action) {
         }
         break;
 
+    case 'saveNewPwd':
+        if(!isset($_SESSION["userRole"])){  //verifica e o utilizador esta logado 
+            echo json_encode(['status' => 'error', 'message' => 'Login required']);
+            exit;
+        }
+
+        $currentPwd = getPost('valueCurrentPwd');
+        $newPwd = getPost('valueNewPwd');
+        $confirmNewPwd = getPost('valueConfirmNewPwd');
+        $userId = $_SESSION['userId'];
+
+        try {
+            require_once "ProfileHandler.php";
+            $profile = new Profile($userId);
+            $res = $profile->updatePwd($currentPwd, $newPwd, $confirmNewPwd);
+
+            echo json_encode($res);
+            exit;
+
+        } catch (PDOException $e) {
+            error_log("Database error: " . $e->getMessage()); // Log interno
+            echo json_encode(['status' => 'error', 'message' => 'Erro na ligação ao servidor.']);
+            exit;
+        }
+        break;
+
 
     default:
         echo json_encode(['status' => 'error', 'message' => 'Invalid Action']);

@@ -98,12 +98,12 @@ $(document).ready(function(){
         e.preventDefault();
         
         if(noEmptyFields(applicationForm) && isFormValid(applicationForm)){
-            //cria um popup
-            let formPopup = $('<div class="popup popup-warn">Formulário válido! ✅</div>').appendTo("main");
+            $('.validSub').remove();
+            const successDiv = $('<div class="validSub">Enviado Com Sucesso!</div>');
+            $('.form-disclaimer').after(successDiv);
 
-            // remove popup depois de 1 segundo e envia o formulário
+            // depois de 1 segundo e envia o formulário
             setTimeout(function(){
-                formPopup.fadeOut(300, function(){ $(this).remove(); });
                 applicationForm.off('submit').submit();
             }, 1000);
         } else {

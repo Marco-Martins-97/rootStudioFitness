@@ -10,7 +10,7 @@ require_once 'configSession.inc.php';
 
 */
 
-$pwdLength = 8; //minimo de caracters da password
+// $pwdLength = 8; //minimo de caracters da password
 
 // Funções de Validação
 function isInputRequired($input){
@@ -22,8 +22,8 @@ function isInputEmpty($value){
     return empty($value);
 }
 
-function isLengthInvalid($value, $length = 255){
-    return mb_strlen($value) > $length;
+function isLengthInvalid($value, $maxLength = 255){
+    return mb_strlen($value) > $maxLength;
 }    
 
 function isNameInvalid($value){
@@ -68,9 +68,8 @@ function isPwdWrong($value, $userId = null) {  //conecta a base de dados, pesqui
     return !password_verify($value, $userData['pwd']);
 }
 
-function isPwdShort($value){
-    global $pwdLength;
-    return strlen($value) < $pwdLength;
+function isPwdShort($value, $minLength = 8){
+    return mb_strlen($value) < $minLength;
 }
 
 function isPwdNoMatch($pwd, $confPwd) {

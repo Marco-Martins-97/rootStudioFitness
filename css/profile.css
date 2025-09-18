@@ -38,8 +38,6 @@
     padding-left: 8px;
 }
 
-
-
 .profile-body{
     width: 100%;
     border: 2px solid var(--SECONDARY-BG-COLOR);
@@ -59,6 +57,7 @@
 
 .field label{
     font-weight: bold;
+    cursor: pointer;
 }
 .field input, .field textarea, .field select{
     flex: 1;
@@ -175,4 +174,23 @@
 .modal-content button:hover{
     background-color: var(--SECONDARY-BTN-COLOR);
     color: var(--PRIMARY-TXT-COLOR);
+}
+
+.edit-pwd{
+    background-color: var(--PRIMARY-BG-COLOR);
+    color: var(--PRIMARY-TXT-COLOR);
+    border-radius: 12px;
+    border: 2px solid var(--PRIMARY-BORDER-COLOR);
+    padding: 12px 24px;
+    font-weight: bold;
+    transition: background-color 0.8s ease;
+    letter-spacing: 1px;
+    cursor: pointer;
+}
+
+.edit-pwd:hover{
+    background-color: var(--SECONDARY-BG-COLOR);
+    color: var(--SECONDARY-TXT-COLOR);
+    font-weight: bolder;
+    outline: 1px solid var(--PRIMARY-BORDER-COLOR);
 }

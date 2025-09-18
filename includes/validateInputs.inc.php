@@ -83,7 +83,7 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
             if(isInputRequired('pwd') && isInputEmpty($valuePwd)){
                 $errors['pwd'] = 'A password é obrigatória.';
             } elseif (isPwdShort($valuePwd)){
-                $errors['pwd'] = 'A password deve ter pelo menos '.$pwdLength.' caracteres.';
+                $errors['pwd'] = 'A password deve ter pelo menos 8 caracteres.';
             } elseif (isLengthInvalid($valuePwd)){
                 $errors['pwd'] = 'A password excede o limite de caracteres.';
             }
@@ -100,6 +100,41 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
             } else {
                 echo json_encode(['status' => 'valid']);
             }
+            exit;
+
+        case 'newPwd':
+            $errors = [];
+            $valueCurrentPwd = htmlspecialchars(trim($_POST['valueCurrentPwd']) ?? '');
+            $valueNewPwd = trim($_POST['valueNewPwd'] ?? '');
+            $valueConfirmNewPwd = trim($_POST['valueConfirmNewPwd'] ?? '');
+
+            if(isPwdWrong($valueCurrentPwd)){
+                $errors['currentPwd'] = 'A password atual não está correta.';
+            }
+            
+            if(isInputRequired('pwd') && isInputEmpty($valueNewPwd)){
+                $errors['newPwd'] = 'A nova password é obrigatória.';
+            } elseif (isPwdShort($valueNewPwd)){
+                $errors['newPwd'] = 'A nova password deve ter pelo menos 8 caracteres.';
+            } elseif (isLengthInvalid($valueNewPwd)){
+                $errors['newPwd'] = 'A nova password excede o limite de caracteres.';
+            }
+
+            if(isInputRequired('confPwd') && isInputEmpty($valueConfirmNewPwd)){
+                $errors['confNewPwd'] = 'A confirmação da nova password é obrigatória.';
+            } elseif (isLengthInvalid($valueConfirmNewPwd)){
+                $errors['confNewPwd'] = 'A confirmação da nova password excede o limite de caracteres.';
+            } elseif (isPwdNoMatch($valueNewPwd, $valueConfirmNewPwd)){
+                $errors['confNewPwd'] = 'As novas passwords não coincidem.';
+            }
+
+           
+            if ($errors) {
+                echo json_encode(['status' => 'invalid', 'message' => $errors]);
+            } else {
+                echo json_encode(['status' => 'valid']);
+            } 
+           
             exit;
         
         case 'confPwd':

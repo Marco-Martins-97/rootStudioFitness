@@ -44,6 +44,60 @@ class Profile{
         return $stmt->execute();
     }
 
+    private function saveNewPwd($value){
+        $query = "UPDATE users SET pwd = :newPwd WHERE id = :userId;";
+        $stmt = $this->conn->prepare($query);
+
+        $options = ['cost' => 12];
+        $hashedPwd = password_hash($value, PASSWORD_BCRYPT, $options);
+
+        $stmt -> bindParam(":newPwd", $hashedPwd);
+        $stmt -> bindParam(":userId", $this->userId);
+        return $stmt->execute();
+    }
+
+    public function updatePwd($currentPwd, $newPwd, $confirmNewPwd){
+        //validaçao dos dados
+        require_once 'validations.inc.php';
+
+        if(isPwdWrong($currentPwd)){
+            $this->errors['currentPwd'] = 'A password atual não está correta.';
+        }
+        
+        if(isInputRequired('pwd') && isInputEmpty($newPwd)){
+            $this->errors['newPwd'] = 'A nova password é obrigatória.';
+        } elseif (isPwdShort($newPwd)){
+            $this->errors['newPwd'] = 'A nova password deve ter pelo menos 8 caracteres.';
+        } elseif (isLengthInvalid($newPwd)){
+            $this->errors['newPwd'] = 'A nova password excede o limite de caracteres.';
+        } elseif (!isPwdNoMatch($currentPwd, $newPwd)){
+            $this->errors['newPwd'] = 'A nova password não pode ser igual a atual.';
+        }
+        
+        if(isInputRequired('confPwd') && isInputEmpty($confirmNewPwd)){
+            $this->errors['confNewPwd'] = 'A confirmação da nova password é obrigatória.';
+        } elseif (isLengthInvalid($confirmNewPwd)){
+            $this->errors['confNewPwd'] = 'A confirmação da nova password excede o limite de caracteres.';
+        } elseif (isPwdNoMatch($newPwd, $confirmNewPwd)){
+            $this->errors['confNewPwd'] = 'As novas passwords não coincidem.';
+        }
+
+        // Conecção
+        if (!$this->conn) {
+            $this->errors['connection'] = 'Falha na connecção com o servidor.';
+        }
+
+        if (!$this->errors) {
+            if ($this->saveNewPwd($newPwd)) {
+                return ['status' => 'valid'];
+            } else {
+                return ['status' => 'invalid', 'message' => 'Ocorreu uma falha ao salvar os dados. Tente novamente.'];
+            }
+        } else {
+            return ['status' => 'invalid', 'message' => $this->errors];
+        } 
+    }
+
 
     public function updateField($field, $value){
         //validaçao dos dados

@@ -13,10 +13,16 @@ function loadProfile(){
             return;
         }
 
+        const roleReplacements = {
+            'user': 'Utilizador',
+            'client': 'Cliente',
+            'admin': 'Administrador',
+        };
         const userProfile = response.userData;
+        // troca para portugues
+        const userRole = roleReplacements[userProfile.userRole] || userProfile.userRole;
 
         let HTMLcontent = '';
-
         HTMLcontent += `
             <div class='profile-header'>
                 <div class='editable'>
@@ -31,9 +37,10 @@ function loadProfile(){
                         </div>
                     </div>
                 </div>
-                <div class='role'>${userProfile.userRole}</div>
+                <div class='role'>${userRole}</div>
             </div>
             <div class='profile-body'>
+                <div><button class='edit-pwd' id='edit-pwd'>Alterar a password</button></div>
                 <div class='editable'>
                     <div class='field' data-field='email'>
                         <label>Email:</label>
@@ -121,6 +128,97 @@ function loadProfile(){
 }
 
 function editField(fieldsConfig){
+    // ativa o modal para alterra a password
+    $('#edit-pwd').on('click', function() {
+        const modal =  `<div class='modal' id='changePwdModal'>
+                        <div class='modal-content'>
+                            <span id='close-change-modal'>&times;</span>
+                            <h2>Alterar a password</h2>
+                            <div class='field-container'>
+                                <div class='field'>
+                                    <label for='current-pwd'>Password Atual:</label>
+                                    <input type='password' name='current-pwd' id='currentPwd'>
+                                </div>
+                                <div class='field'>
+                                    <label for='new-pwd'>Nova Password:</label>
+                                    <input type='password' name='new-pwd' id='newPwd'>
+                                </div>
+                                <div class='field'>
+                                    <label for='confirm-new-pwd'>Confirma Nova Password:</label>
+                                    <input type='password' name='confirm-new-pwd' id='confirmNewPwd'>
+                                </div>
+                                <div class="error"></div>
+                            </div>
+                            <div class='btn-container'>
+                                <button id='save'>Salvar</button>
+                                <button id='cancel'>Cancelar</button>
+                            </div>
+                        </div>
+                    </div>`;
+        $('main').append(modal);
+
+        $('#close-change-modal, #cancel').on('click', function() {
+            $('#changePwdModal').remove(); // remove o modal
+        });
+        $('#save').on('click', function() {
+            const currentPwd = $('#currentPwd').val().trim();
+            const newPwd = $('#newPwd').val().trim();
+            const confirmNewPwd = $('#confirmNewPwd').val().trim();
+            const error = $('.error');
+
+            //VALIDA OS INPUTS
+            $.post('includes/validateInputs.inc.php', {input: 'newPwd', valueCurrentPwd: currentPwd, valueNewPwd: newPwd, valueConfirmNewPwd: confirmNewPwd}, function(response){
+                if (response.status === 'error'){
+                    console.error('Erro:', response.message);
+                    return;
+                }
+                if (response.status === 'invalid'){
+                    let msg = '';
+                    $.each(response.message, function(error, message){
+                        msg += message + '<br>';
+                        console.warn(`Input Invalido: ${error}: ${message}`);
+                    });
+
+                    error.html(msg);
+                    return;
+                }
+                error.text('');
+                
+                //SALVA OS INSPUTS
+                $.post('includes/saveServerData.inc.php', {action: 'saveNewPwd', valueCurrentPwd: currentPwd, valueNewPwd: newPwd, valueConfirmNewPwd: confirmNewPwd}, function(response){
+                    if (response.status === 'error'){
+                        console.error('Erro:', response.message);
+                        return;
+                    }
+                    if (response.status === 'invalid'){
+                        let msg = '';
+                        $.each(response.message, function(error, message){
+                            msg += message + '<br>';
+                            console.warn(`Input Invalido: ${error}: ${message}`);
+                        });
+
+                        error.html(msg);
+                        return;
+                    }
+                    
+                    error.css('color', 'green').text('Password alterada com sucesso!');
+                    setTimeout(() => $('#changePwdModal').remove(), 1000);
+
+
+                }, 'json').fail(function () {
+                    console.error('Erro ao validar os dados.');
+                    error.text('Erro ao validar os dados.');
+                });
+            }, 'json').fail(function () {
+                console.error('Erro ao validar os dados.');
+                error.text('Erro ao validar os dados.');
+            });
+        });
+    });
+
+
+
+    //edita os restantes campos
     $('.profile-container').off('click', '.field').on('click', '.field', function(){
         const $this = $(this);
         const wrapper = $this.find('.value');
@@ -241,44 +339,7 @@ function editField(fieldsConfig){
                                 });
                             }
                         });
-
-                       
-                        //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-                    } else if($field === 'changePwd'){
-                        console.log($field);
-                    /* 
-                        const password = prompt('Para alterar o email, digite sua senha:');
-
-                        if (!password) {
-                            console.warn('É necessário a password para alterar o email');
-                            alert('É necessário a password para alterar o email');
-                            cancelEdit(wrapper);
-                            return;
-                        }
-
-                        validationRequest('confPwd', password, function(response){
-                            if (response.status === 'error'){
-                                console.error('Erro:', response.message);
-                                alert('Erro na validação da senha');
-                                cancelEdit(wrapper);
-                                return;
-                            }
-                            if (response.status === 'invalid'){
-                                console.warn('Input Invalido:', response.message);
-                                alert(response.message || 'Senha inválida');
-                                cancelEdit(wrapper);
-                                return;
-                            }
-                            
-                            //SALVAR NOVO INPUT
-                            saveField($this, function(isSaved){
-                                if(!isSaved) return;
-                            
-                                // troca o input pelo span com o novo valor
-                                const $newSpan = $('<span>', { class: 'value', text: newValue });
-                                cancelEdit($newSpan);
-                            });
-                        }); */
+                    
                     } else {
                         //SALVAR NOVO INPUT
                         saveField($this, function(isSaved){
@@ -298,7 +359,6 @@ function editField(fieldsConfig){
                     }
                     
                     
-                    
                 });
                 disableBlur = false;
             }
@@ -315,7 +375,7 @@ function editField(fieldsConfig){
 }
 
 function confirmPwdModal(callback){
-    const modal =  `<div class='modal' id='pwdModal'>
+    const modal =  `<div class='modal' id='confirmPwdModal'>
                         <div class='modal-content'>
                             <span id='close-pwd-modal'>&times;</span>
                             <h2>Para alterar o email, digite sua password:</h2>
@@ -335,7 +395,7 @@ function confirmPwdModal(callback){
     $('main').append(modal);
 
     $('#close-pwd-modal, #cancel').on('click', function() {
-        $('#pwdModal').remove(); // remove o modal
+        $('#confirmPwdModal').remove(); // remove o modal
         callback(false);
     });
 
@@ -355,8 +415,8 @@ function confirmPwdModal(callback){
                 return;
             }
 
-            error.text('');
-            $('#pwdModal').remove(); // remove o modal
+            error.css('color', 'green').text('Email alterado com sucesso!');
+            setTimeout(() => $('#confirmPwdModal').remove(), 1000);
             callback(true);
 
         }, 'json').fail(function () {
@@ -365,6 +425,8 @@ function confirmPwdModal(callback){
         });
     });
 }
+
+
 
 /* function validationRequest(field, value, callback) {
     $.post('includes/validateInputs.inc.php', { input: field, value: value }, function (response) {
