@@ -14,7 +14,7 @@
         <!-- Style -->
         <link id="favicon" rel="shortcut icon" href="imgs/logo/iconPreto.png" type="image/x-icon">
         <link rel="stylesheet" href="css/style.css">
-        <link rel="stylesheet" href="css/main.css">
+        <link rel="stylesheet" href="css/shop.css">
         <!-- Script -->
         <script src="https://kit.fontawesome.com/d132031da6.js?v=2" crossorigin="anonymous"></script>
     </head>
@@ -59,7 +59,49 @@
             </nav>
         </header>
         <main>
-
+            <div class="shopping-cart"></div>
+            <div class="shop-content">
+                <div class="product-container">
+                        <img src="imgs/products/notebook.jpg" alt="">
+                        <div class="description-container">
+                            <div class="description">
+                                <h3>Nome do produto 1</h3>
+                                <p>1,99 €</p>
+                            </div>
+                            <div class="btns-container">
+                                <button>Comprar</button>
+                                <button>Adicionar Carrinho</button>
+                            </div>
+                        </div>
+                </div>
+                <div class="product-container">
+                        <img src="imgs/products/notebook.jpg" alt="">
+                        <div class="description-container">
+                            <div class="description">
+                                <h3>Nome do produto 1</h3>
+                                <p>1,99 €</p>
+                            </div>
+                            <div class="btns-container">
+                                <button>Comprar</button>
+                                <button>Adicionar Carrinho</button>
+                            </div>
+                        </div>
+                </div>
+                <div class="product-container">
+                        <img src="imgs/products/notebook.jpg" alt="">
+                        <div class="description-container">
+                            <div class="description">
+                                <h3>Nome do produto 1</h3>
+                                <p>1,99 €</p>
+                            </div>
+                            <div class="btns-container">
+                                <button>Comprar</button>
+                                <button>Adicionar Carrinho</button>
+                            </div>
+                        </div>
+                </div>
+                
+            </div>
         </main>
         <footer>
             <img src="imgs/logo/iconOriginal.png" alt="Root Studio logo">
@@ -74,4 +116,5 @@
 
     </body>
     <script src="js/navMenu.js"></script>
+    <script src="js/shop.js"></script>
 </html>
