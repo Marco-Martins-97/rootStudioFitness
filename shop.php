@@ -59,18 +59,64 @@
             </nav>
         </header>
         <main>
-            <div class="cart-btn-container"><i class="fa fa-shopping-cart"></i></div>
-            <div class="shopping-cart">
+            <div class="shopping-cart open">
                 <div class="cart-header">
                     <h2>Carrinho de Compras</h2>
                     <span id='close-shopping-cart'>&times;</span>
                 </div>
                 <div class="cart-content">
-                    <P>Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempora sequi alias, nostrum optio, placeat minima doloribus quia odit voluptates adipisci consequuntur suscipit et velit pariatur ut quam ducimus molestiae maiores dolore corporis? Accusantium nesciunt eos vero provident porro ad facilis debitis, fuga, quibusdam rerum delectus incidunt veritatis magni est pariatur voluptatum sit vel ut nobis! Hic, maiores suscipit. Corrupti officiis quam excepturi voluptatibus laborum modi dolorem, nisi pariatur? Numquam aliquam assumenda suscipit eveniet? Non amet excepturi ut natus illum, tenetur quo ipsam laudantium quam, minima ex? Perspiciatis quod esse omnis, eveniet natus molestiae maxime consectetur quis quasi dolore placeat voluptate odit nobis sapiente incidunt recusandae sit ab maiores sed tenetur iusto neque. Delectus molestiae atque consequatur praesentium nam expedita aut corrupti distinctio deserunt vel. Voluptas atque eveniet deleniti perspiciatis explicabo tempore in a debitis earum, molestiae doloremque praesentium pariatur officia, ab ullam repellat illum possimus architecto illo commodi temporibus cumque! Fugiat dolor explicabo ullam quo non quos facere! Quam quas et nesciunt beatae accusamus soluta quasi fugit, mollitia ducimus placeat eveniet at cupiditate consectetur ad sed? Eum quasi quam, quidem recusandae autem iusto saepe blanditiis quo ducimus odio accusantium minus perferendis maiores id, quisquam repudiandae ex? Temporibus pariatur at dolores saepe, laboriosam maxime accusantium quia nam tempore tempora accusamus repudiandae impedit harum similique distinctio praesentium animi, et quo voluptate quae. Aliquid sapiente nihil amet excepturi? Velit odio cum nemo sit aut tempore, quod quis incidunt dolor, facilis dicta nihil odit totam perferendis unde repudiandae, id sunt quae reprehenderit perspiciatis? Quis nesciunt, fugiat ipsum corrupti totam iusto consequatur voluptates accusamus, quibusdam magnam facere reprehenderit consectetur unde veritatis. Ipsa, voluptatum nobis. Hic suscipit sapiente laudantium enim consequatur minus quos accusamus tempora sit possimus, reiciendis corporis est. Similique suscipit cum, repellat omnis repudiandae velit distinctio autem quibusdam praesentium! Ullam totam nostrum similique enim.</P>
+                    <!-- Nao existem produtos no carrinho! -->
+                    <div class="cart-product-container">
+                        <img src="imgs/products/notebook.jpg" alt="">
+                        <div class="cart-description-container">
+                            <div class="cart-description">
+                                <div class="cart-btns-container">
+                                    <button>&minus;</button>
+                                    <button>+</button>
+                                    <button>&times;</button>
+                                </div>
+                                <h3>Nome do produto 1</h3>
+                                <p>1,99 €</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cart-product-container">
+                        <img src="imgs/products/notebook.jpg" alt="">
+                        <div class="cart-description-container">
+                            <div class="cart-description">
+                                <div class="cart-btns-container">
+                                    <button>&minus;</button>
+                                    <button>+</button>
+                                    <button>&times;</button>
+                                </div>
+                                <h3>Nome do produto 1</h3>
+                                <p>1,99 €</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cart-product-container">
+                        <img src="imgs/products/notebook.jpg" alt="">
+                        <div class="cart-description-container">
+                            <div class="cart-description">
+                                <div class="cart-btns-container">
+                                    <button>&minus;</button>
+                                    <button>+</button>
+                                    <button>&times;</button>
+                                </div>
+                                <h3>Nome do produto 1</h3>
+                                <p>1,99 €</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+
+
+
                 </div>
-                <button>Comprar</button>
+                <button class="buy-cart">Comprar</button>
             </div>
             <div class="shop-content">
+                <!-- Nao foram encontrados produtos! -->
                 <div class="product-container">
                         <img src="imgs/products/notebook.jpg" alt="">
                         <div class="description-container">
@@ -190,6 +236,7 @@
                 </div>
                 
             </div>
+            <div class="cart-btn-container"><i class="fa fa-shopping-cart"></i></div>
         </main>
         <footer>
             <img src="imgs/logo/iconOriginal.png" alt="Root Studio logo">
