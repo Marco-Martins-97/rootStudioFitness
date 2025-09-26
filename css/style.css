@@ -47,7 +47,8 @@ a{
 
 main{
     margin-top: 80px;
-    min-height: 100vh;
+    min-height: 100%;
+    /* height: calc(100vh - 80px); */
     transition: margin-top 0.3s ease;
 }
 
@@ -170,13 +171,13 @@ nav a{
 }
 
 footer{
+    position: relative;
     display: flex;
     height: 80px;
     width: 100%;
     background-color: var(--SECONDARY-BG-COLOR);
     padding: 0 32px;
     align-items: center;
-    position: relative;
 }
 
 footer img{
