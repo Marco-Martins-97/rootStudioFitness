@@ -1,0 +1,86 @@
+.products-container {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(0, 250px)); /* max 250px per card */
+    justify-content: center; /* center the grid */
+    gap: 16px;
+    padding: 16px;
+    list-style: none;
+    margin: 0;
+}
+
+/* Product card */
+.product-card {
+    width: 100%; /* will take full column width */
+    max-width: 250px; /* limit to 250px on desktop */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/* .product-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+ */
+/* Image */
+.product-img {
+    width: 100%;
+    aspect-ratio: 1 / 1; /* keeps a perfect square */
+    object-fit: cover;
+    border-radius: 6px;
+    margin-bottom: 8px;
+}
+
+/* Name */
+.product-name {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+/* Price */
+.product-info {
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+/* Buttons container */
+.product-actions {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+  justify-content: center;
+}
+
+/* Buttons */
+.product-actions button {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.btn-edit {
+  background: #0077cc;
+  color: #fff;
+}
+.btn-edit:hover {
+  background: #005fa3;
+}
+
+.btn-remove {
+  background: #eee;
+  color: #333;
+}
+.btn-remove:hover {
+  background: #ddd;
+}

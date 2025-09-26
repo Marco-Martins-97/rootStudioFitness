@@ -47,8 +47,9 @@ a{
 
 main{
     margin-top: 80px;
-    min-height: 100%;
+    /* min-height: 100%; */
     /* height: calc(100vh - 80px); */
+    min-height: calc(100vh - 80px);
     transition: margin-top 0.3s ease;
 }
 

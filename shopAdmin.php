@@ -1,11 +1,16 @@
-<?php require_once 'includes/configSession.inc.php'; ?>
+<?php
+    require_once 'includes/configSession.inc.php';
+    if(!isset($_SESSION["userRole"]) && $_SESSION["userRole"] !== "admin"){ 
+        header("Location: index.php"); 
+        exit;
+    }
+?>
 <!DOCTYPE html>
 <html lang="pt">
     <head>
         <!-- Titulo & Descrição -->
-        <title>Root Fitness Studio - Loja</title>
-        <meta name="description" content="Descobre a loja do ROOT Studio Fitness em Esposende. Produtos de fitness, acessórios de treino e merchandising exclusivo para apoiar o teu estilo de vida saudável.">
-        <meta name="keywords" content="loja ROOT Studio, loja fitness Esposende, acessórios de treino, material desportivo Esposende, roupa fitness, merchandising ROOT, suplementos Esposende, estúdio de fitness Braga, ginásio Esposende, saúde e bem-estar">
+        <title>Root Fitness Studio - Administração Loja</title>
+        <meta name="description" content="ROOT Studio Fitness - Administração Loja">
         <meta name="author" content="Marco Martins">
         <!-- Browser -->
         <meta charset="UTF-8">
@@ -14,7 +19,7 @@
         <!-- Style -->
         <link id="favicon" rel="shortcut icon" href="imgs/logo/iconPreto.png" type="image/x-icon">
         <link rel="stylesheet" href="css/style.css">
-        <link rel="stylesheet" href="css/shop.css">
+        <link rel="stylesheet" href="css/shopAdmin.css">
         <!-- Script -->
         <script src="https://kit.fontawesome.com/d132031da6.js?v=2" crossorigin="anonymous"></script>
         <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
@@ -60,61 +65,9 @@
             </nav>
         </header>
         <main>
-            <div class="shopping-cart">
-                <div class="cart-header">
-                    <h3>Carrinho de Compras</h3>
-                    <div id="close-cart">&times;</div>
-                </div>
-                <ul class="cart-container">
-                   <!--  <li class="cart-item">
-                        <img src="imgs/products/notebook.jpg" alt="Produto" class="cart-item-img" />
-                        <div class="cart-item-info">
-                        
-                        <div class="cart-item-actions">
-                            <button class="btn-remove">-</button>
-                            <button class="btn-add">+</button>
-                            <button class="btn-delete">🗑</button>
-                        </div>
-
-                        <h4 class="cart-item-name">Produto Exemplo</h4>
-
-                        <div class="cart-item-meta">
-                            <span class="cart-item-price">R$ 49,90</span>
-                            <span class="cart-item-qty">x2</span>
-                        </div>
-
-                        <div class="cart-item-total">
-                            Total: <span class="cart-item-total-price">R$ 99,80</span>
-                        </div>
-                        </div>
-                    </li> -->
-                    
-                    
-                </ul>
-                <div class="pay-container">
-                    <div class="cart-summary">
-                        <span>Total do Carrinho:</span>
-                        <span class="cart-total">R$ 99,80</span>
-                    </div>
-                    <button class="pay-cart">Comprar Carrinho</button>
-                </div>
-            </div>
-
-            <div class="shop-content">
-                <ul class="products-container">
-                    <!-- <li class="product-card">
-                        <img src="imgs/products/notebook.jpg" alt="Produto" class="product-img">
-                        <h4 class="product-name">Produto 1</h4>
-                        <div class="product-price">R$ 49,90</div>
-                        <div class="product-actions">
-                            <button class="btn-buy">Comprar</button>
-                            <button class="btn-add-cart">Adicionar ao Carrinho</button>
-                        </div>
-                    </li> -->
-                </ul>
-            </div>
-
-            <button class="open-cart-btn" id="open-cart-btn">🛒</button>
+            <section class="shop-content">
+                <ul class="products-container"></ul>
+            </section>
         </main>
         <footer>
             <img src="imgs/logo/iconOriginal.png" alt="Root Studio logo">
@@ -129,5 +82,5 @@
 
     </body>
     <script src="js/navMenu.js"></script>
-    <script src="js/shop.js"></script>
+    <script src="js/shopAdmin.js"></script>
 </html>
