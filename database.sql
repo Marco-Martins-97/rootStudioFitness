@@ -74,3 +74,12 @@ CREATE TABLE clients (
     PRIMARY KEY (id),
     FOREIGN KEY (userId) REFERENCES users(id)
 );
+
+CREATE TABLE products(
+	id INT(11) NOT NULL AUTO_INCREMENT,
+    productImgSrc VARCHAR(255) NOT NULL,
+    productName VARCHAR(255) NOT NULL,
+    productPrice DECIMAL(10, 2) NOT NULL,
+    productStock INT NOT NULL DEFAULT 0, 
+    PRIMARY KEY (id)
+);

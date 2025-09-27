@@ -327,7 +327,60 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
             );
             exit;
         
-        
+        case 'addNewProduct':
+            $errors = [];
+            $datapack = $_POST['datapack'] ?? [];
+
+            if(!$datapack){
+                echo json_encode(['status' => 'error', 'message' => 'Ocorreu um ERRO ao enviar os dados!']);
+                exit;
+            }
+ 
+            $uploadImg = filter_var($datapack['uploadImg'] ?? false, FILTER_VALIDATE_BOOLEAN);
+            $valueImgSize = filter_var($datapack['valueImgSize'] ?? 0, FILTER_VALIDATE_INT);
+            $valueImgType = trim($datapack['valueImgType'] ?? '');
+            $valueName = trim($datapack['valueName'] ?? '');
+            $valuePrice = filter_var($datapack['valuePrice'] ?? 0, FILTER_VALIDATE_FLOAT);
+            $valueStock = filter_var($datapack['valueStock'] ?? 0, FILTER_VALIDATE_INT);
+
+
+            if(!$uploadImg){
+                $errors['productImg'] = 'A imagem do produto é obrigatória.';
+            } else{
+                if (isSizeInvalid($valueImgSize)){
+                    $errors['productImg'] = 'A imagem excede o tamanho permitido.';
+                } elseif (isTypeInvalid($valueImgType)){
+                    $errors['productImg'] = 'A imagem não tem um formato válido (png, jpg, gif).';
+                }
+            }    
+
+            if(isInputRequired('productName') && isInputEmpty($valueName)){
+                $errors['productName'] = 'O nome do produto é obrigatório.';
+            } elseif (isProductNameInvalid($valueName)){
+                $errors['productName'] = 'O nome contém caracteres inválidos.';
+            } elseif (isLengthInvalid($valueName)){
+                $errors['productName'] = 'O nome excede o limite de caracteres.';
+            }
+
+            if (isInputRequired('productPrice') && isInputEmpty($valuePrice)) {
+                $errors['productPrice'] = 'O preço é obrigatório.';
+            } elseif (isPriceInvalid($valuePrice)) {
+                $errors['productPrice'] = 'O preço deve ser um número válido maior que zero.';
+            }
+
+            if (isInputRequired('productStock') && isInputEmpty($valueStock)) {
+                $errors['productStock'] = 'A quantidade de stock é obrigatório.';
+            } elseif (isStockInvalid($valueStock)) {
+                $errors['productStock'] = 'A quantidade de stock deve ser um número inteiro maior que zero.';
+            }
+         
+            if ($errors) {
+                echo json_encode(['status' => 'invalid', 'message' => $errors]);
+            } else {
+                echo json_encode(['status' => 'valid']);
+            } 
+           
+            exit;
 
 
 

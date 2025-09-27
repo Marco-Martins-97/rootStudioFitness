@@ -14,7 +14,11 @@ require_once 'configSession.inc.php';
 
 // Funções de Validação
 function isInputRequired($input){
-    $requiredFields = ['firstName','lastName','email','pwd','confPwd','loginEmail','fullName','birthDate','gender','userAddress','nif','phone','trainingPlan','experience','terms'];
+    $requiredFields = ['firstName','lastName','email','pwd','confPwd',  //registo
+                        'loginEmail',   //login
+                        'fullName','birthDate','gender','userAddress','nif','phone','trainingPlan','experience','terms',    //cliente
+                        'productName', 'productPrice', 'productStock'   //criar novo produto
+                    ];
     return in_array($input, $requiredFields);
 }
 
@@ -125,4 +129,25 @@ function isYesOrNo($value) {
 
 function isDescriptionInvalid($value) {
     return !preg_match('/^[\p{L}\p{N}\s.,()-]+$/u', $value);
+}
+
+function isSizeInvalid($size, $maxSize = 2 * 1024 * 1024) {
+    $size = (int)$size;
+    return $size <= 0 || $size > $maxSize;
+}
+
+function isTypeInvalid($type, $allowedTypes = ['image/jpeg', 'image/png', 'image/gif']) {
+    return !in_array($type, $allowedTypes);
+}
+
+function isProductNameInvalid($value) {
+    return !preg_match('/^[\p{L}\p{N}\s.,;:()\-\'"&+\/%!?@$€*#]+$/u', $value);
+}
+
+function isPriceInvalid($value) {
+    return !preg_match('/^\d+(\.\d{1,2})?$/', $value) || (float)$value <= 0;
+}
+
+function isStockInvalid($value) {
+    return !preg_match('/^\d+$/', $value) || (int)$value < 0;
 }
