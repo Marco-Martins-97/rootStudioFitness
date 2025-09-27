@@ -114,7 +114,7 @@
                 </ul>
             </div>
 
-            <button class="open-cart-btn" id="open-cart-btn">🛒</button>
+            <button class="open-cart-btn" id="open-cart-btn"><i class="fas fa-shopping-cart"></i></button>
         </main>
         <footer>
             <img src="imgs/logo/iconOriginal.png" alt="Root Studio logo">

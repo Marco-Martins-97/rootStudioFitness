@@ -20,25 +20,22 @@ function loadCartProducts(){
     let HTMLcontent = '';
     for (let i = 0; i < 5; i++) {
         HTMLcontent += `   
-            <li class='cart-item'>
-                <img src='imgs/products/notebook.jpg' alt='Produto' class='cart-item-img' />
-                <div class='cart-item-info'>
+            <li class='cart-product'>
+                <img src='imgs/products/notebook.jpg' alt='Produto' class='cart-product-img' />
+                <div class='cart-product-info'>
                     <!-- Action buttons -->
-                    <div class='cart-item-actions'>
+                    <div class='cart-product-actions'>
                     <button class='btn-add' data-id='${i}'>+</button>
                     <button class='btn-remove' data-id='${i}'>-</button>
-                        <button class='btn-delete' data-id='${i}'>🗑</button>
+                        <button class='btn-delete' data-id='${i}'><i class="fas fa-trash"></i></button>
                     </div>
                     <!-- Product name -->
-                    <h4 class='cart-item-name'>Produto Exemplo ${i}</h4>
+                    <h4 class='cart-product-name'>Produto Exemplo ${i}</h4>
                     <!-- Price and quantity -->
-                    <div class='cart-item-meta'>
-                        <span class='cart-item-price'>R$ 49,90</span>
-                        <span class='cart-item-qty'>x2</span>
-                    </div>
+                   
                     <!-- Total price -->
-                    <div class='cart-item-total'>
-                        Total: <span class='cart-item-total-price'>R$ 99,80</span>
+                    <div class='cart-product-total'>
+                        99,80€ <span class='cart-product-price-qty'>(44,90€ x2)</span>
                     </div>
                 </div>
             </li>
@@ -46,7 +43,10 @@ function loadCartProducts(){
     }
     $('.cart-container').html(HTMLcontent);
 }
-
+//  <div class='cart-item-meta'>
+//                         <span class='cart-item-price'>R$ 49,90</span>
+//                         <span class='cart-item-qty'>x2</span>
+//                     </div>
 
 $(document).ready(function(){
     loadShopProducts();
