@@ -1,6 +1,6 @@
 function loadShopProducts(){
     $.post('includes/loadServerData.inc.php', {action: 'loadShopProducts'}, function(response){
-        console.log(response);
+        // console.log(response);
 
         if (!response || typeof response !== 'object') {
             console.error('Invalid JSON response:', response);
@@ -15,7 +15,6 @@ function loadShopProducts(){
         }
 
         const products = response.products;
-        console.log(products);
         let HTMLcontent = `   
             <li class='product-card'>
                 <img src='imgs/products/newProduct.jpg' alt='Novo Produto' class='product-img'>
@@ -32,13 +31,13 @@ function loadShopProducts(){
             products.forEach(product => {
                 HTMLcontent += `   
                     <li class='product-card'>
-                        <img src='imgs/products/${product.productImgSrc}' alt='${product.productName}' class='product-img'>
+                        <img src='imgs/products/${product.productImgSrc}' alt='${product.productName}' class='product-img' onerror='this.src="imgs/products/defaultProduct.jpg"'>
                         <h4 class='product-name'>${product.productName}</h4>
                         <div class='product-info'>${product.productPrice}€</div>
                         <div class='product-info'>Stock: ${product.productStock}</div>
                         <div class='product-actions'>
-                            <button class='btn-edit' data-id='${product.id}'>Editar</button>
-                            <button class='btn-remove' data-id='${product.id}'>Remover</button>
+                            <button class='btn-edit-product' data-id='${product.id}'>Editar</button>
+                            <button class='btn-delete-product' data-id='${product.id}'>Apagar</button>
                         </div>
                     </li>
                 `;
@@ -51,7 +50,7 @@ function loadShopProducts(){
     });
 }
 
-function addNewproduct(){
+function addNewProduct(){
     const modal =  `<div class='modal' id='createNewProduct'>
                         <div class='modal-content'>
                             <span id='close-add-modal'>&times;</span>
@@ -77,13 +76,13 @@ function addNewproduct(){
                             </div>
                             <div class='btn-container'>
                                 <button id='save'>Salvar</button>
-                                <button id='cancel'>Cancelar</button>
+                                <button id='cancelAdd'>Cancelar</button>
                             </div>
                         </div>
                     </div>`;
     $('.shop-content').append(modal);
 
-    $('#close-add-modal, #cancel').on('click', function() {
+    $('#close-add-modal, #cancelAdd').on('click', function() {
         $('#createNewProduct').remove(); // remove o modal
     });
     
@@ -150,12 +149,11 @@ function addNewproduct(){
                         console.error('Erro:', response.message);
                         return;
                     }
-                   if (response.status === 'processError'){
+                    if (response.status === 'processError'){
                         console.error('Erro:', response.error);
                         $error.html(response.message);
                         return;
                     }
-
                     if (response.status === 'invalid'){
                         let msg = '';
                         $.each(response.message, function(field, message){
@@ -187,11 +185,72 @@ function addNewproduct(){
             
     
 }
+
+function deleteProduct(productName, productId){
+    console.log(productId);
+    const modal =  `<div class='modal' id='deleteProduct'>
+                        <div class='modal-content'>
+                            <span id='close-del-modal'>&times;</span>
+                            <h2>Apagar ${productName}</h2>
+                            <div class="error"></div>
+                            <div class='btn-container'>
+                                <button id='delete'>Apagar</button>
+                                <button id='cancelDel'>Cancelar</button>
+                            </div>
+                        </div>
+                    </div>`;
+    $('.shop-content').append(modal);
+
+    $('#close-del-modal, #cancelDel').on('click', function() {
+        $('#deleteProduct').remove(); // remove o modal
+    });
+
+    $('#delete').on('click', function() {
+        $.post('includes/saveServerData.inc.php', {action: 'deleteProduct', productId: productId}, function(response){
+            console.log(response);
+            if (response.status === 'error') {
+                console.error('Server error:', response.message || 'Unknown error');
+                return;
+            }
+            if (response.status === 'processError') {
+                console.error('Erro: ', response.error);
+                $('.error').text(response.message);
+                return;
+            } 
+            
+            console.log(`${productName} foi apagado com sucesso!`);
+            $('.error').css('color', 'green').text('Produto apagado com sucesso!');
+            setTimeout(() => {
+                $('#deleteProduct').remove();
+                loadShopProducts();
+            }, 1000);   
+        
+        }, 'json').fail(function () {
+            console.error('Erro na ligação ao servidor.');
+        });
+    });
+}
+
+
+
+
+
+
 $(document).ready(function(){
     loadShopProducts();
 
     $(document).on('click', '.btn-add-product', function() {
-        addNewproduct();
+        addNewProduct();
+    });
+    
+    $(document).on('click', '.btn-delete-product', function() {
+        const productId = $(this).data('id');
+        const productName = $(this).closest('.product-card').find('.product-name').text();  //pega o nome do produto
+        deleteProduct(productName, productId);
+    });
+    $(document).on('click', '.btn-edit-product', function() {
+        const productId = $(this).data('id');
+        // addNewproduct();
     });
     
 

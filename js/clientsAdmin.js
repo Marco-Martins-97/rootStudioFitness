@@ -126,11 +126,11 @@ function reviewApplication(applicationId, review){
     $.post('includes/saveServerData.inc.php', {action: 'reviewApplication', applicationId: applicationId, review: review}, function(response){
         console.log(response);
         if (response.status === 'error') {
-            console.warn('Server error:', response.message || 'Unknown error');
+            console.error('Server error:', response.message || 'Unknown error');
         } else if (response.status !== 'success') {
-            console.warn('Failed To Execute!');
+            console.warn('Falha ao executar!');
         } else {
-            console.log(`Application - Id= "${applicationId}", changed to ${review} with ${response.status}`);
+            console.log(`Application - Id= "${applicationId}", alterada para ${review} com ${response.status}`);
         }
        
         loadApplications(); 

@@ -12,7 +12,7 @@ class Shop{
         $dbh = new Dbh();
         $this->conn = $dbh->connect();
     }
-
+    // SQL
     private function createNewProduct($productImgSrc, $productName, $productPrice, $productStock){
         $query = 'INSERT INTO products (productImgSrc, productName, productPrice, productStock) VALUES (:productImgSrc, :productName, :productPrice, :productStock)';
         $stmt = $this->conn->prepare($query);
@@ -33,6 +33,28 @@ class Shop{
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $result;
     }
+
+    private function productExists($productId){
+        $query = 'SELECT EXISTS(SELECT 1 FROM products WHERE id = :productId)';
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':productId', $productId);
+        $stmt->execute();
+    
+        return (bool) $stmt->fetchColumn();
+    }
+
+    private function getImgSrc($productId){
+        $query="SELECT pImgSrc FROM products WHERE id = :productId;";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':productId', $productId);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['pImgSrc'] ?? false;
+    }
+
+
+    // PRIVATE FUNCTIONS
+    
 
     private function uploadImg(){
         // verifica se o ficheiro nao existe e cria um
@@ -60,6 +82,7 @@ class Shop{
         return ['status' => 'valid'];
     }
 
+    // PUBLIC FUNCTIONS
     public function addNewProduct($productImg, $productName, $productPrice, $productStock){
         //validaçao dos dados
         require_once 'validations.inc.php';
@@ -117,4 +140,68 @@ class Shop{
             return ['status' => 'invalid', 'message' => $this->errors];
         }
     }
+
+    public function deleteProduct($productId){
+        //verifica se o produto existe
+        if(!$this->productExists($productId)){
+            return ['status' => 'processError', 'error' => 'O produto não existe.', 'message' => 'Ocurreu Um Erro, Não Foi Possivel Apagar o Produto!'];
+        }
+  
+        $delImgRes = $this->deleteProductImg($productId);
+        if($delImgRes['status'] !== 'valid'){
+            return $delImgRes;
+        }
+
+        return ['status' => 'valid'];
+    }
+
+    private function deleteProductImg($productId){
+        /* $imgSrc = $this->getImgSrc($productId);
+        if (!$imgSrc){
+            return ['status' => 'processError', 'error' => 'Não foi possivel obter a Src da imagem.', 'message' => 'Ocorreu um erro, Não foi possivel salvar a imagem.'];
+        }
+        
+        $imgDir = $this->uploadDir.$imgSrc;
+        if(file_exists($imgDir)){
+            if(!unlink($imgDir)){
+                return ['status' => 'processError', 'error' => 'Não foi possivel apagar a imagem.', 'message' => 'Ocorreu um erro, Não foi possivel salvar a imagem.'];
+            }
+        }
+        return ['status' => 'valid']; */
+    }
 }
+
+
+
+/* private function deleteProductImg($productId){
+        $imgSrc = $this->getImgSrc($productId);
+        $imgDir = $this->uploadDir.$imgSrc;
+        return file_exists($imgDir) && unlink($imgDir);
+        // echo file_exists($imgDir) && unlink($imgDir) ? 'true' : 'false';
+    } 
+        
+    private function deleteProductData($productId){
+        $query = "DELETE FROM products WHERE id = :productId";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':productId', $productId);
+        $stmt->execute();
+    }
+    private function getImgSrc($productId){
+        $query="SELECT pImgSrc FROM products WHERE id = :productId;";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':productId', $productId);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['pImgSrc'] ?? false;
+    }
+
+
+    private function clientExists($userId){
+        $query = 'SELECT EXISTS(SELECT 1 FROM clients WHERE userId = :userId)';
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':userId', $userId);
+        $stmt->execute();
+    
+        return (bool) $stmt->fetchColumn();
+    }
+    */
