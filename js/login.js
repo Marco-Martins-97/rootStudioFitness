@@ -64,7 +64,7 @@ $(document).ready(function(){
         e.preventDefault();
 
         if(noEmptyFields(loginForm) && isFormValid(loginForm)){
-            error.css('color', 'green').text('Enviado Com Sucesso!').show();
+            error.css('color', 'blue').text('Enviando...').show();
 
             // depois de 1 segundo e envia o formulário
             setTimeout(function(){

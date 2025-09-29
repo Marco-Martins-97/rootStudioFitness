@@ -90,6 +90,28 @@ switch ($action) {
             }
             break;
         
+        case 'loadShopProducts':
+            /* if(!isset($_SESSION["userRole"])){  //verifica e o utilizador esta logado 
+                echo json_encode(['status' => 'error', 'message' => 'Login required']);
+                exit;
+            }  */
+
+            try {
+                require_once "ShopHandler.php";
+
+                $shop = new Shop();
+                $shopProducts = $shop->loadProducts();
+                
+                echo json_encode(['status' => 'success', 'products' => $shopProducts]);
+                exit;
+    
+            } catch (PDOException $e) {
+                error_log("Database error: " . $e->getMessage()); // Log interno
+                echo json_encode(['status' => 'error', 'message' => 'Erro na ligação ao servidor.']);
+                exit;
+            }
+            break;
+        
 
 
 

@@ -99,7 +99,7 @@ $(document).ready(function(){
         
         if(noEmptyFields(applicationForm) && isFormValid(applicationForm)){
             $('.validSub').remove();
-            const successDiv = $('<div class="validSub">Enviado Com Sucesso!</div>');
+            const successDiv = $('<div class="validSub">Enviando...</div>');
             $('.form-disclaimer').after(successDiv);
 
             // depois de 1 segundo e envia o formulário

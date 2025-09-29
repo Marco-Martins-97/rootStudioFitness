@@ -1,30 +1,54 @@
 function loadShopProducts(){
-    let HTMLcontent = `   
-        <li class='product-card'>
-            <img src='imgs/products/newProduct.jpg' alt='Novo Produto' class='product-img'>
-            <h4 class='product-name'>Novo Produto</h4>
-            <div class='product-info'>0,00 €</div>
-            <div class='product-info'>Stock: 0</div>
-            <div class='product-actions'>
-                <button class='btn-add-product'>Adicionar</button>
-            </div>
-        </li>
-    `;
-    for (let i = 0; i < 8; i++) {
-        HTMLcontent += `   
+    $.post('includes/loadServerData.inc.php', {action: 'loadShopProducts'}, function(response){
+        console.log(response);
+
+        if (!response || typeof response !== 'object') {
+            console.error('Invalid JSON response:', response);
+            $('.products-container').html('Ocurreu Um Erro, Não Foi Possivel Carregar os Produtos!');
+            return;
+        }
+
+        if (response.status === 'error') {
+            console.warn('Server error:', response.message || 'Unknown error');
+            $('.products-container').html('Ocurreu Um Erro, Não Foi Possivel Carregar os Produtos!');
+            return;
+        }
+
+        const products = response.products;
+        console.log(products);
+        let HTMLcontent = `   
             <li class='product-card'>
-                <img src='imgs/products/notebook.jpg' alt='Produto' class='product-img'>
-                <h4 class='product-name'>Produto ${i}</h4>
-                <div class='product-info'>R$ 49,90</div>
+                <img src='imgs/products/newProduct.jpg' alt='Novo Produto' class='product-img'>
+                <h4 class='product-name'>Novo Produto</h4>
+                <div class='product-info'>0,00 €</div>
                 <div class='product-info'>Stock: 0</div>
                 <div class='product-actions'>
-                    <button class='btn-edit' data-id='${i}'>Editar</button>
-                    <button class='btn-remove' data-id='${i}'>Remover</button>
+                    <button class='btn-add-product'>Adicionar</button>
                 </div>
             </li>
         `;
-    }
-    $('.products-container').html(HTMLcontent);
+
+        if(products.length > 0){
+            products.forEach(product => {
+                HTMLcontent += `   
+                    <li class='product-card'>
+                        <img src='imgs/products/${product.productImgSrc}' alt='${product.productName}' class='product-img'>
+                        <h4 class='product-name'>${product.productName}</h4>
+                        <div class='product-info'>${product.productPrice}€</div>
+                        <div class='product-info'>Stock: ${product.productStock}</div>
+                        <div class='product-actions'>
+                            <button class='btn-edit' data-id='${product.id}'>Editar</button>
+                            <button class='btn-remove' data-id='${product.id}'>Remover</button>
+                        </div>
+                    </li>
+                `;
+            });
+        }
+
+        $('.products-container').html(HTMLcontent);
+    }, 'json').fail(function () {
+        $('.products-container').html('Ocurreu Um Erro, Não Foi Possivel Carregar os Produtos');
+    });
 }
 
 function addNewproduct(){
@@ -96,15 +120,14 @@ function addNewproduct(){
             }
             if (response.status === 'invalid'){
                 let msg = '';
-                $.each(response.message, function(error, message){
+                $.each(response.message, function(field, message){
                     msg += message + '<br>';
-                    console.warn(`Input Invalido: ${error}: ${message}`);
+                    console.warn(`Input Invalido: ${field}: ${message}`);
                 });
 
                 $error.html(msg);
                 return;
             }
-            
             $error.text('');
             
             //SALVA O PRODUTO
@@ -127,64 +150,47 @@ function addNewproduct(){
                         console.error('Erro:', response.message);
                         return;
                     }
+                   if (response.status === 'processError'){
+                        console.error('Erro:', response.error);
+                        $error.html(response.message);
+                        return;
+                    }
 
                     if (response.status === 'invalid'){
                         let msg = '';
-                        $.each(response.message, function(error, message){
+                        $.each(response.message, function(field, message){
                             msg += message + '<br>';
-                            console.warn(`Input Invalido: ${error}: ${message}`);
+                            console.warn(`Input Inválido: ${field}: ${message}`);
                         });
 
                         $error.html(msg);
                         return;
                     }
 
-                    console.log(response);
 
-                    $error.css('color', 'green').text('Produto Criado Com Sucesso.');
-                    setTimeout(() => $('#createNewProduct').remove(), 1000);
-
+                    $error.css('color', 'green').text('Produto salvo com sucesso!');
+                    setTimeout(() => {
+                        $('#createNewProduct').remove();
+                        loadShopProducts();
+                    }, 1000);
 
                 }, error: function(xhr, status, error) {
                     console.error('AJAX Error:', error);
                     $error.text('Erro ao validar os dados.');
                 }
             });
-            // $.post('includes/saveServerData.inc.php', {action: 'saveNewProduct', imgFile: productImg, valueName: productName, valuePrice: productPrice, valueStock: productStock}, function(response){
-            //     if (response.status === 'error'){
-            //         console.error('Erro:', response.message);
-            //         return;
-            //     }
-            //     if (response.status === 'invalid'){
-            //         let msg = '';
-            //         $.each(response.message, function(error, message){
-            //             msg += message + '<br>';
-            //             console.warn(`Input Invalido: ${error}: ${message}`);
-            //         });
-
-            //         error.html(msg);
-            //         return;
-            //     }
-                
-            //     error.css('color', 'green').text('Password alterada com sucesso!');
-            //     setTimeout(() => $('#changePwdModal').remove(), 1000);
-
-            // }, 'json').fail(function () {
-            //     console.error('Erro ao validar os dados.');
-            //     error.text('Erro ao validar os dados.');
-            // });
         }, 'json').fail(function () {
             console.error('Erro ao validar os dados.');
             $error.text('Erro ao validar os dados.');
         });
     });
             
-
+    
 }
 $(document).ready(function(){
     loadShopProducts();
 
-    $('.btn-add-product').on('click', function() {
+    $(document).on('click', '.btn-add-product', function() {
         addNewproduct();
     });
     
