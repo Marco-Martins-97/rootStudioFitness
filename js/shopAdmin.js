@@ -187,7 +187,7 @@ function addNewProduct(){
 }
 
 function deleteProduct(productName, productId){
-    console.log(productId);
+    // console.log(productId);
     const modal =  `<div class='modal' id='deleteProduct'>
                         <div class='modal-content'>
                             <span id='close-del-modal'>&times;</span>
@@ -226,7 +226,7 @@ function deleteProduct(productName, productId){
             }, 1000);   
         
         }, 'json').fail(function () {
-            console.error('Erro na ligação ao servidor.');
+            console.error('[0]Erro na ligação ao servidor.');
         });
     });
 }

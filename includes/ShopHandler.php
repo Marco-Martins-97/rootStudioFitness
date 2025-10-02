@@ -3,7 +3,8 @@ require_once 'Dbh.php';
 
 class Shop{
     private $uploadDir = "../imgs/products/";
-    private $uploadedImg;
+    private $uploadedImg = null;
+    private $backupImg = null;
 
     private $conn;
     private $errors = [];
@@ -44,12 +45,12 @@ class Shop{
     }
 
     private function getImgSrc($productId){
-        $query="SELECT pImgSrc FROM products WHERE id = :productId;";
+        $query="SELECT productImgSrc FROM products WHERE id = :productId;";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':productId', $productId);
         $stmt->execute();
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $result['pImgSrc'] ?? false;
+        return $result['productImgSrc'] ?? false;
     }
 
 
@@ -144,30 +145,53 @@ class Shop{
     public function deleteProduct($productId){
         //verifica se o produto existe
         if(!$this->productExists($productId)){
-            return ['status' => 'processError', 'error' => 'O produto não existe.', 'message' => 'Ocurreu Um Erro, Não Foi Possivel Apagar o Produto!'];
+            return ['status' => 'processError', 'error' => 'O produto não existe.', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Apagar o Produto!'];
         }
   
         $delImgRes = $this->deleteProductImg($productId);
         if($delImgRes['status'] !== 'valid'){
             return $delImgRes;
         }
-
+        
+        if (!$this->deleteProductData($productId)){
+            $imgDir = $delImgRes['dir'];
+            if ($this->backupImg !== null){
+                if (!file_put_contents($imgDir, $this->backupImg)) {
+                    return ['status' => 'processError', 'error' => 'Falha ao repor o backup da imagem.', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Apagar o Produto!'];
+                }
+            }
+            return ['status' => 'processError', 'error' => 'Não foi possivel apagar os dados do produto.', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Apagar o Produto!'];
+        }
         return ['status' => 'valid'];
     }
 
+    private function deleteProductData($productId){
+        $query = "DELETE FROM products WHERE id = :productId";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':productId', $productId);
+
+        return $stmt->execute();
+    }
+
     private function deleteProductImg($productId){
-        /* $imgSrc = $this->getImgSrc($productId);
+        $imgSrc = $this->getImgSrc($productId);
         if (!$imgSrc){
-            return ['status' => 'processError', 'error' => 'Não foi possivel obter a Src da imagem.', 'message' => 'Ocorreu um erro, Não foi possivel salvar a imagem.'];
+            return ['status' => 'processError', 'error' => 'Não foi possivel obter a Src da imagem.', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Apagar o Produto!'];
         }
         
         $imgDir = $this->uploadDir.$imgSrc;
         if(file_exists($imgDir)){
+            $this->backupImg = file_get_contents($imgDir);    //salva uma copia da imagem antes de a apagar
             if(!unlink($imgDir)){
-                return ['status' => 'processError', 'error' => 'Não foi possivel apagar a imagem.', 'message' => 'Ocorreu um erro, Não foi possivel salvar a imagem.'];
+                if ($this->backupImg !== null){
+                    if (!file_put_contents($imgDir, $this->backupImg)) {
+                        return ['status' => 'processError', 'error' => 'Falha ao repor o backup da imagem.', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Apagar o Produto!'];
+                    }
+                }
+                return ['status' => 'processError', 'error' => 'Não foi possivel apagar a imagem.', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Apagar o Produto!'];
             }
         }
-        return ['status' => 'valid']; */
+        return ['status' => 'valid', 'dir' => $imgDir];
     }
 }
 

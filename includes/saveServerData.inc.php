@@ -27,7 +27,8 @@ switch ($action) {
         if(!isset($_SESSION["userRole"])){  //verifica e o utilizador esta logado 
             echo json_encode(['status' => 'error', 'message' => 'Login required']);
             exit;
-        } else if($_SESSION["userRole"] !== "admin"){  //verifica e o utilizador é um admin
+        }
+        if($_SESSION["userRole"] !== "admin"){  //verifica e o utilizador é um admin
             echo json_encode(['status' => 'error', 'message' => 'Not an Admin']);
             exit;
         }
@@ -49,7 +50,7 @@ switch ($action) {
             echo json_encode(['status' => 'error', 'message' => 'Erro na ligação ao servidor.']);
             exit;
         }
-        break;
+        
 
     case 'saveProfileField':
         if(!isset($_SESSION["userRole"])){  //verifica e o utilizador esta logado 
@@ -79,7 +80,7 @@ switch ($action) {
             echo json_encode(['status' => 'error', 'message' => 'Erro na ligação ao servidor.']);
             exit;
         }
-        break;
+        
 
     case 'saveNewPwd':
         if(!isset($_SESSION["userRole"])){  //verifica e o utilizador esta logado 
@@ -105,13 +106,14 @@ switch ($action) {
             echo json_encode(['status' => 'error', 'message' => 'Erro na ligação ao servidor.']);
             exit;
         }
-        break;
+        
     
     case 'saveNewProduct':
         if(!isset($_SESSION["userRole"])){  //verifica e o utilizador esta logado 
             echo json_encode(['status' => 'error', 'message' => 'Login required']);
             exit;
-        } else if($_SESSION["userRole"] !== "admin"){  //verifica e o utilizador é um admin
+        }
+        if($_SESSION["userRole"] !== "admin"){  //verifica e o utilizador é um admin
             echo json_encode(['status' => 'error', 'message' => 'Not an Admin']);
             exit;
         }
@@ -134,13 +136,14 @@ switch ($action) {
             echo json_encode(['status' => 'error', 'message' => 'Erro na ligação ao servidor.']);
             exit;
         }
-        break;
+        
 
     case 'deleteProduct':
         if(!isset($_SESSION["userRole"])){  //verifica e o utilizador esta logado 
             echo json_encode(['status' => 'error', 'message' => 'Login required']);
             exit;
-        } else if($_SESSION["userRole"] !== "admin"){  //verifica e o utilizador é um admin
+        }
+        if($_SESSION["userRole"] !== "admin"){  //verifica e o utilizador é um admin
             echo json_encode(['status' => 'error', 'message' => 'Not an Admin']);
             exit;
         }
@@ -157,10 +160,10 @@ switch ($action) {
 
         } catch (PDOException $e) {
             error_log("Database error: " . $e->getMessage());
-            echo json_encode(['status' => 'error', 'message' => 'Erro na ligação ao servidor.']);
+            echo json_encode(['status' => 'error', 'message' => '[1]Erro na ligação ao servidor.']);
             exit;
         }
-        break;
+        
 
 
     default:
