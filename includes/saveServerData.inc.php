@@ -160,11 +160,39 @@ switch ($action) {
 
         } catch (PDOException $e) {
             error_log("Database error: " . $e->getMessage());
-            echo json_encode(['status' => 'error', 'message' => '[1]Erro na ligação ao servidor.']);
+            echo json_encode(['status' => 'error', 'message' => 'Erro na ligação ao servidor.']);
             exit;
         }
         
+        case 'updateProduct':
+            if(!isset($_SESSION["userRole"])){  //verifica e o utilizador esta logado 
+                echo json_encode(['status' => 'error', 'message' => 'Login required']);
+                exit;
+            }
+            if($_SESSION["userRole"] !== "admin"){  //verifica e o utilizador é um admin
+                echo json_encode(['status' => 'error', 'message' => 'Not an Admin']);
+                exit;
+            }
 
+            $productId = getPost('productId');
+            $productImg = $_FILES['imgFile'] ?? null;
+            $productName = getPost('valueName');
+            $productPrice = filter_var($_POST['valuePrice'] ?? 0, FILTER_VALIDATE_FLOAT);
+            $productStock = filter_var($_POST['valueStock'] ?? 0, FILTER_VALIDATE_INT);
+
+            try {
+                require_once "ShopHandler.php";
+                $shop = new Shop();
+                $res = $shop->updateProduct($productId, $productImg, $productName, $productPrice, $productStock);
+
+                echo json_encode($res);
+                exit;
+
+            } catch (PDOException $e) {
+                error_log("Database error: " . $e->getMessage());
+                echo json_encode(['status' => 'error', 'message' => 'Erro na ligação ao servidor.']);
+                exit;
+            }
 
     default:
         echo json_encode(['status' => 'error', 'message' => 'Invalid Action']);

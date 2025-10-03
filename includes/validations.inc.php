@@ -23,7 +23,7 @@ function isInputRequired($input){
 }
 
 function isInputEmpty($value){
-    return empty($value);
+    return $value === null || $value === '';
 }
 
 function isLengthInvalid($value, $maxLength = 255){
@@ -145,7 +145,7 @@ function isProductNameInvalid($value) {
 }
 
 function isPriceInvalid($value) {
-    return !preg_match('/^\d+(\.\d{1,2})?$/', $value) || (float)$value <= 0;
+    return !preg_match('/^\d+(\.\d{1,2})?$/', $value) || (float)$value < 0;
 }
 
 function isStockInvalid($value) {

@@ -186,3 +186,7 @@
     font-weight: bold;
     text-align: center;
 }
+
+#tryAgain h2{
+  color: red;
+}

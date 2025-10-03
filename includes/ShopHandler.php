@@ -13,7 +13,7 @@ class Shop{
         $dbh = new Dbh();
         $this->conn = $dbh->connect();
     }
-    // SQL
+    // PRIVATE QUERY
     private function createNewProduct($productImgSrc, $productName, $productPrice, $productStock){
         $query = 'INSERT INTO products (productImgSrc, productName, productPrice, productStock) VALUES (:productImgSrc, :productName, :productPrice, :productStock)';
         $stmt = $this->conn->prepare($query);
@@ -22,6 +22,22 @@ class Shop{
         $stmt->bindParam(':productName', $productName);
         $stmt->bindParam(':productPrice', $productPrice);
         $stmt->bindParam(':productStock', $productStock);
+
+        return $stmt->execute();
+    }
+    
+    private function saveUpdatedProduct($productId, $productImgSrc = null, $productName, $productPrice, $productStock){
+        $query = 'UPDATE products SET ';
+        $productImgSrc !== null && $query .= 'productImgSrc = :productImgSrc, ';
+        $query .= 'productName = :productName, productPrice = :productPrice, productStock = :productStock  WHERE id = :productId';
+
+        $stmt = $this->conn->prepare($query);
+
+        $productImgSrc !== null && $stmt->bindParam(':productImgSrc', $productImgSrc);
+        $stmt->bindParam(':productName', $productName);
+        $stmt->bindParam(':productPrice', $productPrice);
+        $stmt->bindParam(':productStock', $productStock);
+        $stmt->bindParam(':productId', $productId);
 
         return $stmt->execute();
     }
@@ -49,14 +65,30 @@ class Shop{
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':productId', $productId);
         $stmt->execute();
+
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return $result['productImgSrc'] ?? false;
     }
 
+    private function deleteProductData($productId){
+        $query = "DELETE FROM products WHERE id = :productId";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':productId', $productId);
+
+        return $stmt->execute();
+    }
+    // PUBLIC QUERY
+    public function loadProductbyId($productId){
+        $query="SELECT * FROM products WHERE id = :productId;";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':productId', $productId);
+        $stmt->execute();
+
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result;
+    }
 
     // PRIVATE FUNCTIONS
-    
-
     private function uploadImg(){
         // verifica se o ficheiro nao existe e cria um
         if (!file_exists($this->uploadDir)){
@@ -81,6 +113,22 @@ class Shop{
         }
 
         return ['status' => 'valid'];
+    }
+
+    private function deleteProductImg($productId){
+        $imgSrc = $this->getImgSrc($productId);
+        if (!$imgSrc){
+            return ['status' => 'processError', 'error' => 'Não foi possivel obter a Src da imagem.', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Apagar o Produto!'];
+        }
+        
+        $imgDir = $this->uploadDir.$imgSrc;
+        if(file_exists($imgDir)){
+            $this->backupImg = file_get_contents($imgDir);    //salva uma copia da imagem antes de a apagar
+            if(!unlink($imgDir)){
+                return ['status' => 'processError', 'error' => 'Não foi possivel apagar a imagem.', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Apagar o Produto!'];
+            }
+        }
+        return ['status' => 'valid', 'dir' => $imgDir];
     }
 
     // PUBLIC FUNCTIONS
@@ -165,67 +213,85 @@ class Shop{
         return ['status' => 'valid'];
     }
 
-    private function deleteProductData($productId){
-        $query = "DELETE FROM products WHERE id = :productId";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':productId', $productId);
+    public function updateProduct($productId, $productImg, $productName, $productPrice, $productStock){
+        //validaçao dos dados
+        require_once 'validations.inc.php';
 
-        return $stmt->execute();
-    }
-
-    private function deleteProductImg($productId){
-        $imgSrc = $this->getImgSrc($productId);
-        if (!$imgSrc){
-            return ['status' => 'processError', 'error' => 'Não foi possivel obter a Src da imagem.', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Apagar o Produto!'];
+        if(!$this->productExists($productId)){
+            $this->errors['productId'] = 'O produto não existe.';
         }
-        
-        $imgDir = $this->uploadDir.$imgSrc;
-        if(file_exists($imgDir)){
-            $this->backupImg = file_get_contents($imgDir);    //salva uma copia da imagem antes de a apagar
-            if(!unlink($imgDir)){
-                if ($this->backupImg !== null){
-                    if (!file_put_contents($imgDir, $this->backupImg)) {
-                        return ['status' => 'processError', 'error' => 'Falha ao repor o backup da imagem.', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Apagar o Produto!'];
-                    }
-                }
-                return ['status' => 'processError', 'error' => 'Não foi possivel apagar a imagem.', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Apagar o Produto!'];
+
+        if($productImg){
+            if ($productImg['error'] !== 0){
+                $this->errors['productImg'] = 'Não foi carregar a imagem.';
+            } else if (isSizeInvalid($productImg['size'])){
+                $this->errors['productImg'] = 'A imagem excede o tamanho permitido.';
+            } elseif (isTypeInvalid($productImg['type'])){
+                $this->errors['productImg'] = 'A imagem não tem um formato válido (png, jpg, gif).';
             }
         }
-        return ['status' => 'valid', 'dir' => $imgDir];
+        
+        if(isInputRequired('productName') && isInputEmpty($productName)){
+            $this->errors['productName'] = 'O nome do produto é obrigatório.';
+        } elseif (isProductNameInvalid($productName)){
+            $this->errors['productName'] = 'O nome contém caracteres inválidos.';
+        } elseif (isLengthInvalid($productName)){
+            $this->errors['productName'] = 'O nome excede o limite de caracteres.';
+        }
+        
+        if (isInputRequired('productPrice') && isInputEmpty($productPrice)) {
+            $this->errors['productPrice'] = 'O preço é obrigatório.';
+        } elseif (isPriceInvalid($productPrice)) {
+            $this->errors['productPrice'] = 'O preço deve ser um número válido maior ou igual a zero.';
+        }
+
+        if (isInputRequired('productStock') && isInputEmpty($productStock)) {
+            $errors['productStock'] = 'A quantidade de stock é obrigatório.';
+        } elseif (isStockInvalid($productStock)) {
+            $errors['productStock'] = 'A quantidade de stock deve ser um número inteiro maior ou igual a zero.';
+        }
+
+        // Conecção
+        if (!$this->conn) {
+            $this->errors['connection'] = 'connection failed';
+        }
+        
+        
+        if (!$this->errors){
+            $productImgSrc = null;
+            if($productImg){    // salva a imagem se existir
+                $this->uploadedImg = $productImg;
+                $uploadRes = $this->uploadImg();
+                if($uploadRes['status'] !== 'valid'){
+                    return $uploadRes;
+                }
+                $productImgSrc = $this->uploadedImg['name'];
+            }
+
+            //apaga img antiga
+            // $delImgRes = $this->deleteProductImg($productId);
+            // if($delImgRes['status'] !== 'valid'){
+            //     return $delImgRes;
+            // }
+
+
+            if(!$this->saveUpdatedProduct($productId, $productImgSrc, $productName, $productPrice, $productStock)){
+                // apaga a imagem carregada
+                /* $imgDir = $this->uploadDir.$this->uploadedImg['name'];
+                if(file_exists($imgDir)){
+                    if(!unlink($imgDir)){
+                        return ['status' => 'processError', 'error' => 'Não foi possivel apagar a imagem.', 'message' => 'Ocorreu Um Erro, Não Foi Salvar o Produto!'];
+                    }
+                } */
+                return ['status' => 'processError', 'error' => 'Falla ao salvar o produto.', 'message' => 'Ocorreu Um Erro, Não Foi Salvar o Produto.'];
+            }
+
+            return ['status' => 'valid'];
+        } else {
+            return ['status' => 'invalid', 'message' => $this->errors];
+        }
     }
+
+    
 }
 
-
-
-/* private function deleteProductImg($productId){
-        $imgSrc = $this->getImgSrc($productId);
-        $imgDir = $this->uploadDir.$imgSrc;
-        return file_exists($imgDir) && unlink($imgDir);
-        // echo file_exists($imgDir) && unlink($imgDir) ? 'true' : 'false';
-    } 
-        
-    private function deleteProductData($productId){
-        $query = "DELETE FROM products WHERE id = :productId";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':productId', $productId);
-        $stmt->execute();
-    }
-    private function getImgSrc($productId){
-        $query="SELECT pImgSrc FROM products WHERE id = :productId;";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':productId', $productId);
-        $stmt->execute();
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $result['pImgSrc'] ?? false;
-    }
-
-
-    private function clientExists($userId){
-        $query = 'SELECT EXISTS(SELECT 1 FROM clients WHERE userId = :userId)';
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':userId', $userId);
-        $stmt->execute();
-    
-        return (bool) $stmt->fetchColumn();
-    }
-    */

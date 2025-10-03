@@ -111,6 +111,34 @@ switch ($action) {
                 exit;
             }
             break;
+
+        case 'loadProductById':
+            if(!isset($_SESSION["userRole"])){  //verifica e o utilizador esta logado 
+                echo json_encode(['status' => 'error', 'message' => 'Login required']);
+                exit;
+            } 
+
+            $productId = htmlspecialchars(trim($_POST['productId'] ?? ''));
+
+            try {
+                require_once "ShopHandler.php";
+
+                $shop = new Shop();
+                $shopProduct = $shop->loadProductbyId($productId);
+                
+                if (!$shopProduct){
+                    echo json_encode(['status' => 'error', 'message' => 'O produto não foi encontrado.']);
+                    exit;
+                }
+                echo json_encode(['status' => 'success', 'product' => $shopProduct]);
+                exit;
+    
+            } catch (PDOException $e) {
+                error_log("Database error: " . $e->getMessage()); // Log interno
+                echo json_encode(['status' => 'error', 'message' => 'Erro na ligação ao servidor.']);
+                exit;
+            }
+            break;
         
 
 
