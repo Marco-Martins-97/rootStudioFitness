@@ -26,7 +26,7 @@ class Shop{
         return $stmt->execute();
     }
     
-    private function saveUpdatedProduct($productId, $productImgSrc = null, $productName, $productPrice, $productStock){
+    private function updatedProductData($productId, $productImgSrc = null, $productName, $productPrice, $productStock){
         $query = 'UPDATE products SET ';
         $productImgSrc !== null && $query .= 'productImgSrc = :productImgSrc, ';
         $query .= 'productName = :productName, productPrice = :productPrice, productStock = :productStock  WHERE id = :productId';
@@ -161,9 +161,9 @@ class Shop{
         }
 
         if (isInputRequired('productStock') && isInputEmpty($productStock)) {
-            $errors['productStock'] = 'A quantidade de stock é obrigatório.';
+            $this->errors['productStock'] = 'A quantidade de stock é obrigatório.';
         } elseif (isStockInvalid($productStock)) {
-            $errors['productStock'] = 'A quantidade de stock deve ser um número inteiro maior que zero.';
+            $this->errors['productStock'] = 'A quantidade de stock deve ser um número inteiro maior que zero.';
         }
 
         // Conecção
@@ -246,9 +246,9 @@ class Shop{
         }
 
         if (isInputRequired('productStock') && isInputEmpty($productStock)) {
-            $errors['productStock'] = 'A quantidade de stock é obrigatório.';
+            $this->errors['productStock'] = 'A quantidade de stock é obrigatório.';
         } elseif (isStockInvalid($productStock)) {
-            $errors['productStock'] = 'A quantidade de stock deve ser um número inteiro maior ou igual a zero.';
+            $this->errors['productStock'] = 'A quantidade de stock deve ser um número inteiro maior ou igual a zero.';
         }
 
         // Conecção
@@ -265,25 +265,35 @@ class Shop{
                 if($uploadRes['status'] !== 'valid'){
                     return $uploadRes;
                 }
+                
                 $productImgSrc = $this->uploadedImg['name'];
+
+                //apaga imagem antiga
+                $delImgRes = $this->deleteProductImg($productId);
+                if($delImgRes['status'] !== 'valid'){
+                    return $delImgRes;
+                }
             }
 
-            //apaga img antiga
-            // $delImgRes = $this->deleteProductImg($productId);
-            // if($delImgRes['status'] !== 'valid'){
-            //     return $delImgRes;
-            // }
 
-
-            if(!$this->saveUpdatedProduct($productId, $productImgSrc, $productName, $productPrice, $productStock)){
-                // apaga a imagem carregada
-                /* $imgDir = $this->uploadDir.$this->uploadedImg['name'];
-                if(file_exists($imgDir)){
-                    if(!unlink($imgDir)){
+            if(!$this->updatedProductData($productId, $productImgSrc, $productName, $productPrice, $productStock)){
+                //restaura a imagem antiga, caso falhe a salvar os dados
+                if($productImg){
+                    $oldImgDir = $delImgRes['dir'];
+                    if ($this->backupImg !== null){
+                        if (!file_put_contents($oldImgDir, $this->backupImg)) {
+                            return ['status' => 'processError', 'error' => 'Falha ao restaurar o backup da imagem.', 'message' => 'Ocorreu Um Erro, Não Foi Salvar o Produto!'];
+                        }
+                    }
+                }
+                // apaga a imagem carregada, caso falhe a salvar os dados
+                $newImgDir = $this->uploadDir.$this->uploadedImg['name'];
+                if(file_exists($newImgDir)){
+                    if(!unlink($newImgDir)){
                         return ['status' => 'processError', 'error' => 'Não foi possivel apagar a imagem.', 'message' => 'Ocorreu Um Erro, Não Foi Salvar o Produto!'];
                     }
-                } */
-                return ['status' => 'processError', 'error' => 'Falla ao salvar o produto.', 'message' => 'Ocorreu Um Erro, Não Foi Salvar o Produto.'];
+                }
+                return ['status' => 'processError', 'error' => 'Falha ao salvar o produto.', 'message' => 'Ocorreu Um Erro, Não Foi Salvar o Produto.'];
             }
 
             return ['status' => 'valid'];
