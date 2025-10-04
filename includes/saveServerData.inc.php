@@ -194,6 +194,68 @@ switch ($action) {
             exit;
         }
 
+    case 'cartHandler':
+        if(!isset($_SESSION["userRole"])){  //verifica e o utilizador esta logado 
+            echo json_encode(['status' => 'processError', 'error' => 'Login required', 'message' => 'Precisa estar logado para poder usar a loja.']);
+            exit;
+        }
+
+        $productId = getPost('productId');
+        $cartAction = getPost('cartAction');
+        $userId = $_SESSION['userId'];
+        
+        try {
+            require_once "ShopHandler.php";
+            $shop = new Shop();
+
+            switch ($cartAction) {
+                case 'add':
+                    $res = $shop->addProductToCart($productId, $userId);
+                    break;
+
+                case 'remove':
+                    // $res = $shop->removeProductFromCart($productId, $userId);
+                    $res = ['status' => 'valid', 'message' => 'remove'];
+                    break;
+                case 'delete':
+
+                    // $res = $shop->deleteProductFromCart($productId, $userId);
+                    $res = ['status' => 'valid', 'message' => 'delete'];
+                    break;
+                
+                default:
+                    $res = ['status' => 'error', 'message' => 'Invalid Cart Action'];
+                    break;
+            }
+        
+            echo json_encode($res);
+            exit;
+
+        } catch (PDOException $e) {
+            error_log("Database error: " . $e->getMessage());
+            echo json_encode(['status' => 'error', 'message' => 'Erro na ligação ao servidor.']);
+            exit;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     default:
         echo json_encode(['status' => 'error', 'message' => 'Invalid Action']);
         break;

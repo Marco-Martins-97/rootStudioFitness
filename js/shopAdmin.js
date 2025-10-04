@@ -1,16 +1,16 @@
 function loadShopProducts(){
-    $.post('includes/loadServerData.inc.php', {action: 'loadShopProducts'}, function(response){
+    $.post('includes/loadServerData.inc.php', {action: 'loadShopAdmProducts'}, function(response){
         // console.log(response);
 
         if (!response || typeof response !== 'object') {
             console.error('Invalid JSON response:', response);
-            $('.products-container').html('Ocurreu Um Erro, Não Foi Possivel Carregar os Produtos!');
+            $('.products-container').html('Ocorreu Um Erro, Não Foi Possivel Carregar os Produtos!');
             return;
         }
 
         if (response.status === 'error') {
             console.warn('Server error:', response.message || 'Unknown error');
-            $('.products-container').html('Ocurreu Um Erro, Não Foi Possivel Carregar os Produtos!');
+            $('.products-container').html('Ocorreu Um Erro, Não Foi Possivel Carregar os Produtos!');
             return;
         }
 
@@ -46,7 +46,7 @@ function loadShopProducts(){
 
         $('.products-container').html(HTMLcontent);
     }, 'json').fail(function () {
-        $('.products-container').html('Ocurreu Um Erro, Não Foi Possivel Carregar os Produtos');
+        $('.products-container').html('Ocorreu Um Erro, Não Foi Possivel Carregar os Produtos');
     });
 }
 
@@ -207,7 +207,7 @@ function deleteProduct(productName, productId){
 
     $('#delete').on('click', function() {
         $.post('includes/saveServerData.inc.php', {action: 'deleteProduct', productId: productId}, function(response){
-            console.log(response);
+            // console.log(response);
             if (response.status === 'error') {
                 console.error('Server error:', response.message || 'Unknown error');
                 return;

@@ -83,3 +83,13 @@ CREATE TABLE products(
     productStock INT NOT NULL DEFAULT 0, 
     PRIMARY KEY (id)
 );
+
+CREATE TABLE shoppingcart(
+	id INT(11) NOT NULL AUTO_INCREMENT,
+    userId INT NOT NULL, 
+    productId INT NOT NULL, 
+    productQuantity INT NOT NULL, 
+    PRIMARY KEY (id),
+    FOREIGN KEY (userId) REFERENCES users(id),
+    FOREIGN KEY (productId) REFERENCES products(id)
+);

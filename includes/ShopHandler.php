@@ -17,7 +17,6 @@ class Shop{
     private function createNewProduct($productImgSrc, $productName, $productPrice, $productStock){
         $query = 'INSERT INTO products (productImgSrc, productName, productPrice, productStock) VALUES (:productImgSrc, :productName, :productPrice, :productStock)';
         $stmt = $this->conn->prepare($query);
-
         $stmt->bindParam(':productImgSrc', $productImgSrc);
         $stmt->bindParam(':productName', $productName);
         $stmt->bindParam(':productPrice', $productPrice);
@@ -32,7 +31,6 @@ class Shop{
         $query .= 'productName = :productName, productPrice = :productPrice, productStock = :productStock  WHERE id = :productId';
 
         $stmt = $this->conn->prepare($query);
-
         $productImgSrc !== null && $stmt->bindParam(':productImgSrc', $productImgSrc);
         $stmt->bindParam(':productName', $productName);
         $stmt->bindParam(':productPrice', $productPrice);
@@ -40,15 +38,6 @@ class Shop{
         $stmt->bindParam(':productId', $productId);
 
         return $stmt->execute();
-    }
-
-    public function loadproducts(){
-        $query = "SELECT * FROM products ORDER BY id DESC;";
-        $stmt = $this->conn->prepare($query);
-        $stmt -> execute();
-
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        return $result;
     }
 
     private function productExists($productId){
@@ -77,7 +66,67 @@ class Shop{
 
         return $stmt->execute();
     }
+
+    private function getStock($productId){
+        $query="SELECT productStock FROM products WHERE id = :productId;";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':productId', $productId);
+        $stmt->execute();
+
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['productStock'] ?? false;
+    }
+
+    private function getProductInCart($productId, $userId){
+        $query="SELECT * FROM shoppingcart WHERE productId = :productId AND userId = :userId;";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':productId', $productId);
+        $stmt->bindParam(':userId', $userId);
+        $stmt->execute();
+
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result ?? false;
+    }
+
+    private function updateCartProductQty($cartProductId, $cartProductQty){
+        $query = 'UPDATE shoppingcart SET productQuantity = :productQuantity WHERE id = :cartProductId;';
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':productQuantity', $cartProductQty);
+        $stmt->bindParam(':cartProductId', $cartProductId);
+
+        return $stmt->execute();
+    }
+
+    private function addNewProductToCart($productId, $userId, $productQty = 1){
+        $query = 'INSERT INTO shoppingcart (userId, productId, productQuantity) VALUES (:userId, :productId, :productQuantity)';
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':userId', $userId);
+        $stmt->bindParam(':productId', $productId);
+        $stmt->bindParam(':productQuantity', $productQty);
+
+        return $stmt->execute();
+    }
+
+
     // PUBLIC QUERY
+    public function loadAdmProducts(){
+        $query = "SELECT * FROM products ORDER BY id DESC;";
+        $stmt = $this->conn->prepare($query);
+        $stmt -> execute();
+
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $result;
+    }
+
+    public function loadProducts(){
+        $query = 'SELECT products.*, CASE WHEN productStock = 0 THEN "unavailable" WHEN productStock < 10 THEN "limited" ELSE "available" END AS productStock FROM products ORDER BY id DESC;';
+        $stmt = $this->conn->prepare($query);
+        $stmt -> execute();
+
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $result;
+    }
+
     public function loadProductbyId($productId){
         $query="SELECT * FROM products WHERE id = :productId;";
         $stmt = $this->conn->prepare($query);
@@ -85,6 +134,16 @@ class Shop{
         $stmt->execute();
 
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result;
+    }
+
+    public function loadShoppingCart($userId){
+        $query = "SELECT * FROM shoppingcart WHERE userId = :userId;";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':userId', $userId);
+        $stmt -> execute();
+
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $result;
     }
 
@@ -132,6 +191,7 @@ class Shop{
     }
 
     // PUBLIC FUNCTIONS
+    //SHOP ADMIN
     public function addNewProduct($productImg, $productName, $productPrice, $productStock){
         //validaçao dos dados
         require_once 'validations.inc.php';
@@ -300,6 +360,42 @@ class Shop{
         } else {
             return ['status' => 'invalid', 'message' => $this->errors];
         }
+    }
+
+    //Shop
+    public function addProductToCart($productId, $userId){
+        //verifica se o produto existe e pega o stock
+        $productStock = $this->getStock($productId);
+
+        if($productStock === false){    //retorna um erro caso o id seja invalido
+            return ['status' => 'processError', 'error' => 'O produto não existe.', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Adicionar o Produto!'];
+        }
+        
+        $cartProduct = $this->getProductInCart($productId, $userId);
+        if($cartProduct){   // caso ja exista o produto no carrinho add +1
+            $cartProductId = $cartProduct['id'];
+            $cartProductQty= $cartProduct['productQuantity'];
+
+            $cartProductQty++;  
+
+            if($productStock < $cartProductQty){
+                return ['status' => 'processError', 'error' => 'Não existe stock suficiente do produto.', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Adicionar o Produto!'];
+            }
+
+            if(!$this->updateCartProductQty($cartProductId, $cartProductQty)){
+                return ['status' => 'processError', 'error' => 'Não foi possivel adicionar ao produto no carrinho', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Adicionar o Produto!'];
+            }
+        } else {    //adiciona o produto ao carrinho
+            if($productStock < 1){
+                return ['status' => 'processError', 'error' => 'Não existe stock do produto.', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Adicionar o Produto!'];
+            }
+
+            if(!$this->addNewProductToCart($productId, $userId)){
+                return ['status' => 'processError', 'error' => 'Não foi possivel adicionar o produto no carrinho', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Adicionar o Produto!'];
+            }
+        }
+
+        return ['status' => 'valid', 'data' => $cartProduct];
     }
 
     

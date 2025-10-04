@@ -65,53 +65,18 @@
                     <h3>Carrinho de Compras</h3>
                     <div id="close-cart">&times;</div>
                 </div>
-                <ul class="cart-container">
-                   <!--  <li class="cart-item">
-                        <img src="imgs/products/notebook.jpg" alt="Produto" class="cart-item-img" />
-                        <div class="cart-item-info">
-                        
-                        <div class="cart-item-actions">
-                            <button class="btn-remove">-</button>
-                            <button class="btn-add">+</button>
-                            <button class="btn-delete">🗑</button>
-                        </div>
-
-                        <h4 class="cart-item-name">Produto Exemplo</h4>
-
-                        <div class="cart-item-meta">
-                            <span class="cart-item-price">R$ 49,90</span>
-                            <span class="cart-item-qty">x2</span>
-                        </div>
-
-                        <div class="cart-item-total">
-                            Total: <span class="cart-item-total-price">R$ 99,80</span>
-                        </div>
-                        </div>
-                    </li> -->
-                    
-                    
-                </ul>
+                <ul class="cart-container"></ul>
                 <div class="pay-container">
                     <div class="cart-summary">
                         <span>Total do Carrinho:</span>
-                        <span class="cart-total">R$ 99,80</span>
+                        <span class="cart-total">0 €</span>
                     </div>
                     <button class="pay-cart">Comprar Carrinho</button>
                 </div>
             </div>
 
             <div class="shop-content">
-                <ul class="products-container">
-                    <!-- <li class="product-card">
-                        <img src="imgs/products/notebook.jpg" alt="Produto" class="product-img">
-                        <h4 class="product-name">Produto 1</h4>
-                        <div class="product-price">R$ 49,90</div>
-                        <div class="product-actions">
-                            <button class="btn-buy">Comprar</button>
-                            <button class="btn-add-cart">Adicionar ao Carrinho</button>
-                        </div>
-                    </li> -->
-                </ul>
+                <ul class="products-container"></ul>
             </div>
 
             <button class="open-cart-btn" id="open-cart-btn"><i class="fas fa-shopping-cart"></i></button>

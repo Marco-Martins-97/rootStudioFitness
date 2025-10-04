@@ -22,7 +22,8 @@ switch ($action) {
         if(!isset($_SESSION["userRole"])){  //verifica e o utilizador esta logado 
             echo json_encode(['status' => 'error', 'message' => 'Login required']);
             exit;
-        } else if($_SESSION["userRole"] !== "admin"){  //verifica e o utilizador é um admin
+        }
+        if($_SESSION["userRole"] !== "admin"){  //verifica e o utilizador é um admin
             echo json_encode(['status' => 'error', 'message' => 'Not an Admin']);
             exit;
         }
@@ -30,6 +31,7 @@ switch ($action) {
         try {
             require_once "Client.php";
             $client = new Client();
+            
             $applicationsData = $client->loadApplications();
 
             $applications = [];
@@ -69,11 +71,12 @@ switch ($action) {
                 exit;
             } 
 
+            $userId = $_SESSION['userId'];
+
             try {
                 require_once "ProfileHandler.php";
-                $userId = $_SESSION['userId'];
-
                 $profile = new Profile($userId);
+
                 $userData = $profile->loadUserData();
                 $clientData = null;
                 if ($_SESSION["userRole"] === 'client'){
@@ -90,16 +93,37 @@ switch ($action) {
             }
             break;
         
-        case 'loadShopProducts':
-            /* if(!isset($_SESSION["userRole"])){  //verifica e o utilizador esta logado 
+        case 'loadShopAdmProducts':
+            if(!isset($_SESSION["userRole"])){  //verifica e o utilizador esta logado 
                 echo json_encode(['status' => 'error', 'message' => 'Login required']);
                 exit;
-            }  */
+            } 
+            if($_SESSION["userRole"] !== "admin"){  //verifica e o utilizador é um admin
+                echo json_encode(['status' => 'error', 'message' => 'Not an Admin']);
+                exit;
+            }
 
             try {
                 require_once "ShopHandler.php";
-
                 $shop = new Shop();
+
+                $shopProducts = $shop->loadAdmProducts();
+                
+                echo json_encode(['status' => 'success', 'products' => $shopProducts]);
+                exit;
+    
+            } catch (PDOException $e) {
+                error_log("Database error: " . $e->getMessage()); // Log interno
+                echo json_encode(['status' => 'error', 'message' => 'Erro na ligação ao servidor.']);
+                exit;
+            }
+            break;
+        
+        case 'loadShopProducts':
+            try {
+                require_once "ShopHandler.php";
+                $shop = new Shop();
+
                 $shopProducts = $shop->loadProducts();
                 
                 echo json_encode(['status' => 'success', 'products' => $shopProducts]);
@@ -122,8 +146,8 @@ switch ($action) {
 
             try {
                 require_once "ShopHandler.php";
-
                 $shop = new Shop();
+
                 $shopProduct = $shop->loadProductbyId($productId);
                 
                 if (!$shopProduct){
@@ -131,6 +155,30 @@ switch ($action) {
                     exit;
                 }
                 echo json_encode(['status' => 'success', 'product' => $shopProduct]);
+                exit;
+    
+            } catch (PDOException $e) {
+                error_log("Database error: " . $e->getMessage()); // Log interno
+                echo json_encode(['status' => 'error', 'message' => 'Erro na ligação ao servidor.']);
+                exit;
+            }
+            break;
+
+        case 'loadShoppingCart':
+            if(!isset($_SESSION["userRole"])){  //verifica e o utilizador esta logado 
+                echo json_encode(['status' => 'invalid', 'message' => 'Login required']);
+                exit;
+            } 
+
+            $userId = $_SESSION['userId'];
+
+            try {
+                require_once "ShopHandler.php";
+                $shop = new Shop();
+
+                $shoppingCart = $shop->loadShoppingCart($userId);
+                
+                echo json_encode(['status' => 'success', 'shoppingCart' => $shoppingCart]);
                 exit;
     
             } catch (PDOException $e) {
