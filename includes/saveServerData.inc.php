@@ -214,13 +214,11 @@ switch ($action) {
                     break;
 
                 case 'remove':
-                    // $res = $shop->removeProductFromCart($productId, $userId);
-                    $res = ['status' => 'valid', 'message' => 'remove'];
+                    $res = $shop->removeProductFromCart($productId, $userId);
                     break;
-                case 'delete':
 
-                    // $res = $shop->deleteProductFromCart($productId, $userId);
-                    $res = ['status' => 'valid', 'message' => 'delete'];
+                case 'delete':
+                    $res = $shop->deleteProductInCart($productId, $userId);
                     break;
                 
                 default:

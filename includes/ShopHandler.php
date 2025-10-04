@@ -106,6 +106,13 @@ class Shop{
 
         return $stmt->execute();
     }
+    private function deleteProductFromCart($cartProductId){
+        $query = "DELETE FROM shoppingcart WHERE id = :productId";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':productId', $cartProductId);
+
+        return $stmt->execute();
+    }
 
 
     // PUBLIC QUERY
@@ -138,7 +145,8 @@ class Shop{
     }
 
     public function loadShoppingCart($userId){
-        $query = "SELECT * FROM shoppingcart WHERE userId = :userId;";
+        $query = 'SELECT p.productImgSrc, p.productName, p.productPrice, p.id AS productId, sc.productQuantity FROM shoppingcart sc JOIN products p ON sc.productId = p.id WHERE sc.userId = :userId;';
+        // $query = "SELECT * FROM shoppingcart WHERE userId = :userId;";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':userId', $userId);
         $stmt -> execute();
@@ -379,7 +387,7 @@ class Shop{
             $cartProductQty++;  
 
             if($productStock < $cartProductQty){
-                return ['status' => 'processError', 'error' => 'Não existe stock suficiente do produto.', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Adicionar o Produto!'];
+                return ['status' => 'processError', 'error' => 'Não existe stock suficiente do produto.', 'message' => 'Não existe stock suficiente do produto.'];
             }
 
             if(!$this->updateCartProductQty($cartProductId, $cartProductQty)){
@@ -387,7 +395,7 @@ class Shop{
             }
         } else {    //adiciona o produto ao carrinho
             if($productStock < 1){
-                return ['status' => 'processError', 'error' => 'Não existe stock do produto.', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Adicionar o Produto!'];
+                return ['status' => 'processError', 'error' => 'Não existe stock do produto.', 'message' => 'Não existe stock suficiente do produto.'];
             }
 
             if(!$this->addNewProductToCart($productId, $userId)){
@@ -395,9 +403,49 @@ class Shop{
             }
         }
 
-        return ['status' => 'valid', 'data' => $cartProduct];
+        return ['status' => 'valid'];
+    }
+    
+    public function removeProductFromCart($productId, $userId){
+        $cartProduct = $this->getProductInCart($productId, $userId);
+
+        if($cartProduct === false){    //retorna um erro caso o id seja invalido
+            return ['status' => 'processError', 'error' => 'O produto não existe no carrinho.', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Adicionar o Produto!'];
+        }   
+        
+        $cartProductId = $cartProduct['id'];
+        $cartProductQty= $cartProduct['productQuantity'];
+
+        $cartProductQty--;  
+
+        if($cartProductQty < 1){
+            if(!$this->deleteProductFromCart($cartProductId)){
+                return ['status' => 'processError', 'error' => 'Não foi possivel apagar o produto no carrinho', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Adicionar o Produto!'];
+            }
+        } else {    //apaga o produto ao carrinho
+            if(!$this->updateCartProductQty($cartProductId, $cartProductQty)){
+                return ['status' => 'processError', 'error' => 'Não foi possivel remover ao produto no carrinho', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Adicionar o Produto!'];
+            }
+
+        }
+
+        return ['status' => 'valid'];
     }
 
-    
-}
+    public function deleteProductInCart($productId, $userId){
+        $cartProduct = $this->getProductInCart($productId, $userId);
 
+        if($cartProduct === false){    //retorna um erro caso o id seja invalido
+            return ['status' => 'processError', 'error' => 'O produto não existe no carrinho.', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Adicionar o Produto!'];
+        }   
+        
+        $cartProductId = $cartProduct['id'];
+
+        if(!$this->deleteProductFromCart($cartProductId)){
+            return ['status' => 'processError', 'error' => 'Não foi possivel apagar o produto no carrinho', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Adicionar o Produto!'];
+        }
+
+        return ['status' => 'valid'];
+    }
+   
+}

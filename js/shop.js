@@ -47,8 +47,6 @@ function loadShopProducts(){
 
 function loadCartProducts(){
     $.post('includes/loadServerData.inc.php', {action: 'loadShoppingCart'}, function(response){
-        
-
         if (!response || typeof response !== 'object') {
             console.error('Resposta JSON Invalida:', response);
             $('.cart-container').html('Ocorreu Um Erro, Não Foi Possivel Carregar o Carrinho!');
@@ -75,96 +73,75 @@ function loadCartProducts(){
 
         const cartProducts = response.shoppingCart;
         let HTMLcontent = '';
+        let totalCart = 0;
 
-        console.log(cartProducts);
+        // console.log(cartProducts);
 
         if(cartProducts.length > 0){
             cartProducts.forEach(product => {
+                //calcula o preto todal do produto
+                const price = Number(product.productPrice) || 0;
+                const qty = Number(product.productQuantity) || 0;
+                const total = (price * qty);
+
+                //calcula o total o carrinho
+                totalCart += total;
+
+                let totalProductContainer = `${total.toFixed(2)}€`;
+                if(qty > 1){
+                    totalProductContainer += ` <span class='cart-product-price-qty'>(${qty} x ${price.toFixed(2)}€)</span>`;
+                }
+
                 HTMLcontent += `
                     <li class='cart-product'>
-                        <img src='imgs/products/notebook.jpg' alt='Produto' class='cart-product-img' />
+                        <img src='imgs/products/${product.productImgSrc}' alt='${product.productName}' class='cart-product-img' onerror='this.src="imgs/products/defaultProduct.jpg"'>
                         <div class='cart-product-info'>
-                            <!-- Action buttons -->
                             <div class='cart-product-actions'>
-                            <button class='btn-add' data-id='${i}'>+</button>
-                            <button class='btn-remove' data-id='${i}'>-</button>
-                                <button class='btn-delete' data-id='${i}'><i class="fas fa-trash"></i></button>
+                            <button class='btn-add' data-id='${product.productId}'>+</button>
+                            <button class='btn-remove' data-id='${product.productId}'>-</button>
+                            <button class='btn-delete' data-id='${product.productId}'><i class="fas fa-trash"></i></button>
                             </div>
-                            <!-- Product name -->
-                            <h4 class='cart-product-name'>Produto Exemplo ${i}</h4>
-                            <!-- Price and quantity -->
-                        
-                            <!-- Total price -->
-                            <div class='cart-product-total'>
-                                99,80€ <span class='cart-product-price-qty'>(44,90€ x2)</span>
-                            </div>
+                            <h4 class='cart-product-name'>${product.productName}</h4>
+                            <div class='cart-product-total'>${totalProductContainer}</div>
                         </div>
                     </li>
                 `;
             });
+        } else{
+            HTMLcontent = '<h4 class="connect-warn">Não Existem produtos no Carrinho!</h4>';
         }
-        // <li class='product-card'>
-        //     <img src='imgs/products/${product.productImgSrc}' alt='${product.productName}' class='product-img' onerror='this.src="imgs/products/defaultProduct.jpg"'>
-        //     <h4 class='product-name'>${product.productName}</h4>
-        //     <div class='product-price'>${product.productPrice}€</div>
-        //     <div class='product-stock ${product.productStock}'>Stock: <span>${stockStatus}</span></div>
-        //     <div class='product-actions'>
-        //         <button class='btn-buy' data-id='${product.id}'>Comprar</button>
-        //         <button class='btn-add-cart' data-id='${product.id}'>Adicionar ao Carrinho</button>
-        //     </div>
-        // </li>
-        
-        $('.products-container').html(HTMLcontent);
-
+        $('.cart-container').html(HTMLcontent);
+        $('.cart-total').html(`${totalCart.toFixed(2)} €`);    //adiciona o total ao carrinho
     }, 'json').fail(function () {
-        $('.cart-container').html('Ocorreu Um Erro, Não Foi Possivel Carregar o Carrinho!');
+        $('.cart-container').html('<h4 class="connect-warn">Ocorreu Um Erro, Não Foi Possivel Carregar o Carrinho!</h4>');
     });
-    /* let HTMLcontent = '';
-    for (let i = 0; i < 5; i++) {
-        HTMLcontent += `   
-            <li class='cart-product'>
-                <img src='imgs/products/notebook.jpg' alt='Produto' class='cart-product-img' />
-                <div class='cart-product-info'>
-                    <!-- Action buttons -->
-                    <div class='cart-product-actions'>
-                    <button class='btn-add' data-id='${i}'>+</button>
-                    <button class='btn-remove' data-id='${i}'>-</button>
-                        <button class='btn-delete' data-id='${i}'><i class="fas fa-trash"></i></button>
-                    </div>
-                    <!-- Product name -->
-                    <h4 class='cart-product-name'>Produto Exemplo ${i}</h4>
-                    <!-- Price and quantity -->
-                   
-                    <!-- Total price -->
-                    <div class='cart-product-total'>
-                        99,80€ <span class='cart-product-price-qty'>(44,90€ x2)</span>
-                    </div>
-                </div>
-            </li>
-        `;
-    }
-    $('.cart-container').html(HTMLcontent); */
 }
 
 function shoppingCartHandler(productId, cartAction){
-    console.log(cartAction,':', productId);
+    const errorPopup = $(`<div class='popup'></div>`);
+
     $.post('includes/saveServerData.inc.php', {action: 'cartHandler', productId: productId, cartAction: cartAction}, function(response){
     
         if (response.status === 'error') {
             console.error('Server error:', response.message || 'Unknown error');
-            // CREATE A POPUP WITH A GENERIC MSG
+            $('.popup').remove();
+            errorPopup.text('Erro na ligação ao servidor.').appendTo('main');
+            setTimeout(function(){
+                errorPopup.fadeOut(500, function(){ $(this).remove(); });
+            }, 2000);
             return;
         }
         if (response.status === 'processError') {
-            console.error('Erro: ', response.error);
-            console.warn('Erro: ', response.message);
-            // CREATE A POPUP WITH THE ERRO MSG
+            console.warn('Erro: ', response.error);
+            $('.popup').remove();
+            errorPopup.text(response.message).appendTo('main');
+            setTimeout(function(){
+                errorPopup.fadeOut(500, function(){ $(this).remove(); });
+            }, 2000);
             return;
         }
 
-        console.log(response);
-
-
+        loadCartProducts();
 
     }, 'json').fail(function () {
         console.error('Erro na ligação ao servidor.');
@@ -178,33 +155,45 @@ $(document).ready(function(){
     // Abrir e fechar o carrinho
     $('#open-cart-btn').on('click', function() {
         $('.shopping-cart').addClass('open');
-        // $('html, body').animate({ scrollTop: 0 }, 'slow');
         $(window).scrollTop(0);
     });
+    
     $('#close-cart').on('click', function() {
         $('.shopping-cart').removeClass('open');
     });
 
     //Comprar (checkout) 
     $(document).on('click', '.btn-buy', function() {
-        const productId = $(this).data('id');
-        console.log(productId);
+        const isAvailable = !$(this).closest('.product-card').find('.product-stock').hasClass('unavailable');
+        if(isAvailable){
+            const productId = $(this).data('id');
+            console.log(productId);
+        }
     });
+
     //Adicionar ao carrinho
     $(document).on('click', '.btn-add-cart', function() {
+        const isAvailable = !$(this).closest('.product-card').find('.product-stock').hasClass('unavailable');
+        if(isAvailable){
+            const productId = $(this).data('id');
+            shoppingCartHandler(productId, 'add');
+        }
+    });
+
+    // add, remove, apaga o produto que está no carrinho
+    $(document).on('click', '.btn-add', function() {
         const productId = $(this).data('id');
         shoppingCartHandler(productId, 'add');
     });
 
+    $(document).on('click', '.btn-remove', function() {
+        const productId = $(this).data('id');
+        shoppingCartHandler(productId, 'remove');
+    });
 
+    $(document).on('click', '.btn-delete', function() {
+        const productId = $(this).data('id');
+        shoppingCartHandler(productId, 'delete');
+    });
 
-    // $(document).on('click', '.btn-delete-product', function() {
-    //     const productId = $(this).data('id');
-    //     const productName = $(this).closest('.product-card').find('.product-name').text();  //pega o nome do produto
-    //     deleteProduct(productName, productId);
-    // });
-    // $(document).on('click', '.btn-edit-product', function() {
-    //     const productId = $(this).data('id');
-    //     editProduct(productId);
-    // });
 });
