@@ -75,9 +75,9 @@
                     </div>
                     <div class="text-container">
                         <h2>João Figueiredo</h2>
-                        <p>Chamo-me João e sou o fundacor do Root, um estúdio que nasceu da minha história, da paixão pelo movimento e da convicção de que todo o progresso começa om uma base sólida, no corpo, na mente e na vida.</p>
-                        <p>Sou licenciado em ciências do desporto, com mestrado em ensino, pós-graduaçao em treino terapêutico e formação em pilates.</p>
-                        <p>Tive uma infância marcada pela obsidade, onde pesei mais de 130kg. Uma realidade que mudou quando decidi transformar a minha vida através do movimento. Cheguei aos 60Kg, e desde entãp nunca mais parei. Musculação, futebol, natação, padel...</p>
+                        <p>Chamo-me João e sou o fundador do Root, um estúdio que nasceu da minha história, da paixão pelo movimento e da convicção de que todo o progresso começa com uma base sólida, no corpo, na mente e na vida.</p>
+                        <p>Sou licenciado em ciências do desporto, com mestrado em ensino, pós-graduação em treino terapêutico e formação em pilates.</p>
+                        <p>Tive uma infância marcada pela obsidade, onde pesei mais de 130kg. Uma realidade que mudou quando decidi transformar a minha vida através do movimento. Cheguei aos 60Kg, e desde então nunca mais parei. Musculação, futebol, natação, padel...</p>
                     </div>
                 </div>
             </section>
@@ -89,9 +89,9 @@
                     </div>
                     <div class="text-container">
                         <h2>Sophie Rocha</h2>
-                        <p>Olá, sou a Sophie e sempre vivi com o desporto no coração. Sou licenciada em gestão pública e mestre em gestão das organizações, mas foi durante a pandemia que a minha vida me desafiou a olhar para dentro, e decidir seguir o meu verdadeiro sonho de trabalharna área do exercício físico.</p>
-                        <p>Formei-me em técnica de exercício físico pela <a href="">@fitnessacademy</a>, onde obtive o meu títilo proficional. Desde então, especializei-me em aulas de grupo, e foi aí que encontrei a minha grande paixao, o step.</p>
-                        <p>Sou motiada por alegria, empatia e energia positiva. Gosto de criar um ambiente leve, onde o trino é mais do que esforço, é conecção, evolução e bem-estar.</p>
+                        <p>Olá, sou a Sophie e sempre vivi com o desporto no coração. Sou licenciada em gestão pública e mestre em gestão das organizações, mas foi durante a pandemia que a minha vida me desafiou a olhar para dentro, e decidir seguir o meu verdadeiro sonho de trabalhar na área do exercício físico.</p>
+                        <p>Formei-me em técnica de exercício físico pela <a href="">@fitnessacademy</a>, onde obtive o meu título profissional. Desde então, especializei-me em aulas de grupo, e foi aí que encontrei a minha grande paixão, o step.</p>
+                        <p>Sou motivada por alegria, empatia e energia positiva. Gosto de criar um ambiente leve, onde o treino é mais do que esforço, é conecção, evolução e bem-estar.</p>
                     </div>
                 </div>
             </section>

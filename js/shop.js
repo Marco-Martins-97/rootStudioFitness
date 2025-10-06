@@ -148,6 +148,16 @@ function shoppingCartHandler(productId, cartAction){
     });
 }
 
+function checkout(type, productId){ // type = direct/cart
+    // cria um formulário
+    const form = $('<form>', { method: 'POST', action: 'checkout.php' });
+    // adiciona os inputs
+    form.append($('<input>', { type: 'hidden', name: 'type', value: type }));
+    type === 'direct' && form.append($('<input>', { type: 'hidden', name: 'productId', value: productId }));
+    // insere o formulário no html e envia
+    form.appendTo('body').submit();
+}
+
 $(document).ready(function(){
     loadShopProducts();
     loadCartProducts();
@@ -167,8 +177,13 @@ $(document).ready(function(){
         const isAvailable = !$(this).closest('.product-card').find('.product-stock').hasClass('unavailable');
         if(isAvailable){
             const productId = $(this).data('id');
-            console.log(productId);
+            checkout('direct', productId); //via POST
+            // window.location.href = `checkout.php?mode=direct&productId=${encodeURIComponent(productId)}}`; //via GET
         }
+    });
+    //Cart checkout
+    $(document).on('click', '.pay-cart', function() {
+        checkout('cart'); //via POST
     });
 
     //Adicionar ao carrinho
