@@ -43,6 +43,7 @@ if ($type === 'direct'){
     
     $product['productQuantity'] = 1;
     $product['productId'] = $productId;
+    unset($product['id'], $product['productStock']);    // remove dados desnecessarios
     $checkoutProducts[] = $product;
 
 } else {
@@ -71,19 +72,22 @@ function loadOrderSummary($checkoutProducts){
 
         $totalCheckout += $total;
         
-        $totalProductContainer = number_format($total, 2) . '€';
+        $totalProductContainer = number_format($total, 2, '.', '') . '€';
         if ($qty > 1) {
             $totalProductContainer .= " <span class='cart-product-price-qty'>($qty x " . number_format($price, 2) . "€)</span>";
         }
+
+        // converte o produto para JSON para ser usado no JS
+        $productJSON = htmlspecialchars(json_encode($product, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
         
         $HTMLcontent .= "
-            <li class='order-product' data-index='$index'>
+            <li class='order-product' data-product='$productJSON'>
                 <img src='imgs/products/" . $product['productImgSrc'] . "' alt='" . $product['productName'] . "' class='order-product-img' onerror='this.src=\"imgs/products/defaultProduct.jpg\"'>
                 <div class='order-product-info'>
                     <div class='order-product-actions'>
-                        <button class='btn-add' data-id='" . $index . "'>+</button>
-                        <button class='btn-remove' data-id='" . $index . "'>-</button>
-                        <button class='btn-delete' data-id='" . $index . "'><i class='fas fa-trash'></i></button>
+                        <button class='btn-add'>+</button>
+                        <button class='btn-remove'>-</button>
+                        <button class='btn-delete'><i class='fas fa-trash'></i></button>
                     </div>
                     <h4 class='order-product-name'>" . $product['productName'] . "</h4>
                     <div class='order-product-total'>$totalProductContainer</div>
@@ -94,7 +98,7 @@ function loadOrderSummary($checkoutProducts){
     $HTMLcontent .= '</ul>
         <div class="pay-summary">
             <span>Total a Pagar:</span>
-            <span class="order-total">'. number_format($totalCheckout, 2) .' €</span>
+            <span class="order-total">'. number_format($totalCheckout, 2, '.', '') .' €</span>
         </div>
     ';
     echo $HTMLcontent;

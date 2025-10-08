@@ -151,3 +151,15 @@ function isPriceInvalid($value) {
 function isStockInvalid($value) {
     return !preg_match('/^\d+$/', $value) || (int)$value < 0;
 }
+function isOutOfStock($productId, $requiredQty) {
+    $dbh = new Dbh();
+    $conn = $dbh->connect();
+
+    $query = 'SELECT productStock FROM products WHERE id = :productId';
+    $stmt = $conn->prepare($query);
+    $stmt->bindParam(':productId', $productId, PDO::PARAM_INT);
+    $stmt->execute();
+    
+    $quantity = $stmt->fetchColumn();
+    return $quantity === false || $quantity < $requiredQty;
+}

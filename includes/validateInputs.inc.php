@@ -434,7 +434,21 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
             } 
            
             exit;
+        
+        case 'stock':
+            $error = '';
+            $productId = htmlspecialchars(trim($_POST['productId']) ?? 0);
+            $qty = htmlspecialchars(trim($_POST['quantity']) ?? 0);
 
+            if (isOutOfStock($productId, $qty)) {
+                $error = 'Não tem produto em stock.';
+            } 
+
+            echo json_encode($error 
+                ? ['status' => 'invalid', 'message' => $error] 
+                : ['status' => 'valid']
+            );
+            exit;
 
 
         default:
