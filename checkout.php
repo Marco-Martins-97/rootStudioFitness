@@ -19,7 +19,7 @@ if (!isset($_POST['type']) || !in_array($_POST['type'], ['direct', 'cart'])) {
     exit;
 }
 
-$type = htmlspecialchars(trim($_POST['type']));
+$type = trim($_POST['type']);
 $checkoutProducts = [];
 $userId = $_SESSION['userId'];
 
@@ -31,17 +31,73 @@ if ($type === 'direct'){
  
     $productId = htmlspecialchars(trim($_POST['productId']));
 
-    //carrega os dados do produto da base de dados
+    //carrega os dados do produto da base de dados e insere dentro o array
     require_once "includes/ShopHandler.php";
     $shop = new Shop();
-    // $checkoutProducts = $shop->loadShoppingCart($userId);
+    $product = $shop->loadProductbyId($productId);
+
+    if (!$product) {
+        header("Location: shop.php?invalid=notfound");
+        exit;
+    }
+    
+    $product['productQuantity'] = 1;
+    $product['productId'] = $productId;
+    $checkoutProducts[] = $product;
 
 } else {
-    
-    //carrega os dados do produto no carrinho da base de dados
+    //carrega os dados do produtos no carrinho da base de dadosw
     require_once "includes/ShopHandler.php";
     $shop = new Shop();
     $checkoutProducts = $shop->loadShoppingCart($userId);
+}
+
+
+function loadOrderSummary($checkoutProducts){
+    // verifica se existem produtos para concluir o checkout
+    if (empty($checkoutProducts)) {
+        header("Location: shop.php?invalid=empty");
+        exit;
+    }
+
+    $totalCheckout = 0;
+    $HTMLcontent = '<ul class="order-container">';
+
+
+    foreach ($checkoutProducts as $index => $product) {
+        $price = floatval($product['productPrice']);
+        $qty = intval($product['productQuantity']);
+        $total = $price * $qty;
+
+        $totalCheckout += $total;
+        
+        $totalProductContainer = number_format($total, 2) . '€';
+        if ($qty > 1) {
+            $totalProductContainer .= " <span class='cart-product-price-qty'>($qty x " . number_format($price, 2) . "€)</span>";
+        }
+        
+        $HTMLcontent .= "
+            <li class='order-product' data-index='$index'>
+                <img src='imgs/products/" . $product['productImgSrc'] . "' alt='" . $product['productName'] . "' class='order-product-img' onerror='this.src=\"imgs/products/defaultProduct.jpg\"'>
+                <div class='order-product-info'>
+                    <div class='order-product-actions'>
+                        <button class='btn-add' data-id='" . $index . "'>+</button>
+                        <button class='btn-remove' data-id='" . $index . "'>-</button>
+                        <button class='btn-delete' data-id='" . $index . "'><i class='fas fa-trash'></i></button>
+                    </div>
+                    <h4 class='order-product-name'>" . $product['productName'] . "</h4>
+                    <div class='order-product-total'>$totalProductContainer</div>
+                </div>
+            </li>
+        ";
+    }
+    $HTMLcontent .= '</ul>
+        <div class="pay-summary">
+            <span>Total a Pagar:</span>
+            <span class="order-total">'. number_format($totalCheckout, 2) .' €</span>
+        </div>
+    ';
+    echo $HTMLcontent;
 }
 ?>
 
@@ -105,23 +161,49 @@ if ($type === 'direct'){
             </nav>
         </header>
         <main>
-            <?php 
-                echo "Type: ".$type."<br>";
-                if ($type === 'direct'){
-                    echo "Id: ".$productId;
-                }
-            ?>
-            <div class="order-summary">
-                <?php 
-                    foreach ($checkoutProducts as $index => $product) {
-                        echo "<h3>Produto " . ($index + 1) . "</h3>";
-                        foreach ($product as $key => $value) {
-                            echo "<p><strong>$key:</strong> $value</p>";
-                        }
-                    }
-                ?>
+
+            <div class="title-container">
+                <h1>Lista de Compras</h1>
             </div>
-            
+            <div class="order-summary">
+                <?php loadOrderSummary($checkoutProducts); ?>
+            </div>
+            <div class="custumer-details">
+                <div class="form-container">
+                    <h2>Dados de Envio</h2>
+                    <form action="includes/checkout.inc.php" method="post" id="checkout-form">
+                        <!-- Nome Completo -->
+                        <div class="field-container required">
+                            <div class="field">
+                                <label for="fullName">Nome Completo:</label>
+                                <input type="text" id="fullName" name="fullName" maxlength="255">
+                            </div>
+                            <div class="error"></div>
+                        </div>
+                        <!-- Data de Nascimento -->
+                        <div class="field-container required">
+                            <div class="field">
+                                <label for="birthDate">Data de Nascimento:</label>
+                                <input type="date" id="birthDate" name="birthDate">
+                            </div>
+                            <div class="error"></div>
+                        </div>
+                        <!-- Morada -->
+                        <div class="field-container required">
+                            <div class="field">
+                                <label for="userAddress">Morada:</label>
+                                <input type="text" id="userAddress" name="userAddress" maxlength="255">
+                            </div>
+                            <div class="error"></div>
+                        </div>
+
+         
+                        <p class="form-disclaimer">Campos de preenchimento obrigatório.</p>
+                        <button type="submit">Finalizar Compra</button>
+                    </form>
+                </div>
+            </div>
+
         </main>
         <footer>
             <img src="imgs/logo/iconOriginal.png" alt="Root Studio logo">
