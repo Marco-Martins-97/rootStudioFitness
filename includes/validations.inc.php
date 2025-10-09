@@ -163,3 +163,13 @@ function isOutOfStock($productId, $requiredQty) {
     $quantity = $stmt->fetchColumn();
     return $quantity === false || $quantity < $requiredQty;
 }
+
+function isUnder18($birthDate) {
+    $birth = DateTime::createFromFormat('Y-m-d', $birthDate);
+    if (!$birth) return true;
+
+    $today = new DateTime();
+    $age = $today->diff($birth)->y;
+
+    return $age < 18;
+}

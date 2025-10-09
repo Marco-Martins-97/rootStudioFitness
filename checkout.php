@@ -176,6 +176,7 @@ function loadOrderSummary($checkoutProducts){
                 <div class="form-container">
                     <h2>Dados de Envio</h2>
                     <form action="includes/checkout.inc.php" method="post" id="checkout-form">
+                        <input type="hidden" name="checkoutType" value="<?php echo $type; ?>">
                         <!-- Nome Completo -->
                         <div class="field-container required">
                             <div class="field">
@@ -187,8 +188,8 @@ function loadOrderSummary($checkoutProducts){
                         <!-- Data de Nascimento -->
                         <div class="field-container required">
                             <div class="field">
-                                <label for="birthDate">Data de Nascimento:</label>
-                                <input type="date" id="birthDate" name="birthDate">
+                                <label for="birthDate18">Data de Nascimento:</label>
+                                <input type="date" id="birthDate18" name="birthDate18">
                             </div>
                             <div class="error"></div>
                         </div>

@@ -188,6 +188,7 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
             exit;
 
         case 'birthDate':
+        case 'birthDate18':
             $error = '';
             $value = trim($_POST['value'] ?? '');
 
@@ -197,6 +198,8 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
                 $error = 'O formato de data é inválido.';
             } elseif (isBirthInvalid($value)){
                 $error = 'A data de nascimento é inválida.';
+            } elseif ($input === 'birthDate18' && isUnder18($value)){
+                $error = 'É necessário ter pelo menos 18 anos.';
             }
 
             echo json_encode($error 

@@ -104,6 +104,39 @@ function checkEmptyOrder(){
     if (!$('.order-product').length) window.location.href = 'shop.php';
 }
 
+function attachOrderData(formId){
+    const products = [];
+    
+    $('.order-product').each(function() {
+        const dataAttr = $(this).attr('data-product');
+        if(!dataAttr) return;
+
+        try {
+            const data = JSON.parse(dataAttr);
+            const productId = data.productId;
+            const quantity = parseInt(data.productQuantity) || 0;
+
+            if (productId && quantity > 0) {
+                products.push({
+                    id: productId,
+                    qty: quantity
+                });
+            }
+            
+        } catch (e) {
+            console.error('Erro ao carregar dados:', dataAttr);
+        }
+
+        let orderInput = formId.find('input[name="orderData"]');
+        if (!orderInput.length) {
+            orderInput = $('<input>', { type: 'hidden', name: 'orderData' });
+            formId.append(orderInput);
+        }
+
+        orderInput.val(JSON.stringify(products));
+    });
+}
+
 $(document).ready(function(){
     const checkoutForm = $('#checkout-form');
     
@@ -155,26 +188,8 @@ $(document).ready(function(){
     });
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     $('#fullName').on('input', function(){ validateField(this); });
-    $('#birthDate').on('input', function(){ validateField(this); });
+    $('#birthDate18').on('input', function(){ validateField(this); });
     $('#userAddress').on('input', function(){ validateField(this); });
 
 
@@ -187,10 +202,12 @@ $(document).ready(function(){
             const successDiv = $('<div class="validSub">Enviando...</div>');
             $('.form-disclaimer').after(successDiv);
 
+            // anexa os dados dos produtos no formulario
+            attachOrderData(checkoutForm);
+
             // depois de 1 segundo e envia o formulário
             setTimeout(function(){
-                // checkoutForm.off('submit').submit();
-                console.log("ENVIDADO!!")
+                checkoutForm.off('submit').submit();
             }, 1000);
         } else {
             console.error('Invalid Form!');

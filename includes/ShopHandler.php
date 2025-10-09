@@ -107,7 +107,7 @@ class Shop{
         return $stmt->execute();
     }
     private function deleteProductFromCart($cartProductId){
-        $query = "DELETE FROM shoppingcart WHERE id = :productId";
+        $query = "DELETE FROM shoppingcart WHERE id = :productId;";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':productId', $cartProductId);
 

@@ -93,3 +93,22 @@ CREATE TABLE shoppingcart(
     FOREIGN KEY (userId) REFERENCES users(id),
     FOREIGN KEY (productId) REFERENCES products(id)
 );
+
+CREATE TABLE orders(
+	id INT(11) NOT NULL AUTO_INCREMENT,
+    orderId VARCHAR(8) NOT NULL, 
+    userId INT NOT NULL, 
+    productId INT NOT NULL, 
+    productName VARCHAR(255) NOT NULL,
+    productQuantity INT NOT NULL, 
+    productPrice DECIMAL(10, 2) NOT NULL, 
+    customerName VARCHAR(255) NOT NULL,
+    customerAddress VARCHAR(255) NOT NULL,
+    orderDate datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    orderStatus VARCHAR(255) NOT NULL DEFAULT 'pending',
+    checkoutType ENUM('direct','cart') NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (userId) REFERENCES users(id),
+    FOREIGN KEY (productId) REFERENCES products(id)
+);
+
