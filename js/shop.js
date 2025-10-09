@@ -159,6 +159,46 @@ function checkout(type, productId){ // type = direct/cart
 }
 
 $(document).ready(function(){
+    const errorPopup = $(`<div class='popup'></div>`);
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.has('invalid')) {
+        const status = params.get('invalid');
+        
+        const errorMsg = {  
+            login: 'Necessita estar logado para poder comprar.'
+        };
+
+        //mostra uma msg personalizada para alguns status e uma generica para todos os outros
+        const msg = errorMsg[status] || 'Ocurreu um erro, Tente Novamente!';    
+
+        $('.popup').remove();
+        errorPopup.text(msg).appendTo('main');
+        setTimeout(function(){
+            errorPopup.fadeOut(500, function(){ $(this).remove(); });
+        }, 2000);
+    } else if (params.has('checkout')) {
+        const status = params.get('checkout');
+
+        if (status === 'success'){
+            //coloca o popup verde
+        } 
+        const errorMsg = {  
+            success: 'Ordem concluida com Sucesso.',
+            error: 'Ocorreu um erro durante o processo, Tente Novamente!',
+            failed: 'Ocorreu um erro, A operação foi cancelada!',
+        };
+    
+        //mostra uma msg personalizada para alguns status e uma generica para todos os outros
+        const msg = errorMsg[status] || 'Ocurreu um erro, Tente Novamente!';    
+    
+        $('.popup').remove();
+        errorPopup.text(msg).appendTo('main');
+        setTimeout(function(){
+        errorPopup.fadeOut(500, function(){ $(this).remove(); });
+        }, 2000);
+    }
+
     loadShopProducts();
     loadCartProducts();
 

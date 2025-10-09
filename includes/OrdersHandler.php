@@ -185,7 +185,6 @@ class Order{
                 exit;
             }
         } else {
-            // print_r($this->errors);
             header("Location: ../shop.php?checkout=error");
             exit;
         }
