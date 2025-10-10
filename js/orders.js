@@ -129,8 +129,6 @@ function reviewOrder(orderId, review){
             console.error('Server error:', response.message || 'Unknown error');
         } else if (response.status !== 'success') {
             console.warn('Falha ao executar!');
-        } else {
-            console.log(`Order - Id= "${orderId}", alterada para ${review} com ${response.status}`);
         }
        
         loadOrders(); 
@@ -146,7 +144,7 @@ $(document).ready(function(){
 
     $(document).on('click', '#confirm-btn', function() {
         const orderId = $(this).data('id');
-        reviewOrder(orderId, 'confirmed');
+        reviewOrder(orderId, 'received');
      });
 
     $(document).on('click', '#cancel-btn', function() {

@@ -20,6 +20,16 @@ class Order{
         return $result['productStock'] ?? false;
     }
 
+    private function getOrderStatus($orderId){
+        $query="SELECT orderStatus FROM orders WHERE orderId = :orderId;";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':orderId', $produorderIdctId);
+        $stmt->execute();
+
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['orderId'] ?? false;
+    }
+
     private function getProductData($productId){
         $query="SELECT productName, productPrice FROM products WHERE id = :productId;";
         $stmt = $this->conn->prepare($query);
@@ -30,13 +40,21 @@ class Order{
         return $result;
     }
 
-    private function orderIdExists($uniqueId){
-        $query = 'SELECT EXISTS(SELECT 1 FROM orders WHERE orderId = :uniqueId)';
+    private function orderIdExists($orderId){
+        $query = 'SELECT EXISTS(SELECT 1 FROM orders WHERE orderId = :orderId)';
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':uniqueId', $uniqueId);
+        $stmt->bindParam(':orderId', $orderId);
         $stmt->execute();
     
         return (bool) $stmt->fetchColumn();
+    }
+
+    private function updateOrderStatus($orderId, $newStatus){
+        $query = "UPDATE orders SET orderStatus = :newStatus WHERE orderId = :orderId;";
+        $stmt = $this->conn->prepare($query);
+        $stmt -> bindParam(":newStatus", $newStatus);
+        $stmt -> bindParam(":orderId", $orderId);
+        return $stmt->execute();
     }
 
     private function createNewOrder($orderId, $userId, $fullName, $userAddress, $checkoutType, $productId, $qty, $productName, $productPrice){
@@ -73,6 +91,15 @@ class Order{
 
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $result;
+    }
+
+    private function isOrderLocked($orderId) {
+        $query = "SELECT COUNT(*) FROM orders WHERE orderId = :orderId AND orderDate <= NOW() - INTERVAL 24 HOUR";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":orderId", $orderId);
+        $stmt->execute();
+
+        return $stmt->fetchColumn() > 0;
     }
 
     private function createOrders($userId, $fullName, $userAddress, $orderData, $checkoutType){
@@ -201,6 +228,43 @@ class Order{
         }
     }
 
+    public function reviewOrder($orderId, $review){
+        $allowedReviews = ['received', 'canceled', 'dispatched', 'rejected'];
+        if(!in_array($review, $allowedReviews)){
+            return ['status' => 'error', 'message' => 'Invalid Review'];
+        }
+
+        if($_SESSION["userRole"] !== "admin" && in_array($review, ['dispatched', 'rejected'])){ 
+            echo json_encode(['status' => 'error', 'message' => 'Not an Admin']);
+            exit;
+        }
+
+        if(!$this->orderIdExists($orderId)){
+            return ['status' => 'error', 'message' => 'Order not found'];
+        }
+        
+
+        //REVER ESTA PARTE; APENAS ACCOES PERMTIDAS!!!!
+        if ($review === 'dispatched'){
+            //remove stock da loja
+            
+            return $this->updateOrderStatus($orderId, $review) ? ['status' => 'success'] : ['status' => 'error', 'message' => 'Failed to Change Status'];
+        } else {
+            if ($review === 'canceled' &&  $this->isOrderLocked($orderId)){
+                echo json_encode(['status' => 'error', 'message' => "order can't be canceled"]);
+                exit;
+            }
+            // if ($review === 'received' &&  $this->hasOrderBeenDispatched($orderId)){
+            //     echo json_encode(['status' => 'error', 'message' => 'order not dispatched']);
+            //     exit;
+            // }
+            return $this->updateOrderStatus($orderId, $review) ? ['status' => 'success'] : ['status' => 'error', 'message' => 'Failed to Change Status'];
+        }
+
+        return ['status' => 'success'];
+        // return ['status' => 'success', 'id' => $orderId, 'review' => $review];
+
+    }
 
     
 }

@@ -244,16 +244,11 @@ switch ($action) {
         $orderId = getPost('orderId');
         $review = getPost('review');
         
-        if($_SESSION["userRole"] !== "admin"){  //verifica e o utilizador é um admin
-            echo json_encode(['status' => 'error', 'message' => 'Not an Admin']);
-            exit;
-        }
 
         try {
-            // require_once "Client.php";
-            // $client = new Client();
-            // $res = $client->reviewClientApplication($applicationId, $review);
-            $res = ['status' => 'test', 'message' =>  $review];
+            require_once 'OrdersHandler.php';
+            $order = new Order();
+            $res = $order->reviewOrder($orderId, $review);
             echo json_encode($res);
             exit;
 

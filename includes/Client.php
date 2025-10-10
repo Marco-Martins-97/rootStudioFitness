@@ -115,22 +115,6 @@ class Client{
         return $stmt->execute();
     }
 
-    private function showData($userId, $fullName, $birthDate, $gender, $userAddress, $nif, $phone, $trainingPlan, $experience, $nutritionPlan, $healthIssues, $healthDetails, $terms){
-        echo 'ID: '. $userId.'<br>';
-        echo 'Name: '. $fullName.'<br>';
-        echo 'Date: '. $birthDate.'<br>';
-        echo 'Gender: '. $gender.'<br>';
-        echo 'Morada: '. $userAddress.'<br>';
-        echo 'nif: '. $nif.'<br>';
-        echo 'phone: '. $phone.'<br>';
-        echo 'Plan: '. $trainingPlan.'<br>';
-        echo 'experience: '. $experience.'<br>';
-        echo 'nutrition: '. $nutritionPlan.'<br>';
-        echo 'healthIssues: '. $healthIssues.'<br>';
-        echo 'healthDetails: '. $healthDetails.'<br>';
-        echo 'Terms: '. $terms.'<br>';
-    }
-
     public function submitClientApplication($userId, $fullName, $birthDate, $gender, $userAddress, $nif, $phone, $trainingPlan, $experience, $nutritionPlan, $healthIssues, $healthDetails, $terms){
         //validaçao dos dados
         require_once 'validations.inc.php';
@@ -238,8 +222,8 @@ class Client{
 
     public function reviewClientApplication($applicationId, $review){
         //Validaçao dos inputs
-        $alloweReviews = ['accepted', 'rejected'];
-        if(!in_array($review, $alloweReviews)){
+        $allowedReviews = ['accepted', 'rejected'];
+        if(!in_array($review, $allowedReviews)){
             return ['status' => 'error', 'message' => 'Invalid Review'];
         }
         if(!$this->applicationExists($applicationId)){

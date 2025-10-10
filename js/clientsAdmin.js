@@ -116,8 +116,6 @@ function reviewApplication(applicationId, review){
             console.error('Server error:', response.message || 'Unknown error');
         } else if (response.status !== 'success') {
             console.warn('Falha ao executar!');
-        } else {
-            console.log(`Application - Id= "${applicationId}", alterada para ${review} com ${response.status}`);
         }
        
         loadApplications(); 
