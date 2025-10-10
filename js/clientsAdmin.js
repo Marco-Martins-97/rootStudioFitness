@@ -106,25 +106,12 @@ function toggleApplication(){
         } else {
             container.removeClass('open');
         }
-        // $(this).closest('.application-container').find('.application-data').stop(true, true).slideToggle(300);
     });
-
-
-
-    /* $(document).on('click', '.application-title', function() {
-        const container = $(this).closest('.application-container');
-        const data = container.find('.application-data');
-        // const arrowIcon = $(this).find('.application-arrow i');
-
-        // arrowIcon.toggleClass('fa-chevron-up fa-chevron-down');
-        container.toggleClass('open');
-        data.stop(true, true).slideToggle(300);
-    }); */
 }
 
 function reviewApplication(applicationId, review){
     $.post('includes/saveServerData.inc.php', {action: 'reviewApplication', applicationId: applicationId, review: review}, function(response){
-        console.log(response);
+        // console.log(response);
         if (response.status === 'error') {
             console.error('Server error:', response.message || 'Unknown error');
         } else if (response.status !== 'success') {
@@ -145,8 +132,8 @@ $(document).ready(function(){
     toggleApplication();
 
     $(document).on('click', '#accept-btn', function() {
-         const applicationId = $(this).data('id');
-         reviewApplication(applicationId, 'accepted');
+        const applicationId = $(this).data('id');
+        reviewApplication(applicationId, 'accepted');
      });
 
     $(document).on('click', '#reject-btn', function() {

@@ -79,7 +79,7 @@ function loadCartProducts(){
 
         if(cartProducts.length > 0){
             cartProducts.forEach(product => {
-                //calcula o preto todal do produto
+                //calcula o preço total do produto
                 const price = Number(product.productPrice) || 0;
                 const qty = Number(product.productQuantity) || 0;
                 const total = (price * qty);
@@ -159,7 +159,7 @@ function checkout(type, productId){ // type = direct/cart
 }
 
 $(document).ready(function(){
-    const errorPopup = $(`<div class='popup'></div>`);
+    const popup = $(`<div class='popup'></div>`);
     const params = new URLSearchParams(window.location.search);
 
     if (params.has('invalid')) {
@@ -173,15 +173,15 @@ $(document).ready(function(){
         const msg = errorMsg[status] || 'Ocurreu um erro, Tente Novamente!';    
 
         $('.popup').remove();
-        errorPopup.text(msg).appendTo('main');
+        popup.text(msg).appendTo('main');
         setTimeout(function(){
-            errorPopup.fadeOut(500, function(){ $(this).remove(); });
+            popup.fadeOut(500, function(){ $(this).remove(); });
         }, 2000);
     } else if (params.has('checkout')) {
         const status = params.get('checkout');
 
         if (status === 'success'){
-            //coloca o popup verde
+            popup.css('background-color', 'green');
         } 
         const errorMsg = {  
             success: 'Ordem concluida com Sucesso.',
@@ -193,9 +193,9 @@ $(document).ready(function(){
         const msg = errorMsg[status] || 'Ocurreu um erro, Tente Novamente!';    
     
         $('.popup').remove();
-        errorPopup.text(msg).appendTo('main');
+        popup.text(msg).appendTo('main');
         setTimeout(function(){
-        errorPopup.fadeOut(500, function(){ $(this).remove(); });
+        popup.fadeOut(500, function(){ $(this).remove(); });
         }, 2000);
     }
 

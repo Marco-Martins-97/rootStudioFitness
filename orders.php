@@ -1,11 +1,17 @@
-<?php require_once 'includes/configSession.inc.php'; ?>
+<?php
+    require_once 'includes/configSession.inc.php';
+    if(!isset($_SESSION["userId"])){ 
+        header("Location: index.php"); 
+        exit;
+    }
+?>
 <!DOCTYPE html>
 <html lang="pt">
     <head>
         <!-- Titulo & Descrição -->
-        <title>Root Fitness Studio - Treino Funcional em Esposende</title>
-        <meta name="description" content="O ROOT Studio Fitness em Esposende é para todos: iniciantes ou experientes. Treino funcional personalizado, com horários flexíveis e foco no teu bem-estar.">
-        <meta name="keywords" content="fitness Esposende, treino funcional Esposende, personal trainer Esposende, aulas de grupo Esposende, estúdio de fitness Braga, treino personalizado Esposende, ginásio Esposende, Root Studio, saúde e bem-estar Esposende">
+        <title>Root Fitness Studio - Encomendas</title>
+        <meta name="description" content="Consulta as tuas encomendas realizadas no ROOT Fitness Studio em Esposende. Acompanha o estado das tuas compras e mantém o controlo sobre os teus pedidos de produtos e serviços.">
+        <meta name="keywords" content="encomendas Root Fitness Studio, histórico de encomendas, pedidos ROOT Esposende, loja fitness Esposende, acompanhamento de encomendas, Root Studio, fitness Esposende, gestão de pedidos">
         <meta name="author" content="Marco Martins">
         <!-- Browser -->
         <meta charset="UTF-8">
@@ -14,7 +20,7 @@
         <!-- Style -->
         <link id="favicon" rel="shortcut icon" href="imgs/logo/iconPreto.png" type="image/x-icon">
         <link rel="stylesheet" href="css/style.css">
-        <link rel="stylesheet" href="css/main.css">
+        <link rel="stylesheet" href="css/orders.css">
         <script src="https://kit.fontawesome.com/d132031da6.js?v=2" crossorigin="anonymous"></script>
         <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"> -->
         <!-- Script -->
@@ -61,52 +67,7 @@
             </nav>
         </header>
         <main>
-            <section id="hero">
-                <h1>" Everything Begins whith a Strong Root. "</h1>
-            </section>
-            <section id="join">
-                <div class="img-text-container">
-                    <div class="img-container">
-                        <img src="imgs/content/team.jpg" alt="membros root">
-                    </div>
-                    <div class="text-container">
-                        <h2>Junta-te a Nós</h2>
-                        <p>Cada um de nós traz algo único, mas partilhamos o mesmo propósito: ajudar-te a mover melhor, a viver com mais consciência e a reencontrar a tua raiz.</p>
-                        <a href="plans.php">Estamos Aqui para ti</a>
-                    </div>
-                </div>
-            </section>
-            <section id="plans">
-                <div class="plans-container">
-                    <a href="plans.php#personalized" class="plan-container">
-                        <img src="imgs/content/treinoPersonalizado.jpg" alt="Treino Personalizado">
-                        <h3>Treinos Personalizados</h3>
-                    </a>
-                    <a href="plans.php#group" class="plan-container">
-                        <img src="imgs/content/aulasGrupo.jpeg" alt="Aulas de Grupo">
-                        <h3>Aulas de Grupo</h3>
-                    </a>
-                    <a href="plans.php#specialties" class="plan-container">
-                        <img src="imgs/content/treinoTerapeitico.jpg" alt="Treino terapeutico">
-                        <h3>Treino Terapeutico</h3>
-                    </a>
-                    <a href="plans.php#specialties" class="plan-container">
-                        <img src="imgs/content/padel.jpeg" alt="Padel">
-                        <h3>Padel</h3>
-                    </a>
-                </div>
-            </section>
-            <section id="video">
-                <!-- <div class="video-container">
-                    <iframe 
-                        src="https://www.youtube.com/embed/XPSEZeGeeqk"
-                        title="YouTube video player"
-                        frameborder="0" 
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                        allowfullscreen
-                    ></iframe>
-                </div> -->
-            </section>
+            <div class="orders-container"></div>
         </main>
         <footer>
             <img src="imgs/logo/iconOriginal.png" alt="Root Studio logo">
@@ -120,6 +81,6 @@
         </footer> 
 
         <script src="js/navMenu.js"></script>
-        <script src="js/main.js"></script>
+        <script src="js/orders.js"></script>
     </body>
 </html>

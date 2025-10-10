@@ -235,7 +235,33 @@ switch ($action) {
             exit;
         }
 
+    case 'reviewOrder':
+        if(!isset($_SESSION["userRole"])){  //verifica e o utilizador esta logado 
+            echo json_encode(['status' => 'error', 'message' => 'Login required']);
+            exit;
+        }
+        
+        $orderId = getPost('orderId');
+        $review = getPost('review');
+        
+        if($_SESSION["userRole"] !== "admin"){  //verifica e o utilizador é um admin
+            echo json_encode(['status' => 'error', 'message' => 'Not an Admin']);
+            exit;
+        }
 
+        try {
+            // require_once "Client.php";
+            // $client = new Client();
+            // $res = $client->reviewClientApplication($applicationId, $review);
+            $res = ['status' => 'test', 'message' =>  $review];
+            echo json_encode($res);
+            exit;
+
+        } catch (PDOException $e) {
+            error_log("Database error: " . $e->getMessage()); // Log interno
+            echo json_encode(['status' => 'error', 'message' => 'Erro na ligação ao servidor.']);
+            exit;
+        }
 
 
 

@@ -54,7 +54,7 @@
                                     <a href="shopAdmin.php">Administração Loja</a>
                                     <a href="clientsAdmin.php">Administração Clientes</a>
                                 <?php } ?>
-                                <a href="profile.php">Encomendas</a>
+                                <a href="orders.php">Encomendas</a>
                                 
                                 <form action="includes/logout.inc.php" method="post">
                                     <button>Sair</button>

@@ -188,7 +188,57 @@ switch ($action) {
             }
             break;
         
+        case 'loadOrders':
+            if(!isset($_SESSION["userRole"])){  //verifica e o utilizador esta logado 
+                echo json_encode(['status' => 'error', 'message' => 'Login required']);
+                exit;
+            } 
 
+            $userId = $_SESSION['userId'];
+
+            try {
+                require_once 'OrdersHandler.php';
+                $order = new Order();
+                
+                $ordersData = $order->loadOrders($userId);
+                
+                echo json_encode(['status' => 'success', 'ordersData' => $ordersData]);
+                exit;
+    
+            } catch (PDOException $e) {
+                error_log("Database error: " . $e->getMessage()); // Log interno
+                echo json_encode(['status' => 'error', 'message' => 'Erro na ligação ao servidor.']);
+                exit;
+            }
+            break;
+
+        /* case 'loadCustomerOrders':
+            if(!isset($_SESSION["userRole"])){  //verifica e o utilizador esta logado 
+                echo json_encode(['status' => 'error', 'message' => 'Login required']);
+                exit;
+            } 
+            if($_SESSION["userRole"] !== "admin"){  //verifica e o utilizador é um admin
+                echo json_encode(['status' => 'error', 'message' => 'Not an Admin']);
+                exit;
+            }
+
+            $userId = $_SESSION['userId'];
+
+            try {
+                require_once 'OrdersHandler.php';
+                $order = new Order();
+                
+                $ordersData = $order->loadCustomerOrders($userId);
+                
+                echo json_encode(['status' => 'success', 'ordersData' => $ordersData]);
+                exit;
+    
+            } catch (PDOException $e) {
+                error_log("Database error: " . $e->getMessage()); // Log interno
+                echo json_encode(['status' => 'error', 'message' => 'Erro na ligação ao servidor.']);
+                exit;
+            }
+            break; */
 
 
 

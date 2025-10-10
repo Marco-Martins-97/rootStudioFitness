@@ -126,6 +126,7 @@
 	display: flex;
 	width: 100%;
 	height: 48px;
+	overflow: hidden;
 }
 .application-btns button{
 	width: 100%;
@@ -142,12 +143,6 @@
 	color: var(--SECONDARY-TXT-COLOR);
 }
 
-#accept-btn{
-	border-radius: 0 0 0 12px;
-}
-#reject-btn{
-	border-radius: 0 0 12px 0;
-}
 @media (min-width: 768px) {
 	.data-container span{
 		width: 150px;

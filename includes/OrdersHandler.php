@@ -64,6 +64,17 @@ class Order{
         return $stmt->execute();
     }
 
+
+    public function loadOrders($userId){
+        $query = "SELECT o.orderId, o.productName, o.productQuantity, o.productPrice, o.orderDate, o.orderStatus, p.productImgSrc FROM orders AS o INNER JOIN products AS p ON o.productId = p.id WHERE userId = :userId ORDER BY orderDate DESC;";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':userId', $userId);
+        $stmt -> execute();
+
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $result;
+    }
+
     private function createOrders($userId, $fullName, $userAddress, $orderData, $checkoutType){
         do {
             $uniqueId = strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 8)); //cria uma string de 8 digitos aleatória com letras maiusculas e numeros
@@ -189,4 +200,7 @@ class Order{
             exit;
         }
     }
+
+
+    
 }
