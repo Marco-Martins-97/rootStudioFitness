@@ -65,7 +65,7 @@
 	color: #F4A300;
 }
 
-.accepted{
+.accepted, .dispatched, .received{
 	color: #3BA55C;
 }
 

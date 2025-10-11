@@ -23,11 +23,11 @@ class Order{
     private function getOrderStatus($orderId){
         $query="SELECT orderStatus FROM orders WHERE orderId = :orderId;";
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':orderId', $produorderIdctId);
+        $stmt->bindParam(':orderId', $orderId);
         $stmt->execute();
 
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $result['orderId'] ?? false;
+        return $result['orderStatus'] ?? false;
     }
 
     private function getProductData($productId){
@@ -93,13 +93,52 @@ class Order{
         return $result;
     }
 
-    private function isOrderLocked($orderId) {
-        $query = "SELECT COUNT(*) FROM orders WHERE orderId = :orderId AND orderDate <= NOW() - INTERVAL 24 HOUR";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(":orderId", $orderId);
-        $stmt->execute();
+    private function dispatchOrder($orderId){
+        try {
+            $this->conn->beginTransaction();    // inicia a transaçao
 
-        return $stmt->fetchColumn() > 0;
+            // pega o productId e quantidade dos produtos da ordem
+            $query="SELECT productId, productQuantity FROM orders WHERE orderId = :orderId";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':orderId', $orderId);
+            $stmt->execute();
+
+            $orderProducts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            //verifica se nao está vazio
+            if(empty($orderProducts)){
+                throw new Exception("Falha ao carregar os dados da encomenda: $orderId");
+            }
+
+            //remove a quantidade de cada produto do stock
+            $updateQuery = "UPDATE products SET productStock = productStock - :productQty WHERE id = :productId AND productStock >= :productQty";
+            $updateStmt = $this->conn->prepare($updateQuery);
+
+            foreach($orderProducts as $product){
+                $updateStmt->execute([
+                    ':productQty' => $product['productQuantity'],
+                    ':productId' => $product['productId']
+                ]);
+
+                //caso o stock seja insficiente, reverte operaçao
+                if ($updateStmt->rowCount() === 0) {
+                    throw new Exception("Stock Insuficiente");
+                }
+            }
+
+            // altera o status para enviado            
+            if(!$this->updateOrderStatus($orderId, 'dispatched')){
+                throw new Exception("Falha ao atualizar o status");
+            }
+
+            //se tudo for bem suceddido , salva as alteraçoes;
+            $this->conn->commit();
+            return true;
+
+        } catch (Exception $e) {
+            $this->conn->rollBack();
+            return false;
+        }
     }
 
     private function createOrders($userId, $fullName, $userAddress, $orderData, $checkoutType){
@@ -117,16 +156,16 @@ class Order{
 
                 if(!$productData) {
                     $this->errors['loadProductData'] = 'failed';
-                    throw new \Exception("Falha ao carregar os dados do produto $productId");
+                    throw new Exception("Falha ao carregar os dados do produto $productId");
                 }
 
                 if(!$this->createNewOrder($uniqueId, $userId, $fullName, $userAddress, $checkoutType, $productId, $qty, $productData['productName'], $productData['productPrice'])){
-                    throw new \Exception("Falha ao criar a ordem do produto $productId");
+                    throw new Exception("Falha ao criar a ordem do produto $productId");
                 }
 
                 if($checkoutType === 'cart'){
                     if(!$this->deleteProductFromCart($productId, $userId)){
-                        throw new \Exception("Falha ao apagar o produto $productId do carrinho");
+                        throw new Exception("Falha ao apagar o produto $productId do carrinho");
                     }
                 }
             }
@@ -134,7 +173,7 @@ class Order{
             $this->conn->commit();
             return true;
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->conn->rollback();
             return false;
         }
@@ -229,42 +268,43 @@ class Order{
     }
 
     public function reviewOrder($orderId, $review){
-        $allowedReviews = ['received', 'canceled', 'dispatched', 'rejected'];
+        $allowedReviews = ['received', 'canceled', 'accepted', 'dispatched', 'rejected'];
+        $validTransitions = [
+            'pending'    => ['accepted', 'canceled', 'rejected'],
+            'accepted'   => ['dispatched', 'canceled'],
+            'dispatched' => ['received'],
+        ];
+
         if(!in_array($review, $allowedReviews)){
             return ['status' => 'error', 'message' => 'Invalid Review'];
         }
 
-        if($_SESSION["userRole"] !== "admin" && in_array($review, ['dispatched', 'rejected'])){ 
-            echo json_encode(['status' => 'error', 'message' => 'Not an Admin']);
-            exit;
+        if($_SESSION["userRole"] !== "admin" && in_array($review, ['accepted', 'dispatched', 'rejected'])){ 
+            return ['status' => 'error', 'message' => 'Not an Admin'];
         }
 
-        if(!$this->orderIdExists($orderId)){
+        $status = $this->getOrderStatus($orderId);
+
+        if(!$status){
             return ['status' => 'error', 'message' => 'Order not found'];
         }
-        
 
-        //REVER ESTA PARTE; APENAS ACCOES PERMTIDAS!!!!
-        if ($review === 'dispatched'){
-            //remove stock da loja
-            
-            return $this->updateOrderStatus($orderId, $review) ? ['status' => 'success'] : ['status' => 'error', 'message' => 'Failed to Change Status'];
-        } else {
-            if ($review === 'canceled' &&  $this->isOrderLocked($orderId)){
-                echo json_encode(['status' => 'error', 'message' => "order can't be canceled"]);
-                exit;
-            }
-            // if ($review === 'received' &&  $this->hasOrderBeenDispatched($orderId)){
-            //     echo json_encode(['status' => 'error', 'message' => 'order not dispatched']);
-            //     exit;
-            // }
-            return $this->updateOrderStatus($orderId, $review) ? ['status' => 'success'] : ['status' => 'error', 'message' => 'Failed to Change Status'];
+        if (!isset($validTransitions[$status]) || !in_array($review, $validTransitions[$status])) {
+            return ['status' => 'error', 'message' => 'Invalid transition'];
         }
 
+        if ($review === 'dispatched'){
+            //remove stock da loja e altera o status da encomenda para enviado
+            if(!$this->dispatchOrder($orderId)){
+                return ['status' => 'error', 'message' => 'Failed to process dispatch'];
+            }
+        } else {
+
+            if(!$this->updateOrderStatus($orderId, $review)){
+                return ['status' => 'error', 'message' => 'Failed to Change Status'];
+            }
+        }
+       
         return ['status' => 'success'];
-        // return ['status' => 'success', 'id' => $orderId, 'review' => $review];
-
     }
-
-    
 }

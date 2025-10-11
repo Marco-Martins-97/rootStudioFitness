@@ -32,6 +32,8 @@ function loadOrders(){
             'accepted': 'Aceite',
             'rejected': 'Recusado',
             'canceled': 'Cancelado',
+            'received': 'Recebida',
+            'dispatched': 'Enviada'
         };
         
         //cria a ordem
@@ -42,11 +44,6 @@ function loadOrders(){
             const orderStatus = statusReplacements[status] || status;
             const orderTotal = order.reduce((sum, product) => sum + (parseInt(product.productQuantity) * parseFloat(product.productPrice)), 0);
             
-            //verifica se passou 24h da realizaçao da encomenda
-            const date = new Date(orderDate.replace(" ", "T"));
-            const now = new Date();
-            const diffHours = (now - date) / (1000 * 60 * 60);
-
             HTMLcontent += `
                 <div class="order-container">
                     <div class="order-title">
@@ -88,15 +85,10 @@ function loadOrders(){
                 </ul>
                 <div class="order-btns">
             `;
-            if(status === 'pending'){
-                HTMLcontent += `
-                    <button id="confirm-btn" data-id="${orderId}">Confirmar</button>
-                `;
-                if(diffHours < 24){
-                    HTMLcontent += `
-                        <button id="cancel-btn" data-id="${orderId}">Cancelar</button>
-                    `;
-                }
+            if(status === 'dispatched'){
+                HTMLcontent += ` <button id="confirm-btn" data-id="${orderId}">Confirmar</button> `;
+            } else if(status === 'pending' || status === 'accepted'){
+                HTMLcontent += ` <button id="cancel-btn" data-id="${orderId}">Cancelar</button> `;
             }
             HTMLcontent += `
                     </div>
@@ -145,7 +137,7 @@ $(document).ready(function(){
     $(document).on('click', '#confirm-btn', function() {
         const orderId = $(this).data('id');
         reviewOrder(orderId, 'received');
-     });
+    });
 
     $(document).on('click', '#cancel-btn', function() {
         const orderId = $(this).data('id');
