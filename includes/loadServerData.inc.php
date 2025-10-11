@@ -212,7 +212,7 @@ switch ($action) {
             }
             break;
 
-        /* case 'loadCustomerOrders':
+        case 'loadCustomerOrders':
             if(!isset($_SESSION["userRole"])){  //verifica e o utilizador esta logado 
                 echo json_encode(['status' => 'error', 'message' => 'Login required']);
                 exit;
@@ -222,13 +222,11 @@ switch ($action) {
                 exit;
             }
 
-            $userId = $_SESSION['userId'];
-
             try {
                 require_once 'OrdersHandler.php';
                 $order = new Order();
                 
-                $ordersData = $order->loadCustomerOrders($userId);
+                $ordersData = $order->loadCustomerOrders();
                 
                 echo json_encode(['status' => 'success', 'ordersData' => $ordersData]);
                 exit;
@@ -238,7 +236,7 @@ switch ($action) {
                 echo json_encode(['status' => 'error', 'message' => 'Erro na ligação ao servidor.']);
                 exit;
             }
-            break; */
+            break;
 
 
 

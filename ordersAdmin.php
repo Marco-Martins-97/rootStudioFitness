@@ -9,8 +9,8 @@
 <html lang="pt">
     <head>
         <!-- Titulo & Descrição -->
-        <title>Root Fitness Studio - Administração</title>
-        <meta name="description" content="ROOT Studio Fitness - Administração">
+        <title>Root Fitness Studio - Administração Encomendas</title>
+        <meta name="description" content="Root Fitness Studio - Administração Encomendas">
         <meta name="author" content="Marco Martins">
         <!-- Browser -->
         <meta charset="UTF-8">
@@ -19,7 +19,7 @@
         <!-- Style -->
         <link id="favicon" rel="shortcut icon" href="imgs/logo/iconPreto.png" type="image/x-icon">
         <link rel="stylesheet" href="css/style.css">
-        <link rel="stylesheet" href="css/clientsAdmin.css">
+        <link rel="stylesheet" href="css/ordersAdmin.css">
         <!-- Script -->
         <script src="https://kit.fontawesome.com/d132031da6.js?v=2" crossorigin="anonymous"></script>
         <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
@@ -49,7 +49,7 @@
                             </div>
                             <div class="dropdown">
                                 <a href="profile.php">Perfil</a>
-                                <a href="profile.php">Encomendas</a>
+                                <a href="orders.php">Encomendas</a>
                                 <?php if(isset($_SESSION["userRole"]) && $_SESSION["userRole"] === 'admin'){ ?>
                                     <a href="shopAdmin.php">Administração Loja</a>
                                     <a href="clientsAdmin.php">Administração Clientes</a>
@@ -66,7 +66,7 @@
             </nav>
         </header>
         <main>
-            <div class="applications-container"></div>
+            <div class="orders-container"></div>
         </main>
         <footer>
             <img src="imgs/logo/iconOriginal.png" alt="Root Studio logo">
@@ -79,7 +79,7 @@
             </div>
         </footer> 
 
+        <script src="js/navMenu.js"></script>
+        <script src="js/ordersAdmin.js"></script>
     </body>
-    <script src="js/navMenu.js"></script>
-    <script src="js/clientsAdmin.js"></script>
 </html>

@@ -92,6 +92,15 @@ class Order{
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $result;
     }
+    
+    public function loadCustomerOrders(){
+        $query = "SELECT o.orderId, o.productName, o.productQuantity, o.productPrice, o.customerName, o.customerAddress, o.orderDate, o.orderStatus, p.productImgSrc FROM orders AS o INNER JOIN products AS p ON o.productId = p.id ORDER BY orderDate DESC;";
+        $stmt = $this->conn->prepare($query);
+        $stmt -> execute();
+
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $result;
+    }
 
     private function dispatchOrder($orderId){
         try {

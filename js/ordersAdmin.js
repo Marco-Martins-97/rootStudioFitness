@@ -1,7 +1,7 @@
-function loadOrders(){
-    $.post('includes/loadServerData.inc.php', {action: 'loadOrders'}, function(response){
-        // console.log(response);
-
+function loadCustomerOrders(){
+    $.post('includes/loadServerData.inc.php', {action: 'loadCustomerOrders'}, function(response){
+        console.log(response);
+        
         if (!response || typeof response !== 'object') {
             console.error('Invalid JSON response:', response);
             $('.orders-container').html('Ocurreu Um Erro, Não Foi Possivel Carregar as Encomendas!');
@@ -13,7 +13,8 @@ function loadOrders(){
             $('.orders-container').html('Ocurreu Um Erro, Não Foi Possivel Carregar as Encomendas!');
             return;
         }
-
+        
+        
         let HTMLcontent = '';
         const ordersProducts = response.ordersData;
         const orders = {};
@@ -41,6 +42,8 @@ function loadOrders(){
             const order = orders[orderId];
             const orderDate = order[0].orderDate;
             const status = order[0].orderStatus;
+            const customerName = order[0].customerName;
+            const customerAddress = order[0].customerAddress;
             const orderStatus = statusReplacements[status] || status;
             const orderTotal = order.reduce((sum, product) => sum + (parseInt(product.productQuantity) * parseFloat(product.productPrice)), 0);
             
@@ -49,10 +52,12 @@ function loadOrders(){
                     <div class="order-title">
                         <div class="order-info left">
                             <h3>ID: ${orderId}</h3>
-                            <p>${orderDate}</p>
-                        </div>
-                        <div class="order-info right">
+                            <p>Nome: ${customerName}</p>
+                            <p>Morada: ${customerAddress}</p>
+                            </div>
+                            <div class="order-info right">
                             <p class="${status}">${orderStatus}</p>
+                            <p>${orderDate}</p>
                             <p>Total: ${orderTotal.toFixed(2)}€</p>
                         </div>
                         <div class="order-arrow"><i class="fas fa-chevron-down"></i></div>
@@ -85,10 +90,11 @@ function loadOrders(){
                 </ul>
                 <div class="order-btns">
             `;
-            if(status === 'dispatched'){
-                HTMLcontent += ` <button id="confirm-btn" data-id="${orderId}">Confirmar</button> `;
-            } else if(status === 'pending' || status === 'accepted'){
-                HTMLcontent += ` <button id="cancel-btn" data-id="${orderId}">Cancelar</button> `;
+            if(status === 'pending'){
+                HTMLcontent += ` <button id="accept-btn" data-id="${orderId}">Aceitar</button> `;
+                HTMLcontent += ` <button id="reject-btn" data-id="${orderId}">Recusar</button> `;
+            } else if(status === 'accepted'){
+                HTMLcontent += ` <button id="dispatch-btn" data-id="${orderId}">Enviar</button> `;
             }
             HTMLcontent += `
                     </div>
@@ -102,6 +108,7 @@ function loadOrders(){
         $('.orders-container').html('Ocurreu Um Erro, Não Foi Possivel Carregar as Encomendas!');
     });
 }
+
 
 function toggleOrder(){
     $(document).on('click', '.order-title',  function(){
@@ -122,7 +129,7 @@ function reviewOrder(orderId, review){
             console.warn('Falha ao executar!');
         }
        
-        loadOrders(); 
+        loadCustomerOrders(); 
     }, 'json').fail(function () {
         console.error('Erro na ligação ao servidor.');
     });
@@ -130,17 +137,22 @@ function reviewOrder(orderId, review){
 
 
 $(document).ready(function(){
-    loadOrders();
+    loadCustomerOrders();
     toggleOrder();
 
-    $(document).on('click', '#confirm-btn', function() {
+    $(document).on('click', '#accept-btn', function() {
         const orderId = $(this).data('id');
-        reviewOrder(orderId, 'received');
+        reviewOrder(orderId, 'accepted');
     });
 
-    $(document).on('click', '#cancel-btn', function() {
+    $(document).on('click', '#dispatch-btn', function() {
         const orderId = $(this).data('id');
-        reviewOrder(orderId, 'canceled');
+        reviewOrder(orderId, 'dispatched');
+    });
+
+    $(document).on('click', '#reject-btn', function() {
+        const orderId = $(this).data('id');
+        reviewOrder(orderId, 'rejected');
     });
 
 });
