@@ -48,18 +48,8 @@ a{
 
 main{
     margin-top: 80px;
-    /* min-height: 100%; */
-    /* height: calc(100vh - 80px); */
     min-height: calc(100vh - 80px);
     transition: margin-top 0.3s ease;
-}
-
-.menu-active{
-    margin-top: 330px;
-}
-
-.menu-active.submenu-active{
-    margin-top: 480px;
 }
 
 section{
@@ -220,9 +210,9 @@ footer img{
         margin-top: 80px;
     }
 
-    main.start, .menu-active.start, .menu-active.submenu-active.start{
+    /* main.start, .menu-active.start, .menu-active.submenu-active.start{
         margin-top: 200px;
-    }
+    } */
 
     nav{
         padding: 0;

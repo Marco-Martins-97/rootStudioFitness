@@ -45,11 +45,12 @@
                             </div>
                             <div class="dropdown">
                                 <a href="profile.php">Perfil</a>
-                                <?php if(isset($_SESSION["userRole"]) && $_SESSION["userRole"] === 'admin'){ ?>
-                                    <a href="shopAdmin.php">Administração Loja</a>
-                                    <a href="clientsAdmin.php">Administração Clientes</a>
-                                <?php } ?>
                                 <a href="orders.php">Encomendas</a>
+                                <?php if(isset($_SESSION["userRole"]) && $_SESSION["userRole"] === 'admin'){ ?>
+                                    <a href="clientsAdmin.php">Administração Clientes</a>
+                                    <a href="shopAdmin.php">Administração Loja</a>
+                                    <a href="ordersAdmin.php">Administração Encomendas</a>
+                                <?php } ?>
                                 
                                 <form action="includes/logout.inc.php" method="post">
                                     <button>Sair</button>

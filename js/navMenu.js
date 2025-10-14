@@ -41,12 +41,39 @@ document.addEventListener("DOMContentLoaded", () => {
 
     //altera o inicio da pagina conforme o menu e submenu está aberto ou fechado
     const mainElement = document.querySelector('main');
-    menuToggle.addEventListener('click', function(){
-        mainElement.classList.toggle('menu-active');
+
+    function updateMainMargin() {
+        let offset = 80;    // offset padrao
+
+        if (menu.classList.contains('active')) {    //addiciona a altura do menu ao offset padrao
+            offset += menu.offsetHeight;
+        }
+
+        if (window.innerWidth >= 768) { //altera entre a barra larga (H = 200px - apenas para desktop) e a padrao
+            if (mainElement.classList.contains('start')) {
+                offset = menu.offsetHeight;
+            }
+        } else {    // adicona o submenu ao offset (apenas no mobile)
+            if(dropdownToggle) {
+                const dropdown = document.querySelector('.dropdown');
+                if (dropdown.classList.contains('active')) {
+                    offset += dropdown.offsetHeight;
+                }
+            }
+        }
+
+        // aplica o offset no elemento main
+        mainElement.style.marginTop = offset + 'px';
+    }
+
+    // atualiza ao abrir e fechar o menu/submenu
+    menuToggle.addEventListener('click', () => {
+        updateMainMargin();
     });
-    if(dropdownToggle) {
-        dropdownToggle.addEventListener('click', function(){
-            mainElement.classList.toggle('submenu-active');
+
+    if (dropdownToggle) {
+        dropdownToggle.addEventListener('click', () => {
+            updateMainMargin();
         });
     }
 
@@ -66,7 +93,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+
     window.addEventListener('scroll', updateNavBar);
     window.addEventListener('resize', updateNavBar);
+    window.addEventListener('scroll', updateMainMargin);
+    window.addEventListener('resize', updateMainMargin);
     updateNavBar();
+    updateMainMargin();
 });
