@@ -15,9 +15,8 @@
         <link id="favicon" rel="shortcut icon" href="imgs/logo/iconPreto.png" type="image/x-icon">
         <link rel="stylesheet" href="css/style.css">
         <link rel="stylesheet" href="css/main.css">
-        <script src="https://kit.fontawesome.com/d132031da6.js?v=2" crossorigin="anonymous"></script>
-        <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"> -->
         <!-- Script -->
+        <script src="https://kit.fontawesome.com/d132031da6.js?v=2" crossorigin="anonymous"></script>
         <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
     </head>
     <body>
@@ -47,9 +46,9 @@
                                 <a href="profile.php">Perfil</a>
                                 <a href="orders.php">Encomendas</a>
                                 <?php if(isset($_SESSION["userRole"]) && $_SESSION["userRole"] === 'admin'){ ?>
-                                    <a href="clientsAdmin.php">Administração Clientes</a>
-                                    <a href="shopAdmin.php">Administração Loja</a>
-                                    <a href="ordersAdmin.php">Administração Encomendas</a>
+                                    <a href="clientsAdmin.php">Administração de Clientes</a>
+                                    <a href="shopAdmin.php">Administração da Loja</a>
+                                    <a href="ordersAdmin.php">Administração de Encomendas</a>
                                 <?php } ?>
                                 
                                 <form action="includes/logout.inc.php" method="post">
@@ -63,17 +62,17 @@
         </header>
         <main>
             <section id="hero">
-                <h1>" Everything Begins whith a Strong Root. "</h1>
+                <h1>" Everything Begins with a Strong Root. "</h1>
             </section>
             <section id="join">
                 <div class="img-text-container">
                     <div class="img-container">
-                        <img src="imgs/content/team.jpg" alt="membros root">
+                        <img src="imgs/content/team.jpg" alt="membros da Root Studio">
                     </div>
                     <div class="text-container">
                         <h2>Junta-te a Nós</h2>
                         <p>Cada um de nós traz algo único, mas partilhamos o mesmo propósito: ajudar-te a mover melhor, a viver com mais consciência e a reencontrar a tua raiz.</p>
-                        <a href="plans.php">Estamos Aqui para ti</a>
+                        <a href="plans.php">Estamos aqui para ti</a>
                     </div>
                 </div>
             </section>
@@ -88,25 +87,25 @@
                         <h3>Aulas de Grupo</h3>
                     </a>
                     <a href="plans.php#specialties" class="plan-container">
-                        <img src="imgs/content/treinoTerapeitico.jpg" alt="Treino terapeutico">
-                        <h3>Treino Terapeutico</h3>
+                        <img src="imgs/content/treinoTerapeitico.jpg" alt="Treino terapêuticoo">
+                        <h3>Treino Terapêutico</h3>
                     </a>
                     <a href="plans.php#specialties" class="plan-container">
-                        <img src="imgs/content/padel.jpeg" alt="Padel">
-                        <h3>Padel</h3>
+                        <img src="imgs/content/padel.jpeg" alt="Pádel">
+                        <h3>Pádel</h3>
                     </a>
                 </div>
             </section>
             <section id="video">
-                <!-- <div class="video-container">
-                    <iframe 
+                <div class="video-container">
+                    <!-- <iframe 
                         src="https://www.youtube.com/embed/XPSEZeGeeqk"
                         title="YouTube video player"
                         frameborder="0" 
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                         allowfullscreen
-                    ></iframe>
-                </div> -->
+                    ></iframe> -->
+                </div>
             </section>
         </main>
         <footer>

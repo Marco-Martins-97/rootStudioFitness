@@ -13,7 +13,7 @@ function toggleMenu(toggleBtn, _menu, icon, iconBefore, iconAfter) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    //Esta parte altera a cor do favicon (trocando a imagem), dependendo do tema do navegador.
+    // Esta parte altera a cor do favicon (trocando a imagem), dependendo do tema do navegador
     const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const favicon = document.getElementById('favicon');
     
@@ -25,13 +25,13 @@ document.addEventListener("DOMContentLoaded", () => {
     darkModeMediaQuery.addEventListener('change',updateFavicon);
 
 
-    //Abre e Fecha o menu, e altera o icon
+    // Abre e fecha o menu e altera o ícone
     const menuToggle = document.querySelector('.menu-toggle');
     const menu = document.querySelector('.menu');
     const menuIcon = menuToggle.querySelector('i');
     toggleMenu(menuToggle, menu, menuIcon, 'fa-bars', 'fa-times');
 
-    //Abre e Fecha o submenu, e altera o icon
+    // Abre e fecha o submenu e altera o ícone
     const dropdownToggle = document.querySelector('.dropdown-toggle');
     if(dropdownToggle) {
         const dropdown = document.querySelector('.dropdown');
@@ -39,21 +39,21 @@ document.addEventListener("DOMContentLoaded", () => {
         toggleMenu(dropdownToggle, dropdown, dropdownIcon, 'fa-chevron-down', 'fa-chevron-up');
     }
 
-    //altera o inicio da pagina conforme o menu e submenu está aberto ou fechado
+    // Altera o início da página conforme o menu e o submenu estão abertos ou fechados
     const mainElement = document.querySelector('main');
 
     function updateMainMargin() {
         let offset = 80;    // offset padrao
 
-        if (menu.classList.contains('active')) {    //addiciona a altura do menu ao offset padrao
+        if (menu.classList.contains('active')) {    // Adiciona a altura do menu ao offset padrão
             offset += menu.offsetHeight;
         }
 
-        if (window.innerWidth >= 768) { //altera entre a barra larga (H = 200px - apenas para desktop) e a padrao
+        if (window.innerWidth >= 768) { // Altera entre a barra larga (H = 200px - apenas para desktop) e a padrão
             if (mainElement.classList.contains('start')) {
                 offset = menu.offsetHeight;
             }
-        } else {    // adicona o submenu ao offset (apenas no mobile)
+        } else {    // Adiciona o submenu ao offset (apenas no mobile)
             if(dropdownToggle) {
                 const dropdown = document.querySelector('.dropdown');
                 if (dropdown.classList.contains('active')) {
@@ -62,11 +62,11 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        // aplica o offset no elemento main
+        // Aplica o offset ao elemento main
         mainElement.style.marginTop = offset + 'px';
     }
 
-    // atualiza ao abrir e fechar o menu/submenu
+    // Atualiza ao abrir e fechar o menu/submenu
     menuToggle.addEventListener('click', () => {
         updateMainMargin();
     });
@@ -77,7 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    //Altera a imagem e a altura da navbar
+    // Altera a imagem e a altura da navbar
     const navBar = document.querySelector('nav');
     const logo = document.querySelector('nav a img');
 
