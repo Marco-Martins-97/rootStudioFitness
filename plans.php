@@ -44,11 +44,12 @@
                             </div>
                             <div class="dropdown">
                                 <a href="profile.php">Perfil</a>
+                                <a href="orders.php">Encomendas</a>
                                 <?php if(isset($_SESSION["userRole"]) && $_SESSION["userRole"] === 'admin'){ ?>
-                                    <a href="shopAdmin.php">Administração Loja</a>
-                                    <a href="clientsAdmin.php">Administração Clientes</a>
+                                    <a href="clientsAdmin.php">Administração de Clientes</a>
+                                    <a href="shopAdmin.php">Administração da Loja</a>
+                                    <a href="ordersAdmin.php">Administração de Encomendas</a>
                                 <?php } ?>
-                                <a href="profile.php">Encomendas</a>
                                 
                                 <form action="includes/logout.inc.php" method="post">
                                     <button>Sair</button>
@@ -77,7 +78,7 @@
                         <ul>
                             <li>Treinos de 1 Hora</li>
                             <li>De 1 a 3 Treinos por Semana</li>
-                            <li>Acesso Livre ao Estudio (1x) *</li>
+                            <li>Acesso Livre ao Estúdio (1x) *</li>
                         </ul>
                         <h3>Individual</h3>
                         <p>A Partir de 22,5€ por Semana</p>
@@ -104,7 +105,7 @@
                             <li>Grupos de 6 Pessoas</li>
                         </ul>
                         <p>Apenas 30€ por Mês</p>
-                        <p class="disclaimer">*Aulas Com Marcações Pre-Defenidas</p>
+                        <p class="disclaimer">*Aulas Com Marcações Pré-definidas</p>
                         <button class="join-btn" data-option="3">Adere Já</button>
                     </div>
                 </div>
@@ -119,7 +120,7 @@
                         <ul>
                             <li>Treino Terapêutico</li>
                             <li>Padel</li>
-                            <li>Planos Adapatados para Rendimento e Recuperação</li>
+                            <li>Planos Adaptados para o Rendimento e Recuperação</li>
                         </ul>
                         <p>A Partir de 22,5€ por Semana</p>
                         <div class="btn-container">
@@ -132,10 +133,10 @@
             <section id="open-studio">
                 <div class="plan-container">
                     <div class="plan-img-container">
-                        <img src="imgs/content/estudio.png" alt="Acesso ao Estudio">
+                        <img src="imgs/content/estudio.png" alt="Acesso ao Estúdio">
                     </div>
                     <div class="plan-description">
-                        <h2>Acesso ao Estudio</h2>
+                        <h2>Acesso ao Estúdio</h2>
                         <ul>
                             <li>Acesso livre (4x) *</li>
                         </ul>
@@ -172,7 +173,7 @@
                         <!-- Género -->
                         <div class="field-container required">
                             <div class="field">
-                                <legend>Gênero:</legend>
+                                <legend>Género:</legend>
                                 <div class="gender-container">
                                     <div class="gender-field">
                                         <input type="radio" id="genderMale" name="gender" value="male">
@@ -221,7 +222,7 @@
                                     <option value="personalized2">Grupos Reduzidos</option>
                                     <option value="group">Aulas de Grupo</option>
                                     <option value="terapy">Treino Terapêutico</option>
-                                    <option value="padel">Padel</option>
+                                    <option value="padel">Pádel</option>
                                     <option value="openStudio">Acesso ao Estúdio</option>
                                 </select>
                             </div>
@@ -248,14 +249,14 @@
                             </div>
                             <div class="error"></div>
                         </div>
-                        <!-- Problemas de Saude -->
+                        <!-- Problemas de Saúde -->
                         <div class="field-container">
                             <div class="health-field">
                                 <div class="checkbox-field">
                                     <input type="checkbox" id="health-issues" name="health-issues">
                                     <label for="health-issues">Tem algum problema de saúde?</label>
                                 </div>
-                                <textarea id="health-details" name="health-details" rows="3" placeholder="Detalhe os problemas de saude."></textarea>
+                                <textarea id="health-details" name="health-details" rows="3" placeholder="Detalhe os problemas de saúde."></textarea>
                             </div>
                             <div class="error"></div>
                         </div>
@@ -264,7 +265,7 @@
                         <div class="field-container required">
                             <div class="checkbox-field">
                                 <input type="checkbox" id="terms" name="terms"><!-- required -->
-                                <label for="terms">Aceito os <a href="termsAndConditions.php" target="_blank">Termos e Condições.</a></label>
+                                <label for="terms">Aceito os <a href="termsAndConditions.php" target="_blank">Termos e Condições</a>.</label>
                             </div>
                             <div class="error"></div>
                         </div>
@@ -275,15 +276,15 @@
                     </form>
                     <?php } else if($_SESSION["userRole"] === 'user' && isset($_SESSION["userApplied"])){ ?>
                         <div class="form-unavailable">
-                            <h3>Candidatura já foi enviada, aguarde confirmação.</h3>
+                            <h3>A candidatura já foi enviada. Aguarde confirmação.</h3>
                         </div>
                     <?php } else if($_SESSION["userRole"] === 'client'){ ?>
                         <div class="form-unavailable">
-                            <h3>Já é um Cliente!</h3>
+                            <h3>Já é cliente!</h3>
                         </div>
                     <?php } else { ?>
                         <div class="form-unavailable">
-                            <h3>Não é Possivel Increver!</h3>
+                            <h3>Não é possível inscrever!</h3>
                         </div>
                     <?php } } else{  ?>
                         <div class="connect">
@@ -295,13 +296,13 @@
             </section>
         </main>
         <footer>
-            <img src="imgs/logo/iconOriginal.png" alt="Root Studio logo">
+            <img src="imgs/logo/iconOriginal.png" alt="Logótipo da Root Studio Fitness">
             <div class="footer-content">
                 <div class="social">
                     <a href="https://instagram.com/root.studiofitness" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
                     <a href="https://api.whatsapp.com/send?phone=351925677310" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
                 </div>
-                <p>&copy; 2025 Root Studio Fitness</p>
+                <p>&copy; 2025 Root Studio Fitness. Todos os direitos reservados.</p>
             </div>
         </footer> 
 

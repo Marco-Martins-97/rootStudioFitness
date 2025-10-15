@@ -235,9 +235,11 @@ footer img{
         transition: none;
         margin-top: 80px;
     }
+
     nav{
         padding: 0;
     }
+    
     nav.start{
         height: 200px;
     }

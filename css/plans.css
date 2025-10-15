@@ -2,19 +2,21 @@
 #info{
     min-height: 300px;
 }
+
 .info-container{
     text-align: center;
     max-width: 768px;
     color: var(--PRIMARY-TXT-COLOR);
     padding: 32px 24px;
 }
+
 .info-container h1{
     font-size: 3rem;
     margin-bottom: 60px;
 }
+
 .info-container p{
     text-align: justify;
-    /* text-indent: 32px; */
     line-height: 1.5;
 }
 
@@ -33,7 +35,6 @@
 
 .plan-img-container img{
     width: 100%;
-    /* max-width: 576px; */
     height: auto;
     border-radius: 12px;
     box-shadow: 0 4px 12px var(--SHADOW-COLOR);
@@ -41,7 +42,6 @@
 
 .plan-description{
     width: 100%;
-    /* max-width: 576px; */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -56,7 +56,6 @@
     text-align: left;
     font-size: 1rem;
     padding-bottom: 5px;
-
 }
 
 .no-bold-small {
@@ -87,12 +86,13 @@
     letter-spacing: 1px;
     cursor: pointer;
 }
+
 .plan-description button:hover{
     background-color: var(--SECONDARY-BTN-COLOR);
     color: var(--PRIMARY-TXT-COLOR);
 }
-/* FORM - SECTION */
 
+/* FORM - SECTION */
 .form-container{
     width: 100%;
     max-width: 576px;
@@ -139,6 +139,7 @@
     border-radius: 8px;
     background-color: var(--PRIMARY-BG-COLOR);
 }
+
 .field input:focus:not([name="gender"]):not(#nutrition-plan), .health-field textarea:focus{
     outline: 1px solid var(--PRIMARY-BORDER-COLOR);
 }
@@ -151,13 +152,13 @@
 
 .form-disclaimer::before, .field-container.required > .field > label::after, .field-container.required > .field > legend::after, .field-container.required > .checkbox-field > label::after{
     content: "*";
-    color: red;
+    color: var(--ERROR);
     font-size: 1.1rem;
 }
 
 .error{
     display: none;
-    color: red;
+    color: var(--ERROR);
     font-size: 0.8rem;
     font-weight: bold;
     text-align: center;
@@ -179,6 +180,7 @@
     letter-spacing: 1px;
     cursor: pointer;
 }
+
 .form-container button:hover{
     background-color: var(--SECONDARY-BTN-COLOR);
     color: var(--PRIMARY-TXT-COLOR);
@@ -211,9 +213,11 @@
     display: none;
     margin-top: 16px;
 }
+
 .health-field:has(#health-issues:checked) textarea {
     display: block;
 }
+
 /* FORM - TERMS */
 .field-container a{
     font-weight: bold;
@@ -247,40 +251,13 @@
     width: 100%;
     padding: 24px 36px;
 }
+
 .form-unavailable h3{
     text-align: center;
 }
 
-/* POPUP */
-.popup{
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: white;
-    padding: 15px 25px;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.4);
-    z-index: 999;
-    font-size: 18px;
-    text-align: center;
-}
-
-.popup-fail{
-    background-color: red;
-}
-
-.popup-success{
-    background-color: green;
-}
-
-.popup-warn{
-    background-color: yellow;
-    color: black;
-}
-
 .validSub{
-    color: blue;
+    color: var(--INFO);
     font-size: 0.8rem;
     font-weight: bold;
     text-align: center;
@@ -294,9 +271,11 @@
         flex-wrap: nowrap;
         max-width: 1200px;
     }
+
     .plan-img-container{
         width: 40%;
     }
+
     .plan-description{
         width: 60%;
     }
@@ -314,10 +293,12 @@
         width: auto;
         margin: auto;
     }
+
     /* FORM - SECTION */
     .form-container{
         max-width: 768px;
     }
+
     .field{
         flex-direction: row;
     }

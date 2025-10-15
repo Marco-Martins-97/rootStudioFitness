@@ -4,12 +4,18 @@ function validateField(input){
     const field = $(input).closest('.field-container');
 
     $.post('includes/validateInputs.inc.php', {input: name, value: value}, function(response){
+        if (!response || typeof response.status === 'undefined') {
+            console.error('A resposta do servidor é inválida.');
+            return;
+        }
+
         if (response.status === 'error'){
-            console.error('Erro:', response.message);
+            console.error('Ocorreu um erro:', response.message);
+            return
         }
         
         if (response.status === 'invalid'){
-            console.warn('Input Invalido:', response.message);
+            console.warn('Campo inválido:', response.message);
             field.addClass('invalid').find('.error').html(response.message);
             return;
         }
@@ -17,7 +23,7 @@ function validateField(input){
         field.removeClass('invalid').find('.error').html('');
 
     }, 'json').fail(function () {
-        console.error('Erro ao validar os dados.');
+        console.error('Ocorreu um erro ao validar os dados.');
     });
 }
 
@@ -26,13 +32,13 @@ function validateCheckbox(input){
     const field = $(input).closest('.field-container');
 
     if (!isChecked && field.hasClass('required')){
-        field.addClass('invalid').find('.error').html('Campo de preenchimento obrigatório!');
+        field.addClass('invalid').find('.error').html('Preenchimento deste campo é obrigatório.');
     } else {
         field.removeClass('invalid').find('.error').html('');
     }
 }
 
-//key, é o que ativa a funçao, input é o que vai ser limpo
+// key é o que ativa a funçao, input é o que vai ser limpo
 function cleanInput(key, input){
     const isChecked = $(key).is(':checked');
 
@@ -46,18 +52,20 @@ function noEmptyFields(formId){
     $(formId).find('.field-container.required').each(function(){
         let input = $(this).find('input, textarea, select').first();
 
-        // Radio Butons
+        // Radio Buttons
         if (input.is('input[type="radio"]') && $(this).find('input[type="radio"]:checked').length === 0){
-            $(this).closest('.field-container').addClass('invalid').find('.error').html('Campo de preenchimento obrigatório!');
+            emptyFields = true;
+            $(this).closest('.field-container').addClass('invalid').find('.error').html('Preenchimento deste campo é obrigatório.');
         }
         // Ckeckbox
         if (input.is('input[type="checkbox"]') && $(this).find('input[type="checkbox"]:checked').length === 0){
-            $(this).closest('.field-container').addClass('invalid').find('.error').html('Campo de preenchimento obrigatório!');
+            emptyFields = true;
+            $(this).closest('.field-container').addClass('invalid').find('.error').html('Preenchimento deste campo é obrigatório.');
         }
 
         if (input.val() === null || input.val().trim() === ''){
             emptyFields = true;
-            $(this).closest('.field-container').addClass('invalid').find('.error').html('Campo de preenchimento obrigatório!');
+            $(this).closest('.field-container').addClass('invalid').find('.error').html('Preenchimento deste campo é obrigatório.');
         }
     });
     return !emptyFields;
@@ -79,35 +87,28 @@ $(document).ready(function(){
         applicationForm.find('select').trigger("change");
     });
 
-
-    $('#fullName').on('input', function(){ validateField(this); });
-    $('#birthDate').on('input', function(){ validateField(this); });
+    $('#fullName, #birthDate, #userAddress, #nif, #phone, #health-details').on('input', function(){ validateField(this); });
     $('input[name="gender"]').on('change', function(){ $(this).closest('.field-container').removeClass('invalid').find('.error').html(''); });
-    $('#userAddress').on('input', function(){ validateField(this); });
-    $('#nif').on('input', function(){ validateField(this); });
-    $('#phone').on('input', function(){ validateField(this); });
     $('#training-plan').on('change', function(){ $(this).closest('.field-container').removeClass('invalid').find('.error').html(''); });
     $('#experience').on('change', function(){ $(this).closest('.field-container').removeClass('invalid').find('.error').html(''); });
     $('#nutrition-plan').on('change', function(){ validateCheckbox(this); });
     $('#health-issues').on('change', function(){ validateCheckbox(this); cleanInput(this, '#health-details'); });
-    $('#health-details').on('input', function(){ validateField(this); });
     $('#terms').on('change', function(){ validateCheckbox(this); });
 
-    
     applicationForm.on('submit', function(e){
         e.preventDefault();
         
         if(noEmptyFields(applicationForm) && isFormValid(applicationForm)){
             $('.validSub').remove();
-            const successDiv = $('<div class="validSub">Enviando...</div>');
+            const successDiv = $('<div class="validSub">A enviar...</div>');
             $('.form-disclaimer').after(successDiv);
 
-            // depois de 1 segundo e envia o formulário
+            // Após 1 segundo, envia o formulário
             setTimeout(function(){
                 applicationForm.off('submit').submit();
             }, 1000);
         } else {
-            console.error('Invalid Form!');
+            console.error('O formulário contém erros. Verifique os campos assinalados.');
         }
     });
 });

@@ -115,7 +115,7 @@
                     <a href="https://instagram.com/root.studiofitness" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
                     <a href="https://api.whatsapp.com/send?phone=351925677310" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
                 </div>
-                <p>&copy; 2025 Root Studio Fitness</p>
+                <p>&copy; 2025 Root Studio Fitness. Todos os direitos reservados.</p>
             </div>
         </footer> 
 
