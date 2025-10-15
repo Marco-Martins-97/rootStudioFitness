@@ -44,11 +44,12 @@
                             </div>
                             <div class="dropdown">
                                 <a href="profile.php">Perfil</a>
+                                <a href="orders.php">Encomendas</a>
                                 <?php if(isset($_SESSION["userRole"]) && $_SESSION["userRole"] === 'admin'){ ?>
-                                    <a href="shopAdmin.php">Administração Loja</a>
-                                    <a href="clientsAdmin.php">Administração Clientes</a>
+                                    <a href="clientsAdmin.php">Administração de Clientes</a>
+                                    <a href="shopAdmin.php">Administração da Loja</a>
+                                    <a href="ordersAdmin.php">Administração de Encomendas</a>
                                 <?php } ?>
-                                <a href="profile.php">Encomendas</a>
                                 
                                 <form action="includes/logout.inc.php" method="post">
                                     <button>Sair</button>
@@ -71,7 +72,7 @@
                         <span>Total do Carrinho:</span>
                         <span class="cart-total">0 €</span>
                     </div>
-                    <button class="pay-cart">Comprar Carrinho</button>
+                    <button class="pay-cart">Finalizar Compra</button>
                 </div>
             </div>
 
@@ -88,7 +89,7 @@
                     <a href="https://instagram.com/root.studiofitness" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
                     <a href="https://api.whatsapp.com/send?phone=351925677310" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
                 </div>
-                <p>&copy; 2025 Root Studio Fitness</p>
+                <p>&copy; 2025 Root Studio Fitness. Todos os direitos reservados.</p>
             </div>
         </footer> 
 

@@ -1,14 +1,14 @@
 function loadShopProducts(){
     $.post('includes/loadServerData.inc.php', {action: 'loadShopProducts'}, function(response){
         if (!response || typeof response !== 'object') {
-            console.error('Resposta JSON Invalida:', response);
-            $('.products-container').html('Ocorreu Um Erro, Não Foi Possivel Carregar os Produtos!');
+            console.error('Resposta JSON inválida:', response);
+            $('.products-container').html('Ocorreu um erro. Não foi possível carregar os produtos!');
             return;
         }
 
         if (response.status === 'error') {
-            console.error('Error:', response.message || 'Unknown error');
-            $('.products-container').html('Ocorreu Um Erro, Não Foi Possivel Carregar os Produtos!');
+            console.error('Error:', response.message || 'Erro desconhecido');
+            $('.products-container').html('Ocorreu um erro. Não foi possível carregar os produtos!');
             return;
         }
 
@@ -41,7 +41,7 @@ function loadShopProducts(){
         
         $('.products-container').html(HTMLcontent);
     }, 'json').fail(function () {
-        $('.products-container').html('Ocorreu Um Erro, Não Foi Possivel Carregar os Produtos');
+        $('.products-container').html('Ocorreu um erro. Não foi possível carregar os produtos!');
     });
 }
 
@@ -49,20 +49,20 @@ function loadCartProducts(){
     $.post('includes/loadServerData.inc.php', {action: 'loadShoppingCart'}, function(response){
         if (!response || typeof response !== 'object') {
             console.error('Resposta JSON Invalida:', response);
-            $('.cart-container').html('Ocorreu Um Erro, Não Foi Possivel Carregar o Carrinho!');
+            $('.cart-container').html('Ocorreu um erro. Não foi possível carregar o carrinho!');
             return;
         }
 
         if (response.status === 'error') {
-            console.error('Error:', response.message || 'Unknown error');
-            $('.cart-container').html('Ocorreu Um Erro, Não Foi Possivel Carregar o Carrinho!');
+            console.error('Erro:', response.message || 'Erro desconhecido');
+            $('.cart-container').html('Ocorreu um erro. Não foi possível carregar o carrinho!');
             return;
         }
         
         if (response.status === 'invalid') {
-            console.warn('Error:', response.message);
+            console.warn('Erro:', response.message);
             $('.cart-container').html(`
-                <h4 class='connect-warn'>Necessita estar logado para poder utilizar o carrinho.</h4>
+                <h4 class='connect-warn'>É necessário iniciar sessão para utilizar o carrinho.</h4>
                 <div class='connect'>
                     <a href='login.php'>Entrar</a>
                     <a href='signup.php'>Registar</a>
@@ -75,16 +75,15 @@ function loadCartProducts(){
         let HTMLcontent = '';
         let totalCart = 0;
 
-        // console.log(cartProducts);
 
         if(cartProducts.length > 0){
             cartProducts.forEach(product => {
-                //calcula o preço total do produto
+                // Calcula o preço total do produto
                 const price = Number(product.productPrice) || 0;
                 const qty = Number(product.productQuantity) || 0;
                 const total = (price * qty);
 
-                //calcula o total o carrinho
+                // Calcula o total o carrinho
                 totalCart += total;
 
                 let totalProductContainer = `${total.toFixed(2)}€`;
@@ -108,36 +107,27 @@ function loadCartProducts(){
                 `;
             });
         } else{
-            HTMLcontent = '<h4 class="connect-warn">Não Existem produtos no Carrinho!</h4>';
+            HTMLcontent = '<h4 class="connect-warn">Não existem produtos no carrinho!</h4>';
         }
         $('.cart-container').html(HTMLcontent);
-        $('.cart-total').html(`${totalCart.toFixed(2)} €`);    //adiciona o total ao carrinho
+        $('.cart-total').html(`${totalCart.toFixed(2)} €`);    // Adiciona o total ao carrinho
     }, 'json').fail(function () {
-        $('.cart-container').html('<h4 class="connect-warn">Ocorreu Um Erro, Não Foi Possivel Carregar o Carrinho!</h4>');
+        $('.cart-container').html('<h4 class="connect-warn">Ocorreu um erro. Não foi possível carregar o carrinho!</h4>');
     });
 }
 
 function shoppingCartHandler(productId, cartAction){
-    const errorPopup = $(`<div class='popup'></div>`);
 
     $.post('includes/saveServerData.inc.php', {action: 'cartHandler', productId: productId, cartAction: cartAction}, function(response){
     
         if (response.status === 'error') {
-            console.error('Server error:', response.message || 'Unknown error');
-            $('.popup').remove();
-            errorPopup.text('Erro na ligação ao servidor.').appendTo('main');
-            setTimeout(function(){
-                errorPopup.fadeOut(500, function(){ $(this).remove(); });
-            }, 2000);
+            console.error('Server error:', response.message || 'Erro desconhecido');
+            showPopup('Erro na ligação ao servidor.');
             return;
         }
         if (response.status === 'processError') {
             console.warn('Erro: ', response.error);
-            $('.popup').remove();
-            errorPopup.text(response.message).appendTo('main');
-            setTimeout(function(){
-                errorPopup.fadeOut(500, function(){ $(this).remove(); });
-            }, 2000);
+            showPopup(response.message);
             return;
         }
 
@@ -154,49 +144,55 @@ function checkout(type, productId){ // type = direct/cart
     // adiciona os inputs
     form.append($('<input>', { type: 'hidden', name: 'type', value: type }));
     type === 'direct' && form.append($('<input>', { type: 'hidden', name: 'productId', value: productId }));
-    // insere o formulário no html e envia
+    // Insere o formulário no html e envia
     form.appendTo('body').submit();
 }
 
+function showPopup(msg, delay = 2000, success = false) {
+    $('.popup').remove();// Remove um popup antes de criar outro (se existir)
+    
+    // Cria o elemento popup
+    const popup = $('<div class="popup"></div>').text(msg);
+    
+    // Adiciona a classe "popup-success" apenas se success for true ou 1
+    if (success === true || success === 1 || success === '1') {
+        popup.addClass('popup-success');
+    }
+    // Insere no main e aplica delay + fadeOut
+    popup.appendTo('main').delay(delay).fadeOut(300, function() { $(this).remove(); });
+}
+
 $(document).ready(function(){
-    const popup = $(`<div class='popup'></div>`);
     const params = new URLSearchParams(window.location.search);
 
     if (params.has('invalid')) {
         const status = params.get('invalid');
         
         const errorMsg = {  
-            login: 'Necessita estar logado para poder comprar.'
+            login: 'É necessário iniciar sessão para comprar.'
         };
 
-        //mostra uma msg personalizada para alguns status e uma generica para todos os outros
-        const msg = errorMsg[status] || 'Ocurreu um erro, Tente Novamente!';    
+        // Mostra uma msg personalizada para alguns status e uma genérica para todos os outros
+        const msg = errorMsg[status] || 'Ocorreu um erro. Tente novamente!';    
 
-        $('.popup').remove();
-        popup.text(msg).appendTo('main');
-        setTimeout(function(){
-            popup.fadeOut(500, function(){ $(this).remove(); });
-        }, 2000);
+        showPopup(msg);
     } else if (params.has('checkout')) {
         const status = params.get('checkout');
-
-        if (status === 'success'){
-            popup.css('background-color', 'green');
-        } 
+        
         const errorMsg = {  
-            success: 'Ordem concluida com Sucesso.',
-            error: 'Ocorreu um erro durante o processo, Tente Novamente!',
-            failed: 'Ocorreu um erro, A operação foi cancelada!',
+            success: 'Encomenda concluída com sucesso.',
+            error: 'Ocorreu um erro durante o processo. Tente novamente!',
+            failed: 'Ocorreu um erro. A operação foi cancelada!',
         };
     
-        //mostra uma msg personalizada para alguns status e uma generica para todos os outros
-        const msg = errorMsg[status] || 'Ocurreu um erro, Tente Novamente!';    
-    
-        $('.popup').remove();
-        popup.text(msg).appendTo('main');
-        setTimeout(function(){
-        popup.fadeOut(500, function(){ $(this).remove(); });
-        }, 2000);
+        // Mostra uma msg personalizada para alguns status e uma genérica para todos os outros
+        const msg = errorMsg[status] || 'Ocorreu um erro. Tente novamente!';    
+
+        if (status === 'success'){
+            showPopup(msg, 2000, true);
+        } else {
+            showPopup(msg);
+        }
     }
 
     loadShopProducts();
@@ -212,21 +208,21 @@ $(document).ready(function(){
         $('.shopping-cart').removeClass('open');
     });
 
-    //Comprar (checkout) 
+    // Comprar (checkout) 
     $(document).on('click', '.btn-buy', function() {
         const isAvailable = !$(this).closest('.product-card').find('.product-stock').hasClass('unavailable');
         if(isAvailable){
             const productId = $(this).data('id');
-            checkout('direct', productId); //via POST
-            // window.location.href = `checkout.php?mode=direct&productId=${encodeURIComponent(productId)}}`; //via GET
+            checkout('direct', productId);
         }
     });
-    //Cart checkout
+
+    // Cart checkout
     $(document).on('click', '.pay-cart', function() {
-        checkout('cart'); //via POST
+        checkout('cart');
     });
 
-    //Adicionar ao carrinho
+    // Adicionar ao carrinho
     $(document).on('click', '.btn-add-cart', function() {
         const isAvailable = !$(this).closest('.product-card').find('.product-stock').hasClass('unavailable');
         if(isAvailable){
