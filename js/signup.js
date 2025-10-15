@@ -48,14 +48,14 @@ function validatePwds(){
             const invalid = response.message;
 
             if (invalid.pwd){
-                console.warn('Input Invalido:', invalid.pwd);
+                console.warn('Campo inválido:', invalid.pwd);
                 fieldPwd.addClass('invalid').find('.error').html(invalid.pwd);
             } else {
                 fieldPwd.removeClass('invalid').find('.error').html('');
             }
 
             if (invalid.confPwd){
-                console.warn('Input Invalido:', invalid.confPwd);
+                console.warn('Campo inválido:', invalid.confPwd);
                 fieldConfPwd.addClass('invalid').find('.error').html(invalid.confPwd);
             } else {
                 fieldConfPwd.removeClass('invalid').find('.error').html('');

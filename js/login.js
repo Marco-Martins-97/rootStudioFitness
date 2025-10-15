@@ -4,12 +4,18 @@ function validateField(input){
     const field = $(input).closest('.form-container');
 
     $.post('includes/validateInputs.inc.php', {input: name, value: value}, function(response){
+        if (!response || typeof response.status === 'undefined') {
+            console.error('A resposta do servidor é inválida.');
+            return;
+        }
+
         if (response.status === 'error'){
             console.error('Erro:', response.message);
+            return;
         }
         
         if (response.status === 'invalid'){
-            console.warn('Input Invalido:', response.message);
+            console.warn('Campo inválido:', response.message);
             field.addClass('invalid').find('.error').html(response.message);
             return;
         }
@@ -17,7 +23,7 @@ function validateField(input){
         field.removeClass('invalid').find('.error').html('');
 
     }, 'json').fail(function () {
-        console.error('Erro ao validar os dados.');
+        console.error('Ocorreu um erro ao validar os dados.');
     });
 }
 
@@ -26,7 +32,7 @@ function noEmptyFields(formId){
     $(formId).find('input').each(function(){
         if ($(this).val().trim() === ''){
             emptyFields = true;
-            $(this).closest('.form-container').addClass('invalid').find('.error').html('Campos de preenchimento obrigatório!');
+            $(this).closest('.form-container').addClass('invalid').find('.error').html('Preenchimento dos campos é obrigatório.');
         }
     })
     return !emptyFields;
@@ -36,6 +42,19 @@ function isFormValid(formId){
     return $(formId).find('.form-container.invalid').length === 0;
 }
 
+function showPopup(msg, delay = 2000, success = false) {
+    $('.popup').remove();// Remove um popup antes de criar outro (se existir)
+    
+    // Cria o elemento popup
+    const popup = $('<div class="popup"></div>').text(msg);
+    
+    // Adiciona a classe "popup-success" apenas se success for true ou 1
+    if (success === true || success === 1 || success === '1') {
+        popup.addClass('popup-success');
+    }
+    // Insere no main e aplica delay + fadeOut
+    popup.appendTo('main').delay(delay).fadeOut(300, function() { $(this).remove(); });
+}
 
 $(document).ready(function(){
     const loginForm = $('#login-form');
@@ -44,18 +63,23 @@ $(document).ready(function(){
     const params = new URLSearchParams(window.location.search);
 
     if (params.has('login')) {
-        const loginStatus = params.get('login');
-        const loginMessages = {
-            failed: 'Erro na ligação à base de dados.',
-            empty: 'Campos de preenchimento obrigatório!',
-            invalid: 'Email ou palavra-passe incorretos.'
+        const status = params.get('login');
+        const messages = {
+            success: 'Sessão iniciada com sucesso!',
+            failed: 'Ocorreu um erro na ligação à base de dados.',
+            empty: 'Preenchimento dos campos é obrigatório.',
+            invalid: 'O email ou a palavra-passe estão incorretos.'
         };
-        const loginMsg = loginMessages[loginStatus] || '';
+        // Mostra uma msg personalizada para alguns status e uma genérica para todos os outros
+        const msg = messages[status] || 'Ocorreu um erro. Tente novamente!';
 
-        //mostra popup
-        let loginPopup = $(`<div class='popup popup-fail'>${loginMsg}</div>`).appendTo('main');
-        // remove popup depois de 3 segundo
-        setTimeout(() => loginPopup.fadeOut(300, () => loginPopup.remove()), 3000);
+        if (status === 'success'){
+            const delay = 2000;
+            showPopup(msg, delay, true);
+            setTimeout(function(){ window.location.href = 'index.php'; }, delay);
+        } else {
+            showPopup(msg);
+        }
     }
 
     $('#loginEmail').on('input', function(){ validateField(this); });
@@ -64,7 +88,7 @@ $(document).ready(function(){
         e.preventDefault();
 
         if(noEmptyFields(loginForm) && isFormValid(loginForm)){
-            error.css('color', 'blue').text('Enviando...').show();
+            error.css('color', 'blue').text('A enviar...').show();
 
             // depois de 1 segundo e envia o formulário
             setTimeout(function(){

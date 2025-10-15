@@ -103,7 +103,8 @@
                     <div class="contact-info">
                         <p>Morada: <a href="https://maps.app.goo.gl/ToG9UKXNECdGPDrY6" target="_blank">Travessa Doutor Francisco Sá Carneiro 150 fração 1 G, 4740-010 Esposende</a></p>
                         <p>Telemóvel: <a href="tel:+351925677310">+351 925 677 310</a></p>
-                        <p>Horários: 
+                        <div>
+                            <p>Horários:</p>
                             <div class="schedule-container">
                                 <div class="schedule">
                                     <div class="day">Segunda-Feira:</div><div class="time">07h00 - 20h30</div>
@@ -127,13 +128,11 @@
                                     <div class="day">Domingo:</div><div class="time">Encerrado</div>
                                 </div>
                             </div>
-                        </p>
-                        <p>
-                            <div class="social-container">
-                                <a href="https://instagram.com/root.studiofitness" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                                <a href="https://api.whatsapp.com/send?phone=351925677310" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-                            </div>
-                        </p>
+                        </div>
+                        <div class="social-container">
+                            <a href="https://instagram.com/root.studiofitness" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                            <a href="https://api.whatsapp.com/send?phone=351925677310" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -186,10 +185,9 @@
             </div>
         </footer> 
 
+        <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+        <script src="js/navMenu.js"></script>
+        <script src="js/map.js"></script>
+        <script src="js/about.js"></script>
     </body>
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="js/navMenu.js"></script>
-    <script src="js/map.js"></script>
-    <script src="js/about.js"></script>
-
 </html>

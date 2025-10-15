@@ -14,11 +14,12 @@ function showPopup(msg, delay = 2000, success = false) {
 
 $(document).ready(function(){
     const params = new URLSearchParams(window.location.search);
-    if (params.has('login')) {
-        const loginStatus = params.get('login');
+    // if (params.has('login')) {
+    //     const loginStatus = params.get('login');
 
-        if (loginStatus === 'success') showPopup('Login realizado com sucesso!', 3000, true);
-    } else if (params.has('logout')){
+    //     if (loginStatus === 'success') showPopup('Login realizado com sucesso!', 3000, true);
+    // } else 
+    if (params.has('logout')){
         const logoutStatus = params.get('logout');
 
         if (logoutStatus === 'success') showPopup('Logout realizado com sucesso!', 3000, true);

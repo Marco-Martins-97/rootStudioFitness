@@ -110,7 +110,7 @@
             </div>
         </footer>
 
+        <script src="js/navMenu.js"></script>
+        <script src="js/signup.js"></script>
     </body>
-    <script src="js/navMenu.js"></script>
-    <script src="js/signup.js"></script>
 </html>

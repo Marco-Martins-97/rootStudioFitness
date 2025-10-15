@@ -117,9 +117,7 @@ function loadCartProducts(){
 }
 
 function shoppingCartHandler(productId, cartAction){
-
     $.post('includes/saveServerData.inc.php', {action: 'cartHandler', productId: productId, cartAction: cartAction}, function(response){
-    
         if (response.status === 'error') {
             console.error('Server error:', response.message || 'Erro desconhecido');
             showPopup('Erro na ligação ao servidor.');

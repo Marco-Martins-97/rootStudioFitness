@@ -39,47 +39,46 @@
                     </div>
                     <div class="right-menu">
                         <a href="shop.php">Loja</a>
-
-                            <div class="guest">
-                                <a href="login.php">Entrar</a>
-                                <a href="signup.php">Registar</a>
-                            </div>
+                        <div class="guest">
+                            <a href="login.php">Entrar</a>
+                            <a href="signup.php">Registar</a>
+                        </div>
                     </div>
                 </div>
             </nav>
         </header>
         <main>
             <div class="form-container <?php if (isset($_SESSION['loginError'])) { echo 'invalid'; } ?> ">
-                    <h1>Entrar</h1>
-                    <form action="includes/login.inc.php" method="post" id="login-form">
-                        <!-- Email -->
-                        <div class="field-container">
-                            <div class="field">
-                                <label for="loginEmail">Email:</label>
-                                <input type="email" id="loginEmail" name="loginEmail" maxlength="255" value="admin@email.pt">
-                            </div>
+                <h1>Entrar</h1>
+                <form action="includes/login.inc.php" method="post" id="login-form">
+                    <!-- Email -->
+                    <div class="field-container">
+                        <div class="field">
+                            <label for="loginEmail">Email:</label>
+                            <input type="email" id="loginEmail" name="loginEmail" maxlength="255">
                         </div>
-                        <!-- Password -->
-                        <div class="field-container">
-                            <div class="field">
-                                <label for="loginPwd">Password:</label>
-                                <input type="password" id="loginPwd" name="loginPwd" maxlength="255" value="123123123">
-                            </div>
+                    </div>
+                    <!-- Password -->
+                    <div class="field-container">
+                        <div class="field">
+                            <label for="loginPwd">Palavra-passe:</label>
+                            <input type="password" id="loginPwd" name="loginPwd" maxlength="255">
                         </div>
+                    </div>
                         
-                        <div class="error">
-                            <?php 
-                                if (isset($_SESSION['loginError'])) { 
-                                    echo $_SESSION['loginError']; 
-                                    unset($_SESSION['loginError']);
-                                }
-                            ?>
-                        </div>
+                    <div class="error">
+                        <?php 
+                            if (isset($_SESSION['loginError'])) { 
+                                echo $_SESSION['loginError']; 
+                                unset($_SESSION['loginError']);
+                            }
+                        ?>
+                    </div>
 
-                        <button type="submit">Entrar</button>
-                        <div class="link-container"><a href="signup.php">Registar</a></div>
-                    </form>
-                </div>
+                    <button type="submit">Entrar</button>
+                    <div class="link-container"><a href="signup.php">Ainda não tens conta? Registar</a></div>
+                </form>
+            </div>
         </main>
         <footer>
             <img src="imgs/logo/iconOriginal.png" alt="Root Studio logo">
@@ -88,11 +87,11 @@
                     <a href="https://instagram.com/root.studiofitness" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
                     <a href="https://api.whatsapp.com/send?phone=351925677310" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
                 </div>
-                <p>&copy; 2025 Root Studio Fitness</p>
+                <p>&copy; 2025 Root Studio Fitness. Todos os direitos reservados.</p>
             </div>
         </footer> 
 
+        <script src="js/navMenu.js"></script>
+        <script src="js/login.js"></script>
     </body>
-    <script src="js/navMenu.js"></script>
-    <script src="js/login.js"></script>
 </html>

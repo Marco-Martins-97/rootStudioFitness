@@ -72,6 +72,5 @@ class Login{
         
         header('Location: ../index.php?login=success');
         exit;
-
     }
 }
