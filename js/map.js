@@ -1,15 +1,15 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const rootStudio = [41.53346835901555, -8.757288894843745]; // Localização do Root
+    const rootStudio = [41.53346835901555, -8.757288894843745]; // Localização do Root Studio
     
-    // Inicia o mapa
+    // Inicializa o mapa centrado no Root Studio
     const map = L.map('map').setView(rootStudio, 13);   //localização, zoom
 
-    // camadas
+    // Camadas do mapa (OpenStreetMap)
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
-    // Root icon
+    // Ícone do Root Studio
     const rootIcon = L.icon({
         iconUrl: 'imgs/content/rootIcon.png',
         iconSize: [32, 32],
@@ -17,24 +17,24 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     L.marker(rootStudio, { icon: rootIcon }).addTo(map).bindPopup('Root Studio');
 
-    // Check geolocation
+    // Verifica se a geolocalização é suportada
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 const userLoc = [position.coords.latitude, position.coords.longitude];
 
-                // User marker
+                // Ícone do utilizador
                 const userIcon = L.icon({
                     iconUrl: 'imgs/content/userIcon.png',
                     iconSize: [32, 32],
                     iconAnchor: [16, 32]
                 });
-                L.marker(userLoc, { icon: userIcon }).addTo(map).bindPopup("Voce Está Aqui");
+                L.marker(userLoc, { icon: userIcon }).addTo(map).bindPopup("Está aqui");
 
-                // Fit map to both markers
+                // Ajusta o mapa para mostrar ambos os marcadores
                 map.fitBounds([rootStudio, userLoc]);
 
-                // Fetch route from OSRM
+                // Obtém a rota a partir do serviço OSRM
                 const routingUrl = `https://router.project-osrm.org/route/v1/driving/${userLoc[1]},${userLoc[0]};${rootStudio[1]},${rootStudio[0]}?overview=full&geometries=geojson`;
 
                 fetch(routingUrl)
@@ -48,8 +48,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
                     })
                     .catch(err => {
-                        console.error("Routing error:", err);
-                        alert("Falha ao carregar a rota.");
+                        console.error("Erro ao calcular rota:", err);
+                        alert("Não foi possível carregar a rota.");
                     });
             },
             (error) => {

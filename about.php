@@ -45,11 +45,12 @@
                             </div>
                             <div class="dropdown">
                                 <a href="profile.php">Perfil</a>
+                                <a href="orders.php">Encomendas</a>
                                 <?php if(isset($_SESSION["userRole"]) && $_SESSION["userRole"] === 'admin'){ ?>
-                                    <a href="shopAdmin.php">Administração Loja</a>
-                                    <a href="clientsAdmin.php">Administração Clientes</a>
+                                    <a href="clientsAdmin.php">Administração de Clientes</a>
+                                    <a href="shopAdmin.php">Administração da Loja</a>
+                                    <a href="ordersAdmin.php">Administração de Encomendas</a>
                                 <?php } ?>
-                                <a href="profile.php">Encomendas</a>
                                 
                                 <form action="includes/logout.inc.php" method="post">
                                     <button>Sair</button>
@@ -64,20 +65,20 @@
             <section id="history">
                 <div class="history-container">
                     <h1>Root Studio Fitness</h1>
-                    <p>No domingo, dia 15 julho 2025, o Root abriu portas para uma novo capítulo. No Root, acreditamos que tudo começa com uma base sólida, e essa base somos nós. Esta equipa não é feita só de personal trainers. É feita de histórias, experiências, diferentes olhares sobre o corpo e o movimento. É feita de pessoas que escolhem estar presentes, ouvir, adaptar, motivar e caminhar ao lado de quem confia em nós. Cada um de nós traz algo único, mas partilhamos o mesmo propósito: ajudar-te a mover melhor, a viver com mais consciência e a reencontrar a tua raiz.</p>
+                    <p>No domingo, dia 15 de julho de 2025, o Root abriu portas para um novo capítulo. No Root, acreditamos que tudo começa com uma base sólida — e essa base somos nós. Esta equipa não é feita só de personal trainers. É feita de histórias, experiências, diferentes olhares sobre o corpo e o movimento. É feita de pessoas que escolhem estar presentes, ouvir, adaptar, motivar e caminhar ao lado de quem confia em nós. Cada um de nós traz algo único, mas partilhamos o mesmo propósito: ajudar-te a mover melhor, a viver com mais consciência e a reencontrar a tua raiz.</p>
                 </div>
             </section>
 
             <section id="profile-joao">
                 <div class="img-text-container">
                     <div class="img-container">
-                        <img src="imgs/content/joao.jpg" alt="joão Figueiredo">
+                        <img src="imgs/content/joao.jpg" alt="João Figueiredo">
                     </div>
                     <div class="text-container">
                         <h2>João Figueiredo</h2>
-                        <p>Chamo-me João e sou o fundador do Root, um estúdio que nasceu da minha história, da paixão pelo movimento e da convicção de que todo o progresso começa com uma base sólida, no corpo, na mente e na vida.</p>
-                        <p>Sou licenciado em ciências do desporto, com mestrado em ensino, pós-graduação em treino terapêutico e formação em pilates.</p>
-                        <p>Tive uma infância marcada pela obsidade, onde pesei mais de 130kg. Uma realidade que mudou quando decidi transformar a minha vida através do movimento. Cheguei aos 60Kg, e desde então nunca mais parei. Musculação, futebol, natação, padel...</p>
+                        <p>Chamo-me João e sou o fundador do Root - um estúdio que nasceu da minha história, da paixão pelo movimento e da convicção de que todo o progresso começa com uma base sólida: no corpo, na mente e na vida.</p>
+                        <p>Sou licenciado em Ciências do Desporto, com mestrado em Ensino, pós-graduação em Treino Terapêutico e formação em Pilates.</p>
+                        <p>Tive uma infância marcada pela obesidade, onde pesei mais de 130 kg. Uma realidade que mudou quando decidi transformar a minha vida através do movimento. Cheguei aos 60 kg e, desde então, nunca mais parei. Musculação, futebol, natação, padel… </p>
                     </div>
                 </div>
             </section>
@@ -89,9 +90,9 @@
                     </div>
                     <div class="text-container">
                         <h2>Sophie Rocha</h2>
-                        <p>Olá, sou a Sophie e sempre vivi com o desporto no coração. Sou licenciada em gestão pública e mestre em gestão das organizações, mas foi durante a pandemia que a minha vida me desafiou a olhar para dentro, e decidir seguir o meu verdadeiro sonho de trabalhar na área do exercício físico.</p>
-                        <p>Formei-me em técnica de exercício físico pela <a href="">@fitnessacademy</a>, onde obtive o meu título profissional. Desde então, especializei-me em aulas de grupo, e foi aí que encontrei a minha grande paixão, o step.</p>
-                        <p>Sou motivada por alegria, empatia e energia positiva. Gosto de criar um ambiente leve, onde o treino é mais do que esforço, é conecção, evolução e bem-estar.</p>
+                        <p>Olá, sou a Sophie e sempre vivi com o desporto no coração. Sou licenciada em Gestão Pública e mestre em Gestão das Organizações, mas foi durante a pandemia que a vida me desafiou a olhar para dentro — e decidir seguir o meu verdadeiro sonho: trabalhar na área do exercício físico.</p>
+                        <p>Formei-me como Técnica de Exercício Físico pela <a href="https://www.instagram.com/fitnessacademy/">@fitnessacademy</a>, onde obtive o meu título profissional. Desde então, especializei-me em aulas de grupo, e foi aí que encontrei a minha grande paixão: o step.</p>
+                        <p>Sou movida por alegria, empatia e energia positiva. Gosto de criar um ambiente leve, onde o treino é mais do que esforço — é conexão, evolução e bem-estar.</p>
                     </div>
                 </div>
             </section>
@@ -101,7 +102,7 @@
                     <div id="map" class="map"></div>
                     <div class="contact-info">
                         <p>Morada: <a href="https://maps.app.goo.gl/ToG9UKXNECdGPDrY6" target="_blank">Travessa Doutor Francisco Sá Carneiro 150 fração 1 G, 4740-010 Esposende</a></p>
-                        <p>Telemovel: <a href="tel:+351925677310">+351 925 677 310</a></p>
+                        <p>Telemóvel: <a href="tel:+351925677310">+351 925 677 310</a></p>
                         <p>Horários: 
                             <div class="schedule-container">
                                 <div class="schedule">
@@ -147,7 +148,7 @@
                             <i class="fas fa-plus"></i>
                         </div>
                         <div class="faq-answer">
-                            Toda a Gente, O Root foi criado para pessoas reais, com rotinas, dúvidas, objectivos e ritmos diferentes.
+                            Toda a Gente, O Root foi criado para pessoas reais, com rotinas, dúvidas, objetivos e ritmos diferentes.
                         </div>
                     </div>
                     <div class="faq-item">
@@ -156,14 +157,14 @@
                             <i class="fas fa-plus"></i>
                         </div>
                         <div class="faq-answer">
-                            No Root, acretitamos que o verdadeiro progresso começa com uma base solida.
-                            Somos mais o que presonal trainers. Queremos ajudar-te a gostar de  te movimentar, a valorizar o proceso e a desafiar-te continuamente.
-                            Aqui, todos os treinos vão além do fisico, procuramos promover hábitos saudáveis, consistência corporal e autonomia.
+                            No Root, acreditamos que o verdadeiro progresso começa com uma base sólida.
+                            Somos mais do que personal trainers. Queremos ajudar-te a gostar de te movimentar, a valorizar o processo e a desafiar-te continuamente.
+                            Aqui, todos os treinos vão além do físico, procuramos promover hábitos saudáveis, consistência corporal e autonomia.
                         </div>
                     </div>
                     <div class="faq-item">
                         <div class="faq-question">
-                            Como  Posso Marcar o meu Treino?
+                            Como Posso Marcar o Meu Treino?
                             <i class="fas fa-plus"></i>
                         </div>
                         <div class="faq-answer">
@@ -181,7 +182,7 @@
                     <a href="https://instagram.com/root.studiofitness" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
                     <a href="https://api.whatsapp.com/send?phone=351925677310" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
                 </div>
-                <p>&copy; 2025 Root Studio Fitness</p>
+                <p>&copy; 2025 Root Studio Fitness. Todos os direitos reservados.</p>
             </div>
         </footer> 
 
