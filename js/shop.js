@@ -168,25 +168,25 @@ $(document).ready(function(){
     if (params.has('invalid')) {
         const status = params.get('invalid');
         
-        const errorMsg = {  
+        const messages = {  
             login: 'É necessário iniciar sessão para comprar.'
         };
 
         // Mostra uma msg personalizada para alguns status e uma genérica para todos os outros
-        const msg = errorMsg[status] || 'Ocorreu um erro. Tente novamente!';    
+        const msg = messages[status] || 'Ocorreu um erro. Tente novamente!';    
 
         showPopup(msg);
     } else if (params.has('checkout')) {
         const status = params.get('checkout');
         
-        const errorMsg = {  
+        const messages = {  
             success: 'Encomenda concluída com sucesso.',
             error: 'Ocorreu um erro durante o processo. Tente novamente!',
             failed: 'Ocorreu um erro. A operação foi cancelada!',
         };
     
         // Mostra uma msg personalizada para alguns status e uma genérica para todos os outros
-        const msg = errorMsg[status] || 'Ocorreu um erro. Tente novamente!';    
+        const msg = messages[status] || 'Ocorreu um erro. Tente novamente!';    
 
         if (status === 'success'){
             showPopup(msg, 2000, true);

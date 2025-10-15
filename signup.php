@@ -40,65 +40,64 @@
                     </div>
                     <div class="right-menu">
                         <a href="shop.php">Loja</a>
-
-                            <div class="guest">
-                                <a href="login.php">Entrar</a>
-                                <a href="signup.php">Registar</a>
-                            </div>
+                        <div class="guest">
+                            <a href="login.php">Entrar</a>
+                            <a href="signup.php">Registar</a>
+                        </div>
                     </div>
                 </div>
             </nav>
         </header>
         <main>
             <div class="form-container">
-                    <h1>Registar</h1>
-                    <form action="includes/signup.inc.php" method="post" id="signup-form">
-                        <!-- Primeiro Nome -->
-                        <div class="field-container required">
-                            <div class="field">
-                                <label for="firstName">Nome:</label>
-                                <input type="text" id="firstName" name="firstName" maxlength="255">
-                            </div>
-                            <div class="error"></div>
+                <h1>Registar</h1>
+                <form action="includes/signup.inc.php" method="post" id="signup-form">
+                    <!-- Primeiro Nome -->
+                    <div class="field-container required">
+                        <div class="field">
+                            <label for="firstName">Nome:</label>
+                            <input type="text" id="firstName" name="firstName" maxlength="255">
                         </div>
-                        <!-- Apelido -->
-                        <div class="field-container required">
-                            <div class="field">
-                                <label for="lastName">Apelido:</label>
-                                <input type="text" id="lastName" name="lastName" maxlength="255">
-                            </div>
-                            <div class="error"></div>
+                        <div class="error"></div>
+                    </div>
+                    <!-- Apelido -->
+                    <div class="field-container required">
+                        <div class="field">
+                            <label for="lastName">Apelido:</label>
+                            <input type="text" id="lastName" name="lastName" maxlength="255">
                         </div>
-                        <!-- Email -->
-                        <div class="field-container required">
-                            <div class="field">
-                                <label for="email">Email:</label>
-                                <input type="email" id="email" name="email" maxlength="255">
-                            </div>
-                            <div class="error"></div>
+                        <div class="error"></div>
+                    </div>
+                    <!-- Email -->
+                    <div class="field-container required">
+                        <div class="field">
+                            <label for="email">Email:</label>
+                            <input type="email" id="email" name="email" maxlength="255">
                         </div>
-                        <!-- Password -->
-                        <div class="field-container required">
-                            <div class="field">
-                                <label for="pwd">Password:</label>
-                                <input type="password" id="pwd" name="pwd" minlength="8" maxlength="255">
-                            </div>
-                            <div class="error"></div>
+                        <div class="error"></div>
+                    </div>
+                    <!-- Password -->
+                    <div class="field-container required">
+                        <div class="field">
+                            <label for="pwd">Palavra-passe:</label>
+                            <input type="password" id="pwd" name="pwd" minlength="8" maxlength="255">
                         </div>
-                        <!-- Confirmação de Password -->
-                        <div class="field-container required">
-                            <div class="field">
-                                <label for="confirmPwd">Confirmação de Password:</label>
-                                <input type="password" id="confirmPwd" name="confirmPwd" minlength="8" maxlength="255">
-                            </div>
-                            <div class="error"></div>
+                        <div class="error"></div>
+                    </div>
+                    <!-- Confirmação de Password -->
+                    <div class="field-container required">
+                        <div class="field">
+                            <label for="confirmPwd">Confirmação da palavra-passe:</label>
+                            <input type="password" id="confirmPwd" name="confirmPwd" minlength="8" maxlength="255">
                         </div>
+                        <div class="error"></div>
+                    </div>
 
-                        <p class="form-disclaimer">Campos de preenchimento obrigatório.</p>
-                        <button type="submit">Registar</button>
-                        <div class="link-container"><a href="login.php">Entrar</a></div>
-                    </form>
-                </div>
+                    <p class="form-disclaimer">Campos de preenchimento obrigatório.</p>
+                    <button type="submit">Registar</button>
+                    <div class="link-container"><a href="login.php">Já tens conta? Entrar</a></div>
+                </form>
+            </div>
         </main>
         <footer>
             <img src="imgs/logo/iconOriginal.png" alt="Root Studio logo">
@@ -107,9 +106,9 @@
                     <a href="https://instagram.com/root.studiofitness" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
                     <a href="https://api.whatsapp.com/send?phone=351925677310" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
                 </div>
-                <p>&copy; 2025 Root Studio Fitness</p>
+                <p>&copy; 2025 Root Studio Fitness. Todos os direitos reservados.</p>
             </div>
-        </footer> 
+        </footer>
 
     </body>
     <script src="js/navMenu.js"></script>

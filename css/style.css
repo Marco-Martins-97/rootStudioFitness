@@ -225,6 +225,13 @@ footer img{
     background-color: var(--SUCCESS);
 }
 
+.validSub{
+    color: blue;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-align: center;
+}
+
 /* DESKTOP */
 @media (min-width: 768px) {
     .mobile-only{
@@ -239,7 +246,7 @@ footer img{
     nav{
         padding: 0;
     }
-    
+
     nav.start{
         height: 200px;
     }

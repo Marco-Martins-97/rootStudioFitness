@@ -11,7 +11,7 @@ function validateField(input){
 
         if (response.status === 'error'){
             console.error('Ocorreu um erro:', response.message);
-            return
+            return;
         }
         
         if (response.status === 'invalid'){

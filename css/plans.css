@@ -256,13 +256,6 @@
     text-align: center;
 }
 
-.validSub{
-    color: var(--INFO);
-    font-size: 0.8rem;
-    font-weight: bold;
-    text-align: center;
-}
-
 
 @media (min-width: 768px) {
     /* PLANS - SECTION */

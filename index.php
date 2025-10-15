@@ -117,7 +117,7 @@
                 </div>
                 <p>&copy; 2025 Root Studio Fitness. Todos os direitos reservados.</p>
             </div>
-        </footer> 
+        </footer>
 
         <script src="js/navMenu.js"></script>
         <script src="js/main.js"></script>

@@ -4,12 +4,18 @@ function validateField(input){
     const field = $(input).closest('.field-container');
 
     $.post('includes/validateInputs.inc.php', {input: name, value: value}, function(response){
+        if (!response || typeof response.status === 'undefined') {
+            console.error('A resposta do servidor é inválida.');
+            return;
+        }
+
         if (response.status === 'error'){
             console.error('Erro:', response.message);
+            return;
         }
         
         if (response.status === 'invalid'){
-            console.warn('Input Invalido:', response.message);
+            console.warn('Campo inválido:', response.message);
             field.addClass('invalid').find('.error').html(response.message);
             return;
         }
@@ -17,7 +23,7 @@ function validateField(input){
         field.removeClass('invalid').find('.error').html('');
 
     }, 'json').fail(function () {
-        console.error('Erro ao validar os dados.');
+        console.error('Ocorreu um erro ao validar os dados.');
     });
 }
 
@@ -28,8 +34,14 @@ function validatePwds(){
     const fieldConfPwd = $('#confirmPwd').closest('.field-container');
 
     $.post('includes/validateInputs.inc.php', {input: 'createPwd', valuePwd: pwd, valueConfPwd: confPwd}, function(response){
+        if (!response || typeof response.status === 'undefined') {
+            console.error('A resposta do servidor é inválida.');
+            return;
+        }
+
         if (response.status === 'error'){
             console.error('Erro:', response.message);
+            return;
         }
             
         if (response.status === 'invalid'){
@@ -55,7 +67,7 @@ function validatePwds(){
         }
 
     }, 'json').fail(function () {
-        console.error('Erro ao validar os dados.');
+        console.error('Ocorreu um erro ao validar os dados.');
     });
 }
 
@@ -65,7 +77,7 @@ function noEmptyFields(formId){
         let input = $(this).find('input').first();
         if (input.val() === null || input.val().trim() === ''){
             emptyFields = true;
-            $(this).closest('.field-container').addClass('invalid').find('.error').html('Campo de preenchimento obrigatório!');
+            $(this).closest('.field-container').addClass('invalid').find('.error').html('Preenchimento deste campo é obrigatório.');
         }
     });
     return !emptyFields;
@@ -84,49 +96,49 @@ function validateAllFields(formId){
     })
 }
 
+function showPopup(msg, delay = 2000, success = false) {
+    $('.popup').remove();// Remove um popup antes de criar outro (se existir)
+    
+    // Cria o elemento popup
+    const popup = $('<div class="popup"></div>').text(msg);
+    
+    // Adiciona a classe "popup-success" apenas se success for true ou 1
+    if (success === true || success === 1 || success === '1') {
+        popup.addClass('popup-success');
+    }
+    // Insere no main e aplica delay + fadeOut
+    popup.appendTo('main').delay(delay).fadeOut(300, function() { $(this).remove(); });
+}
+
 $(document).ready(function(){
     const signupForm = $('#signup-form');
     const params = new URLSearchParams(window.location.search);
 
     if (params.has('signup')) {
-        const signupStatus = params.get('signup');
-        let signupMsg = '';
-        let signupSts = '';
+        const status = params.get('signup');
 
-        switch (signupStatus) {
-            case 'failed':
-                signupMsg = 'Falha ao registar. Tente novamente.';
-                signupSts = 'fail';
-                break;
-            case 'invalid':
-                signupMsg = 'Dados inválidos. Confira e tente novamente.';
-                signupSts = 'fail';
-                break;
-            case 'success':
-                signupMsg = 'Registo realizado com sucesso!';
-                signupSts = 'success';
-                break;
+        const messages = {  
+            success: 'Registo realizado com sucesso!',
+            invalid: 'Dados inválidos. Confira e tente novamente.',
+            failed: 'Falha ao registar. Tente novamente.!',
+        };
+       
+        // Mostra uma msg personalizada para alguns status e uma genérica para todos os outros
+        const msg = messages[status] || 'Ocorreu um erro. Tente novamente!';   
+
+        if (status === 'success'){
+            const delay = 2000;
+            showPopup(msg, delay, true);
+            setTimeout(function(){ window.location.href = 'login.php'; }, delay);
+        } else {
+            showPopup(msg);
         }
-
-        //mostra popup
-        let signupPopup = $(`<div class='popup popup-${signupSts}'>${signupMsg}</div>`).appendTo('main');
-        // remove popup depois de 3 segundo
-        setTimeout(function(){
-            signupPopup.fadeOut(300, function(){ $(this).remove(); });
-            if (sts === 'success') {window.location.href = 'login.php';}
-        }, 3000);
-        
-        
     }
-
 
     validateAllFields(signupForm);
 
-    $('#firstName').on('input', function(){ validateField(this); });
-    $('#lastName').on('input', function(){ validateField(this); });
-    $('#email').on('input', function(){ validateField(this); });
+    $('#firstName, #lastName, #email').on('input', function(){ validateField(this); });
     $('#pwd, #confirmPwd').on('input', function(){ validatePwds(); });
-
 
 
     signupForm.on('submit', function(e){
@@ -134,7 +146,7 @@ $(document).ready(function(){
 
         if(noEmptyFields(signupForm) && isFormValid(signupForm)){
             $('.validSub').remove();
-            const successDiv = $('<div class="validSub">Enviando...</div>');
+            const successDiv = $('<div class="validSub">A enviar...</div>');
             $('.form-disclaimer').after(successDiv);
             
             // depois de 1 segundo e envia o formulário
@@ -142,7 +154,7 @@ $(document).ready(function(){
                 signupForm.off('submit').submit();
             }, 1000);
         } else {
-            console.error('Invalid Form!');
+            console.error('O formulário contém erros. Verifique os campos assinalados.');
         }
     });
 
