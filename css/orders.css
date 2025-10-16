@@ -53,6 +53,7 @@
 .order-info{
     font-weight: bold;
 }
+
 .order-title .left p{
 	font-size: 0.8rem;
 }
@@ -125,9 +126,11 @@
 .order-container.open > .order-products{
 	display: flex;
 }
+
 .order-container.open > .order-title{
 	border-bottom: none;
 }
+
 .order-container.open .order-arrow i {
   transform: rotate(180deg);
 }
@@ -156,4 +159,3 @@
 	background-color: var(--SECONDARY-BTN-COLOR);
 	color: var(--SECONDARY-TXT-COLOR);
 }
-

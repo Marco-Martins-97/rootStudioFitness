@@ -188,6 +188,7 @@ footer img{
     align-items: center;
     color: var(--PRIMARY-TXT-COLOR);
 }
+
 .social{
     display: flex;
     justify-content: center;
@@ -204,7 +205,6 @@ footer img{
 }
 
 /* POPUP */
-
 .popup{
     position: fixed;
     top: 50%;
@@ -347,5 +347,3 @@ footer img{
         text-align: center;
     }
 }
-
-
