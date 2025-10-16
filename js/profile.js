@@ -1,15 +1,14 @@
 function loadProfile(){
     $.post('includes/loadServerData.inc.php', {action: 'loadProfile'}, function(response){
-        // console.log(response);
-
         if (!response || typeof response !== 'object') {
-            console.error('Invalid JSON response:', response);
-            $('.profile-container').html(`Ocurreu Um Erro, Não Foi Possivel Carregar os dados do utilizador!`);
+            console.error('Resposta JSON inválida:', response);
+            $('.profile-container').html(`Ocorreu um erro. Não foi possível carregar os dados do utilizador.`);
             return;
         }
+
         if (response.status === 'error') {
-            console.error('Server error:', response.message || 'Unknown error');
-            $('.profile-container').html(`Ocurreu Um Erro, Não Foi Possivel Carregar os dados do utilizador!`);
+            console.error('Erro do servidor:', response.message || 'Erro desconhecido');
+            $('.profile-container').html(`Ocorreu um erro. Não foi possível carregar os dados do utilizador.`);
             return;
         }
 
@@ -40,7 +39,7 @@ function loadProfile(){
                 <div class='role'>${userRole}</div>
             </div>
             <div class='profile-body'>
-                <div><button class='edit-pwd' id='edit-pwd'>Alterar a password</button></div>
+                <div><button class='edit-pwd' id='edit-pwd'>Alterar a palavra-passe</button></div>
                 <div class='editable'>
                     <div class='field' data-field='email'>
                         <label>Email:</label>
@@ -48,7 +47,6 @@ function loadProfile(){
                     </div>
                 </div>
         `;
-        // Reset PWD
 
         // o array fieldsConfig contem toda a informaçao para a criação da estrutura do perfil do cliente, para a parte visual e editavel
         const fieldsConfig = [
@@ -57,7 +55,7 @@ function loadProfile(){
             {field: 'email', label: 'Email', type: 'input', inputType: 'text'},
             {field: 'fullName', label: 'Nome Completo', type: 'input', inputType: 'text'},
             {field: 'birthDate', label: 'Data de Nascimento', type: 'input', inputType: 'date'},
-            {field: 'gender', label: 'Gênero', type: 'select', options: [
+            {field: 'gender', label: 'Género', type: 'select', options: [
                                                                             {value: 'male', label: 'Masculino'},
                                                                             {value: 'female', label: 'Feminino'}
                                                                         ]},
@@ -97,7 +95,7 @@ function loadProfile(){
                 const value = clientProfile[field] ?? '';
                 const label = f.label ?? field;
                 let displayValue = '';
-                //nao mostra os dados do utilizador apenas os de cliente
+                // Não mostra os dados do utilizador, apenas os de cliente
                 if (field !== 'email' && field !== 'firstName' && field !== 'lastName'){
                     if (type === 'select'){
                         const selected = f.options.find(opt => opt.value === value);
@@ -116,14 +114,15 @@ function loadProfile(){
             });
         }
 
-        HTMLcontent += '</div>';
+        HTMLcontent += `<p class="form-disclaimer">As alterações não foram guardadas.</p>
+                        </div>`;
 
         $('.profile-container').html(HTMLcontent);
         
         editField(fieldsConfig);
 
     }, 'json').fail(function () {
-        $('.profile-container').html('Ocurreu Um Erro, Não Foi Possivel Carregar os Dados de Utilizador!');
+        $('.profile-container').html('Ocorreu um erro. Não foi possível carregar os dados do utilizador.');
     });
 }
 
@@ -133,18 +132,18 @@ function editField(fieldsConfig){
         const modal =  `<div class='modal' id='changePwdModal'>
                         <div class='modal-content'>
                             <span id='close-change-modal'>&times;</span>
-                            <h2>Alterar a password</h2>
+                            <h2>Alterar a palavra-passe</h2>
                             <div class='field-container'>
                                 <div class='field'>
-                                    <label for='current-pwd'>Password Atual:</label>
+                                    <label for='current-pwd'>Palavra-passe atual:</label>
                                     <input type='password' name='current-pwd' id='currentPwd'>
                                 </div>
                                 <div class='field'>
-                                    <label for='new-pwd'>Nova Password:</label>
+                                    <label for='new-pwd'>Nova palavra-passe:</label>
                                     <input type='password' name='new-pwd' id='newPwd'>
                                 </div>
                                 <div class='field'>
-                                    <label for='confirm-new-pwd'>Confirma Nova Password:</label>
+                                    <label for='confirm-new-pwd'>Confirma a nova palavra-passe:</label>
                                     <input type='password' name='confirm-new-pwd' id='confirmNewPwd'>
                                 </div>
                                 <div class="error"></div>
@@ -201,7 +200,7 @@ function editField(fieldsConfig){
                         return;
                     }
                     
-                    error.css('color', 'green').text('Password alterada com sucesso!');
+                    error.css('color', 'green').text('Palavra-passe alterada com sucesso!');
                     setTimeout(() => $('#changePwdModal').remove(), 1000);
 
 
@@ -218,7 +217,7 @@ function editField(fieldsConfig){
 
 
 
-    //edita os restantes campos
+    // Edita os restantes campos
     $('.profile-container').off('click', '.field').on('click', '.field', function(){
         const $this = $(this);
         const wrapper = $this.find('.value');
@@ -226,7 +225,7 @@ function editField(fieldsConfig){
         const $field = $this.data('field');
         const editable = $this.closest('.editable');
         
-        // previne de criar um input ja existente
+        // previne de criar um input já existente
         if($this.find('input, select, textarea').length > 0) return;
 
         // procura no array fieldsConfig pelos dados do field correspondente clicado, caso não enconte, nao faz nada
@@ -289,9 +288,10 @@ function editField(fieldsConfig){
 
         function resizeInput(){
             const $span = $('<span>').css({ visibility: 'hidden', position: 'absolute', whiteSpace: 'pre', font: $input.css('font') }).text($input.val() || $input.attr('placeholder') || '').appendTo('body');
-            $input.width($span.width() + 2);
+            $input.width($span.width() + (1.2 * $span.text().length) + 2);
             $span.remove();
         }
+
         if($field === 'firstName' || $field === 'lastName'){
             $input.on("input", resizeInput);// atualiza a largura conforme vai escrevendo
         }
@@ -299,7 +299,6 @@ function editField(fieldsConfig){
         let disableBlur = false;    // esta variavel previne que os eventos no input seja ativados multiplas vezes pelo blur
 
         $input.on('blur change keyup', function(e){
-            // console.log('Event triggered:', e.type, e.key || 'no key'); 
             if (e.key === 'Escape') {   //cancela as alteraçoes e sai do modo de ediçao
                 cancelEdit(wrapper);
                 return;
@@ -307,7 +306,6 @@ function editField(fieldsConfig){
 
             if (disableBlur) return;
 
-            // if(e.type === 'blur' || e.type === 'change' || e.key === 'Enter'){
             if(($input.is('input, textarea') && (e.type === 'blur' || e.key === 'Enter')) || ($input.is('select') && e.type === 'change')) {
 
                 let newValue = $input.val().trim();
@@ -316,7 +314,7 @@ function editField(fieldsConfig){
                     return;
                 }
 
-                // valida o input
+                // valida o campo
                 validateField($this, function(isValid){
                     if(!isValid) return;
 
@@ -370,8 +368,6 @@ function editField(fieldsConfig){
             $this.removeClass('notSaved');
         }
     });
-
-
 }
 
 function confirmPwdModal(callback){
@@ -425,43 +421,6 @@ function confirmPwdModal(callback){
         });
     });
 }
-
-
-
-/* function validationRequest(field, value, callback) {
-    $.post('includes/validateInputs.inc.php', { input: field, value: value }, function (response) {
-        callback(response);
-    }, 'json').fail(function (jqXHR, textStatus, errorThrown) {
-        callback({ status: 'error', message: textStatus || 'Request failed', details: errorThrown
-        });
-    });
-}
-
-function validateField($this, callback){
-    const field = $this.data('field');
-    const editable = $this.closest('.editable');
-    const error = editable.find('.error');
-    const input = $this.find('input, select, textarea');
-    const value = input.val();
-
-
-    validationRequest(field, value, function (response) {
-        if (response.status === 'error'){
-            console.error('Erro:', response.message);   //Motra o erro no console
-            error.text(response.message || 'Erro ao validar os dados.');
-            callback(false);
-            return;
-        }
-        if (response.status === 'invalid'){
-            console.warn('Input Invalido:', response.message);
-            error.text(response.message);
-            callback(false);
-            return;
-        }
-
-        callback(true);
-    });
-} */
 
 function validateField($this, callback){
     const field = $this.data('field');
@@ -523,7 +482,6 @@ function saveField($this, callback){
         callback(false);
     }); 
 }
-
 
 
 $(document).ready(function(){
