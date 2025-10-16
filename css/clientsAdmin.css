@@ -2,7 +2,6 @@
 	width: 100%;
 	display: flex;
 	flex-direction: column;
-	/* justify-content: center; */
 	align-items: center;
 	gap: 32px;
 	padding: 32px 24px;
@@ -14,8 +13,6 @@
   	color: var(--PRIMARY-TXT-COLOR);
   	overflow: hidden;
   	transition: all 0.3s ease;
-  	/* border: 2px solid var(--SECONDARY-BG-COLOR);
-	border-radius: 16px; */
 }
 
 .application-title{
@@ -26,7 +23,6 @@
 	border-radius: 12px 12px 0 0;
 	cursor: pointer;
 	border-bottom: 2px double var(--PRIMARY-BG-COLOR);
-	/* arrow */
 	position: relative;
 }
 
@@ -41,6 +37,7 @@
 	transform: translateX(-50%);
 
 }
+
 .application-arrow i{
 	width: 100%;
 	height: 100%; 
@@ -72,15 +69,14 @@
 
 .pending{
 	color: #F4A300;
-	/* color: #E4B04C; */
 }
+
 .accepted{
 	color: #3BA55C;
-	/* color: #5FA777; */
 }
+
 .rejected{
 	color: #D64545;
-	/* color: #C96363; */
 }
 
 .application-data{
@@ -97,11 +93,13 @@
 	padding: 4px 0;
 	font-size: 0.9rem;
 }
+
 .data-container span{
 	width: 120px;
 	font-weight: bold;
 	flex-shrink: 0;
 }
+
 .data-container p{
 	text-align: justify;
 	margin: auto 0;
@@ -114,12 +112,15 @@
 .application-container.open > .application-data{
 	display: flex;
 }
+
 .application-container.open > .application-title{
 	border-bottom: none;
 }
+
 .application-container.open .application-arrow i {
-  transform: rotate(180deg);
+  	transform: rotate(180deg);
 }
+
 .application-btns{
 	background-color: var(--SECONDARY-BG-COLOR);
 	border-radius: 0 0 12px 12px;
@@ -128,6 +129,7 @@
 	height: 48px;
 	overflow: hidden;
 }
+
 .application-btns button{
 	width: 100%;
 	background: none;
@@ -147,6 +149,7 @@
 	.data-container span{
 		width: 150px;
 	}
+	
 	.application-data{
 		padding: 16px 24px 8px 24px;
 	}

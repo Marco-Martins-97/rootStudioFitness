@@ -1,23 +1,21 @@
 function loadApplications(){
     $.post('includes/loadServerData.inc.php', {action: 'loadClientApplications'}, function(response){
-        // console.log(response);
-
         if (!response || typeof response !== 'object') {
-            console.error('Invalid JSON response:', response);
-            $('.applications-container').html('Ocurreu Um Erro, Não Foi Possivel Carregar as Inscrições!');
+            console.error('Resposta JSON inválida:', response);
+            $('.applications-container').html('Ocorreu um erro. Não foi possível carregar as candidaturas!');
             return;
         }
 
         if (response.status === 'error') {
-            console.warn('Server error:', response.message || 'Unknown error');
-            $('.applications-container').html('Ocurreu Um Erro, Não Foi Possivel Carregar as Inscrições!');
+            console.warn('Erro do servidor:', response.message || 'Erro desconhecido');
+            $('.applications-container').html('Ocorreu um erro. Não foi possível carregar as candidaturas!');
             return;
         }
 
         let HTMLcontent = '';
         const applications = response.data;
 
-        //lista de palavras para serem substuidas
+        // Lista de palavras a substituir
         const replacements = {
             'pending': 'Pendente',
             'accepted': 'Aceite',
@@ -39,19 +37,18 @@ function loadApplications(){
 
         applications.forEach(application => {
             const applicationStatus = application.status;
-            
-            //Substitui as variaveis or palavras em portugues
+           
             for (let key in application) {
                 if (typeof application[key] === 'string') {
-                    // Replace all words based on the replacements map
+                    // Substitui para palavras em português
                     for (let word in replacements) {
-                        const regex = new RegExp(`\\b${word}\\b`, "gi"); // g = global, i = case-insensitive
+                        const regex = new RegExp(`\\b${word}\\b`, "gi");
                         application[key] = application[key].replace(regex, replacements[word]);
                     }
                 }
             }
 
-            // cria o HTML com os dados
+            // Cria o HTML com os dados da candidatura
             HTMLcontent += `
                 <div class="application-container">
                     <div class="application-title">
@@ -94,7 +91,7 @@ function loadApplications(){
         $('.applications-container').html(HTMLcontent);
 
     }, 'json').fail(function () {
-        $('.applications-container').html('Ocurreu Um Erro, Não Foi Possivel Carregar as Inscrições!');
+        $('.applications-container').html('Ocorreu um erro. Não foi possível carregar as candidaturas!');
     });
 }
 
@@ -113,9 +110,9 @@ function reviewApplication(applicationId, review){
     $.post('includes/saveServerData.inc.php', {action: 'reviewApplication', applicationId: applicationId, review: review}, function(response){
         // console.log(response);
         if (response.status === 'error') {
-            console.error('Server error:', response.message || 'Unknown error');
+            console.error('Erro do servidor:', response.message || 'Erro desconhecido');
         } else if (response.status !== 'success') {
-            console.warn('Falha ao executar!');
+            console.warn('Falha ao executar a ação!');
         }
        
         loadApplications(); 
@@ -123,7 +120,6 @@ function reviewApplication(applicationId, review){
         console.error('Erro na ligação ao servidor.');
     });
 }
-
 
 $(document).ready(function(){
     loadApplications();
@@ -138,5 +134,4 @@ $(document).ready(function(){
         const applicationId = $(this).data('id');
         reviewApplication(applicationId, 'rejected');
     });
-
 });

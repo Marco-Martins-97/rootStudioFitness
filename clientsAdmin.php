@@ -1,6 +1,6 @@
 <?php
     require_once 'includes/configSession.inc.php';
-    if(!isset($_SESSION["userRole"]) && $_SESSION["userRole"] !== "admin"){ 
+    if(!isset($_SESSION["userRole"]) || $_SESSION["userRole"] !== "admin"){
         header("Location: index.php"); 
         exit;
     }
@@ -49,11 +49,11 @@
                             </div>
                             <div class="dropdown">
                                 <a href="profile.php">Perfil</a>
-                                <a href="profile.php">Encomendas</a>
+                                <a href="orders.php">Encomendas</a>
                                 <?php if(isset($_SESSION["userRole"]) && $_SESSION["userRole"] === 'admin'){ ?>
-                                    <a href="shopAdmin.php">Administração Loja</a>
-                                    <a href="clientsAdmin.php">Administração Clientes</a>
-                                    <a href="ordersAdmin.php">Administração Encomendas</a>
+                                    <a href="clientsAdmin.php">Administração de Clientes</a>
+                                    <a href="shopAdmin.php">Administração da Loja</a>
+                                    <a href="ordersAdmin.php">Administração de Encomendas</a>
                                 <?php } ?>
                                 
                                 <form action="includes/logout.inc.php" method="post">
@@ -75,11 +75,11 @@
                     <a href="https://instagram.com/root.studiofitness" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
                     <a href="https://api.whatsapp.com/send?phone=351925677310" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
                 </div>
-                <p>&copy; 2025 Root Studio Fitness</p>
+                <p>&copy; 2025 Root Studio Fitness. Todos os direitos reservados.</p>
             </div>
-        </footer> 
+        </footer>
 
+        <script src="js/navMenu.js"></script>
+        <script src="js/clientsAdmin.js"></script>
     </body>
-    <script src="js/navMenu.js"></script>
-    <script src="js/clientsAdmin.js"></script>
 </html>
