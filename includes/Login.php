@@ -44,33 +44,30 @@ class Login{
         }
     }
 
-    private function returnError($message, $error){
-        $_SESSION['loginError'] = $message;
-        header('Location: ../login.php?login='.$error);
+    private function returnLoginStatus($status){
+        header('Location: ../login.php?login='.$status);
         exit;
     }
     
     public function login(){
         //validaçao dos dados
         if (!$this->conn) {
-            $this->returnError('Erro na ligação à base de dados.', 'failed');
+            $this->returnLoginStatus('failed');
         }
 
         if (empty($this->email) || empty($this->pwd)){
-            $this->returnError('Campos de preenchimento obrigatório!', 'empty');
+            $this->returnLoginStatus('empty');
         }
         
         $userData = $this->getUserData();
 
         if (!$userData || !password_verify($this->pwd, $userData['pwd'])){
-            $this->returnError('Email ou palavra-passe incorretos.', 'invalid');
+            $this->returnLoginStatus('invalid');
         }
 
         //Inicia a Sessão
         $this->createSessionData($userData);
-
         
-        header('Location: ../index.php?login=success');
-        exit;
+        $this->returnLoginStatus('success');
     }
 }

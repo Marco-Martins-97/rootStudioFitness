@@ -58,6 +58,7 @@ function showPopup(msg, delay = 2000, success = false) {
 
 $(document).ready(function(){
     const loginForm = $('#login-form');
+    const formContainer = $('.form-container');
     const error = $('.error')
 
     const params = new URLSearchParams(window.location.search);
@@ -73,12 +74,14 @@ $(document).ready(function(){
         // Mostra uma msg personalizada para alguns status e uma genérica para todos os outros
         const msg = messages[status] || 'Ocorreu um erro. Tente novamente!';
 
-        if (status === 'success'){
+        if (status === 'success'){  // Mostra msg de sucesso e redireciona para a pagina inicial
             const delay = 2000;
             showPopup(msg, delay, true);
             setTimeout(function(){ window.location.href = 'index.php'; }, delay);
-        } else {
+        } else {    // Mostra o popup e o erro
             showPopup(msg);
+            formContainer.addClass('invalid');
+            error.text(msg);
         }
     }
 

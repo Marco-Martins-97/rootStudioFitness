@@ -1,7 +1,7 @@
 <?php 
     require_once 'includes/configSession.inc.php'; 
     
-    if(isset($_SESSION["userId"])){ 
+    if (isset($_SESSION["userId"]) && (!isset($_GET['login']) || $_GET['login'] !== 'success')) {
         header("Location: index.php"); 
         exit;
     }
@@ -48,7 +48,7 @@
             </nav>
         </header>
         <main>
-            <div class="form-container <?php if (isset($_SESSION['loginError'])) { echo 'invalid'; } ?> ">
+            <div class="form-container">
                 <h1>Entrar</h1>
                 <form action="includes/login.inc.php" method="post" id="login-form">
                     <!-- Email -->
@@ -66,14 +66,7 @@
                         </div>
                     </div>
                         
-                    <div class="error">
-                        <?php 
-                            if (isset($_SESSION['loginError'])) { 
-                                echo $_SESSION['loginError']; 
-                                unset($_SESSION['loginError']);
-                            }
-                        ?>
-                    </div>
+                    <div class="error"></div>
 
                     <button type="submit">Entrar</button>
                     <div class="link-container"><a href="signup.php">Ainda não tens conta? Registar</a></div>
