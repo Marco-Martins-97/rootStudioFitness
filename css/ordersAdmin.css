@@ -126,11 +126,13 @@
 .order-container.open > .order-products{
 	display: flex;
 }
+
 .order-container.open > .order-title{
 	border-bottom: none;
 }
+
 .order-container.open .order-arrow i {
-  transform: rotate(180deg);
+  	transform: rotate(180deg);
 }
 
 .order-btns{
