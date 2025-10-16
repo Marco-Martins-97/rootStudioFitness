@@ -8,7 +8,7 @@
     list-style: none;
     margin: 0;
 }
-/* Product card */
+
 .product-card {
     width: 100%; 
     max-width: 250px;
@@ -21,7 +21,7 @@
     text-align: center;
     color: var(--PRIMARY-TXT-COLOR);
 }
-/* Image */
+
 .product-img {
     width: 100%;
     aspect-ratio: 1 / 1;
@@ -30,21 +30,19 @@
     margin-bottom: 8px;
 }
 
-/* Name */
+
 .product-name {
     font-size: 0.9rem;
     font-weight: bold;
     margin-bottom: 6px;
 }
 
-/* Price | Stock */
 .product-info {
-  font-size: 0.8rem;
-  font-weight: bold;
-  margin-bottom: 6px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-bottom: 6px;
 }
 
-/* Buttons container */
 .product-actions {
     display: flex;
     gap: 4px;
@@ -52,7 +50,6 @@
     justify-content: center;
 }
 
-/* Buttons */
 .product-actions button {
     flex: 1;
     padding: 8px 12px;
@@ -73,7 +70,6 @@
 }
 
 /* MODAL */
-
 .modal{
     display: flex;
     position: fixed;
@@ -102,6 +98,7 @@
     color: var(--PRIMARY-TXT-COLOR);
     border-radius: 12px;
 }
+
 .modal-content span{
     display: flex;
     justify-content: center;
@@ -133,7 +130,6 @@
     margin: auto;
 }
 
-
 .modal-content label{
     font-size: 0.9rem;
 }
@@ -160,6 +156,7 @@
     letter-spacing: 1px;
     cursor: pointer;
 }
+
 .modal-content button:hover{
     background-color: var(--SECONDARY-BTN-COLOR);
     color: var(--PRIMARY-TXT-COLOR);
@@ -174,5 +171,5 @@
 }
 
 #tryAgain h2{
-  color: red;
+    color: red;
 }

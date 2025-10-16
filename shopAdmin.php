@@ -1,6 +1,6 @@
 <?php
     require_once 'includes/configSession.inc.php';
-    if(!isset($_SESSION["userRole"]) && $_SESSION["userRole"] !== "admin"){ 
+    if(!isset($_SESSION["userRole"]) || $_SESSION["userRole"] !== "admin"){ 
         header("Location: index.php"); 
         exit;
     }
@@ -9,13 +9,14 @@
 <html lang="pt">
     <head>
         <!-- Titulo & Descrição -->
-        <title>Root Fitness Studio - Administração Loja</title>
-        <meta name="description" content="ROOT Studio Fitness - Administração Loja">
+        <title>Root Fitness Studio - Administração da Loja</title>
+        <meta name="description" content="Root Studio Fitness - Administração da Loja">
         <meta name="author" content="Marco Martins">
         <!-- Browser -->
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="robots" content="noindex, nofollow">
         <!-- Style -->
         <link id="favicon" rel="shortcut icon" href="imgs/logo/iconPreto.png" type="image/x-icon">
         <link rel="stylesheet" href="css/style.css">
@@ -49,11 +50,12 @@
                             </div>
                             <div class="dropdown">
                                 <a href="profile.php">Perfil</a>
+                                <a href="orders.php">Encomendas</a>
                                 <?php if(isset($_SESSION["userRole"]) && $_SESSION["userRole"] === 'admin'){ ?>
-                                    <a href="shopAdmin.php">Administração Loja</a>
-                                    <a href="clientsAdmin.php">Administração Clientes</a>
+                                    <a href="clientsAdmin.php">Administração de Clientes</a>
+                                    <a href="shopAdmin.php">Administração da Loja</a>
+                                    <a href="ordersAdmin.php">Administração de Encomendas</a>
                                 <?php } ?>
-                                <a href="profile.php">Encomendas</a>
                                 
                                 <form action="includes/logout.inc.php" method="post">
                                     <button>Sair</button>
@@ -76,11 +78,11 @@
                     <a href="https://instagram.com/root.studiofitness" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
                     <a href="https://api.whatsapp.com/send?phone=351925677310" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
                 </div>
-                <p>&copy; 2025 Root Studio Fitness</p>
+                <p>&copy; 2025 Root Studio Fitness. Todos os direitos reservados.</p>
             </div>
         </footer> 
 
+        <script src="js/navMenu.js"></script>
+        <script src="js/shopAdmin.js"></script>
     </body>
-    <script src="js/navMenu.js"></script>
-    <script src="js/shopAdmin.js"></script>
 </html>

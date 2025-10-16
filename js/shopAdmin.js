@@ -1,15 +1,13 @@
 function loadShopProducts(){
     $.post('includes/loadServerData.inc.php', {action: 'loadShopAdmProducts'}, function(response){
-        // console.log(response);
-
         if (!response || typeof response !== 'object') {
-            console.error('Invalid JSON response:', response);
+            console.error('Resposta JSON inválida:', response);
             $('.products-container').html('Ocorreu Um Erro, Não Foi Possivel Carregar os Produtos!');
             return;
         }
 
         if (response.status === 'error') {
-            console.warn('Server error:', response.message || 'Unknown error');
+            console.warn('Erro do servidor:', response.message || 'Erro desconhecido');
             $('.products-container').html('Ocorreu Um Erro, Não Foi Possivel Carregar os Produtos!');
             return;
         }
@@ -46,7 +44,7 @@ function loadShopProducts(){
 
         $('.products-container').html(HTMLcontent);
     }, 'json').fail(function () {
-        $('.products-container').html('Ocorreu Um Erro, Não Foi Possivel Carregar os Produtos');
+        $('.products-container').html('Ocorreu Um Erro, Não Foi Possivel Carregar os Produtos!');
     });
 }
 
@@ -111,6 +109,7 @@ function addNewProduct(){
             valuePrice: productPrice, 
             valueStock: productStock,
         };
+
         //VALIDA OS INPUTS
         $.post('includes/validateInputs.inc.php', {input: 'addNewProduct', datapack}, function(response){
             if (response.status === 'error'){
@@ -187,7 +186,6 @@ function addNewProduct(){
 }
 
 function deleteProduct(productName, productId){
-    // console.log(productId);
     const modal =  `<div class='modal' id='deleteProduct'>
                         <div class='modal-content'>
                             <span id='close-del-modal'>&times;</span>
@@ -207,9 +205,8 @@ function deleteProduct(productName, productId){
 
     $('#delete').on('click', function() {
         $.post('includes/saveServerData.inc.php', {action: 'deleteProduct', productId: productId}, function(response){
-            // console.log(response);
             if (response.status === 'error') {
-                console.error('Server error:', response.message || 'Unknown error');
+                console.error('Erro do servidor:', response.message || 'Erro desconhecido');
                 return;
             }
             if (response.status === 'processError') {
@@ -277,8 +274,6 @@ function editProduct(productId){
 
 
     $.post('includes/loadServerData.inc.php', {action: 'loadProductById', 'productId': productId}, function(response){
-        // console.log(response);
-
         if (response.status !== 'success'){
             if (!response || typeof response !== 'object') { console.error('JSON Invalido:', response);
             } else if (response.status === 'error') { console.error('Erro:', response.message); }
@@ -324,7 +319,7 @@ function editProduct(productId){
             // verifica se foram realizadas alteraçoes antes de validar e salvar
             if (!productNewImg && sameName && samePrice && sameStock){
                 console.warn('Não foram realizadas alterações.')
-                $('#editProduct').remove(); // remove o modal
+                $('#editProduct').remove();
                 return;
             }
 
@@ -396,13 +391,12 @@ function editProduct(productId){
                             let msg = '';
                             $.each(response.message, function(field, message){
                                 msg += message + '<br>';
-                                console.warn(`Input Inválido: ${field}: ${message}`);
+                                console.warn(`Campo Inválido: ${field}: ${message}`);
                             });
 
                             $error.html(msg);
                             return;
                         }
-
 
                         $error.css('color', 'green').text('Produto salvo com sucesso!');
                         setTimeout(() => {
@@ -434,8 +428,6 @@ function editProduct(productId){
 }
 
 
-
-
 $(document).ready(function(){
     loadShopProducts();
 
@@ -445,13 +437,12 @@ $(document).ready(function(){
     
     $(document).on('click', '.btn-delete-product', function() {
         const productId = $(this).data('id');
-        const productName = $(this).closest('.product-card').find('.product-name').text();  //pega o nome do produto
+        const productName = $(this).closest('.product-card').find('.product-name').text();
         deleteProduct(productName, productId);
     });
+
     $(document).on('click', '.btn-edit-product', function() {
         const productId = $(this).data('id');
         editProduct(productId);
     });
-    
-
 });
