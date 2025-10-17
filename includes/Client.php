@@ -10,7 +10,7 @@ class Client{
         $this->conn = $dbh->connect();
     }
 
-    //Carrega dados da base de dados
+    // Carrega dados da base de dados
     public function loadApplications(){
         $query = "SELECT ca.*, u.firstName, u.lastName, CONCAT(u.firstName, ' ', u.lastName) AS username FROM clientApplications ca INNER JOIN users u ON ca.userId = u.id ORDER BY ca.submitted_at DESC";
         $stmt = $this->conn->prepare($query);
@@ -28,6 +28,34 @@ class Client{
 
         $result = $stmt -> fetch(PDO::FETCH_ASSOC);
         return $result;
+    }
+
+    // Verifica se exite na base de dados
+    private function hasUserApplied($userId){
+        $query = 'SELECT EXISTS(SELECT 1 FROM clientApplications WHERE userId = :userId AND applicationStatus IN ("pending", "accepted"))';
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':userId', $userId);
+        $stmt->execute();
+    
+        return (bool) $stmt->fetchColumn(0);
+    }
+
+    private function applicationExists($applicationId){
+        $query = 'SELECT EXISTS(SELECT 1 FROM clientApplications WHERE id = :applicationId)';
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':applicationId', $applicationId);
+        $stmt->execute();
+    
+        return (bool) $stmt->fetchColumn(0);
+    }
+
+    private function clientExists($userId){
+        $query = 'SELECT EXISTS(SELECT 1 FROM clients WHERE userId = :userId)';
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':userId', $userId);
+        $stmt->execute();
+    
+        return (bool) $stmt->fetchColumn(0);
     }
 
     // Insere dados na base de dados
@@ -58,35 +86,6 @@ class Client{
         return $stmt->execute();
     }
 
-    // Verifica se exite na base de dados
-    private function hasUserApplied($userId){
-        $query = 'SELECT EXISTS(SELECT 1 FROM clientApplications WHERE userId = :userId AND applicationStatus IN ("pending", "accepted"))';
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':userId', $userId);
-        $stmt->execute();
-    
-        return (bool) $stmt->fetchColumn();
-    }
-
-    private function applicationExists($applicationId){
-        $query = 'SELECT EXISTS(SELECT 1 FROM clientApplications WHERE id = :applicationId)';
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':applicationId', $applicationId);
-        $stmt->execute();
-    
-        return (bool) $stmt->fetchColumn();
-    }
-
-    private function clientExists($userId){
-        $query = 'SELECT EXISTS(SELECT 1 FROM clients WHERE userId = :userId)';
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':userId', $userId);
-        $stmt->execute();
-    
-        return (bool) $stmt->fetchColumn();
-    }
-
-    // Funçoes de execução
     private function saveUserApplication($userId, $fullName, $birthDate, $gender, $userAddress, $nif, $phone, $trainingPlan, $experience, $nutritionPlan, $healthIssues, $healthDetails, $terms){
         $query = "INSERT INTO clientApplications (userId, fullName, birthDate, gender, userAddress, nif, phone, trainingPlan, experience, nutritionPlan, healthIssues, healthDetails, terms) 
                     VALUES (:userId, :fullName, :birthDate, :gender, :userAddress, :nif, :phone, :trainingPlan, :experience, :nutritionPlan, :healthIssues, :healthDetails, :terms)";
@@ -115,11 +114,12 @@ class Client{
         return $stmt->execute();
     }
 
+    // Funçoes de execução
     public function submitClientApplication($userId, $fullName, $birthDate, $gender, $userAddress, $nif, $phone, $trainingPlan, $experience, $nutritionPlan, $healthIssues, $healthDetails, $terms){
-        //validaçao dos dados
+        // Validação dos dados
         require_once 'validations.inc.php';
         
-        // fullName
+        // FullName
         if (isInputRequired('fullName') && isInputEmpty($fullName)){
             $this->errors['fullName'] = 'empty';
         } elseif (isNameInvalid($fullName)){
@@ -127,7 +127,8 @@ class Client{
         } elseif (isLengthInvalid($fullName)){
             $this->errors['fullName'] = 'toLong';
         }
-        // birthDate
+
+        // BirthDate
         if (isInputRequired('birthDate') && isInputEmpty($birthDate)){
             $this->errors['birthDate'] = 'empty';
         } elseif (isDateInvalid($birthDate)){
@@ -135,13 +136,15 @@ class Client{
         } elseif (isBirthInvalid($birthDate)){
             $this->errors['birthDate'] = 'birthInvalid';
         }
-        //gender
+
+        // Gender
         if (isInputRequired('gender') && isInputEmpty($gender)){
             $this->errors['gender'] = 'empty';
         } elseif (isGenderInvalid($gender)){
             $this->errors['gender'] = 'invalid';
         }
-        //userAddress
+
+        // UserAddress
         if (isInputRequired('userAddress') && isInputEmpty($userAddress)){
             $this->errors['userAddress'] = 'empty';
         } elseif (isAddressInvalid($userAddress)){
@@ -149,63 +152,65 @@ class Client{
         } elseif (isLengthInvalid($userAddress)){
             $this->errors['userAddress'] = 'toLong';
         }
-        //nif
+
+        // NIF
         if (isInputRequired('nif') && isInputEmpty($nif)){
             $this->errors['nif'] = 'empty';
         } elseif (isNifInvalid($nif)){
             $this->errors['nif'] = 'invalid';
         }
-        //phone
+
+        // Phone
         if (isInputRequired('phone') && isInputEmpty($phone)){
             $this->errors['phone'] = 'empty';
         } elseif (isPhoneInvalid($phone)){
             $this->errors['phone'] = 'invalid';
         }
-        //trainingPlan
+
+        // TrainingPlan
         if (isInputRequired('trainingPlan') && isInputEmpty($trainingPlan)){
             $this->errors['trainingPlan'] = 'empty';
         } elseif (isTrainingPlanInvalid($trainingPlan)){
             $this->errors['trainingPlan'] = 'invalid';
         }
-        //experience
+        // Experience
         if (isInputRequired('experience') && isInputEmpty($experience)){
             $this->errors['experience'] = 'empty';
         } elseif (isExperienceInvalid($experience)){
             $this->errors['experience'] = 'invalid';
         }
-        //nutritionPlan
+        // NutritionPlan
         if (isInputRequired('nutritionPlan') && isNotChecked($nutritionPlan)){
             $this->errors['nutritionPlan'] = 'notChecked';
         } 
-        //healthIssues
+        // HealthIssues
         if (isInputRequired('healthIssues') && isNotChecked($healthIssues)){
             $this->errors['healthIssues'] = 'notChecked';
         } 
-        //healthDetails
+        // HealthDetails
         if (isInputRequired('healthDetails') && isInputEmpty($healthDetails)){
             $this->errors['healthDetails'] = 'empty';
         } elseif (!isInputEmpty($healthDetails) && isDescriptionInvalid($healthDetails)){
             $this->errors['healthDetails'] = 'invalid';
         }
-        //terms
+        // Terms
         if (isInputRequired('terms') && isNotChecked($terms)){
             $this->errors['terms'] = 'notChecked';
         } 
 
-        // Conecção
+        // Verificação da ligação à base de dados
         if (!$this->conn) {
-            $this->errors['connection'] = 'connection failed';
+            $this->errors['connection'] = 'failed';
         }
         
-
         if (!$this->errors){
-            // duplicados
+            // Verifica duplicados
             if ($this->hasUserApplied($userId)){
                 header('Location: ../plans.php?application=duplicated#application');
                 exit;
             }
 
-            // Salva Os Dados na Base de dados
+            // Guarda os dados na base de dados
             if ($this->saveUserApplication($userId, $fullName, $birthDate, $gender, $userAddress, $nif, $phone, $trainingPlan, $experience, $nutritionPlan, $healthIssues, $healthDetails, $terms)){
                 $_SESSION['userApplied'] = true;
                 header('Location: ../plans.php?application=success#application');
@@ -220,48 +225,45 @@ class Client{
         }
     }
 
+    // Revê a candidatura do cliente
     public function reviewClientApplication($applicationId, $review){
-        //Validaçao dos inputs
+        // Validação dos dados
         $allowedReviews = ['accepted', 'rejected'];
         if(!in_array($review, $allowedReviews)){
-            return ['status' => 'error', 'message' => 'Invalid Review'];
+            return ['status' => 'error', 'message' => 'Revisão inválida'];
         }
         if(!$this->applicationExists($applicationId)){
-            return ['status' => 'error', 'message' => 'Application not found'];
+            return ['status' => 'error', 'message' => 'Candidatura não encontrada'];
         }
 
         // Aplica as alterações
-
         if ($review === 'rejected'){
-            return $this->updateApplicationStatus($applicationId, $review) ? ['status' => 'success'] : ['status' => 'error', 'message' => 'Failed to Change Status'];
+            return $this->updateApplicationStatus($applicationId, $review) ? ['status' => 'success'] : ['status' => 'error', 'message' => 'Falha ao alterar o estado'];
         } else {
             // carrega os dados da inscrição e o userRole do utilizador
             $data = $this->getEssencialData($applicationId);
 
             if ($this->clientExists($data['userId'])){
-                return ['status' => 'error', 'message' => 'Client already Exists'];
+                return ['status' => 'error', 'message' => 'O cliente já existe'];
             }
 
             // implementa alterações, caso a alteraçao falhe, irá reverter essas alterações
             if (!$this->updateApplicationStatus($applicationId, $review)){
-                return ['status' => 'error', 'message' => 'Failed to Change Status'];
+                return ['status' => 'error', 'message' => 'Falha ao alterar o estado'];
             }
             
             if (!$this->updateUserRole($data['userId'], 'client')){
                 $this->updateApplicationStatus($applicationId, 'pending');
-                return ['status' => 'error', 'message' => 'Failed to Change UserRole'];
+                return ['status' => 'error', 'message' => 'Falha ao alterar o cargo do utilizador'];
             }
             
             if (!$this->copyClientData($data)){
                 $this->updateApplicationStatus($applicationId, 'pending');
                 $this->updateUserRole($data['userId'], $data['userRole']);
-                return ['status' => 'error', 'message' => 'Failed to Copy Client Data'];
+                return ['status' => 'error', 'message' => 'Falha ao copiar os dados do cliente'];
             }
 
-            return ['status' => 'success']; //se tudo funcionar retorna success
+            return ['status' => 'success'];
         }
     }
-
-    
-
 }

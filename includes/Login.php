@@ -15,7 +15,7 @@ class Login{
         $dbh = new Dbh();
         $this->conn = $dbh->connect();
     }
-
+    // Carrega dados da base de dados
     private function getUserData(){
         $query = 'SELECT * FROM users WHERE email = :email;';
         $stmt = $this->conn->prepare($query);
@@ -26,15 +26,17 @@ class Login{
         return $result;
     }
 
+    // Verifica se exite na base de dados
     private function hasUserApplied($userId){
         $query = 'SELECT EXISTS(SELECT 1 FROM clientApplications WHERE userId = :userId AND applicationStatus IN ("pending", "accepted"))';
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':userId', $userId);
         $stmt->execute();
     
-        return (bool) $stmt->fetchColumn();
+        return (bool) $stmt->fetchColumn(0);
     }
 
+    // Funçoes de execução
     private function createSessionData($userData){
         $_SESSION['userId'] = $userData['id'];
         $_SESSION['userRole'] = $userData['userRole'];
@@ -50,7 +52,9 @@ class Login{
     }
     
     public function login(){
-        //validaçao dos dados
+        // Validação dos dados
+
+        // Verificação da ligação à base de dados
         if (!$this->conn) {
             $this->returnLoginStatus('failed');
         }
@@ -64,9 +68,8 @@ class Login{
         if (!$userData || !password_verify($this->pwd, $userData['pwd'])){
             $this->returnLoginStatus('invalid');
         }
-
-        //Inicia a Sessão
-        $this->createSessionData($userData);
+        
+        $this->createSessionData($userData);    // Inicia a Sessão
         
         $this->returnLoginStatus('success');
     }

@@ -12,7 +12,7 @@ class Profile{
         $dbh = new Dbh();
         $this->conn = $dbh->connect();
     }
-    // get Data
+    // Carrega dados da base de dados
     public function loadUserData(){
         $query = "SELECT firstName, lastName, email, userRole FROM users WHERE id = :userId;";
         $stmt = $this->conn->prepare($query);
@@ -32,7 +32,7 @@ class Profile{
         $result = $stmt -> fetch(PDO::FETCH_ASSOC);
         return $result;
     }
-    // update Data
+    // Insere dados na base de dados
     private function saveField($field, $value){
         $table = in_array($field, ['firstName', 'lastName', 'email']) ? 'users' : 'clients';    // seleciona atabela correta para salvar os dados
         $index = in_array($field, ['firstName', 'lastName', 'email']) ? 'id' : 'userId';    // seleciona o index correto para encontrar os dados pretendidos
@@ -56,51 +56,52 @@ class Profile{
         return $stmt->execute();
     }
 
+    // Funçoes de execução
     public function updatePwd($currentPwd, $newPwd, $confirmNewPwd){
-        //validaçao dos dados
+        // Validação dos dados
         require_once 'validations.inc.php';
 
         if(isPwdWrong($currentPwd)){
-            $this->errors['currentPwd'] = 'A password atual não está correta.';
+            $this->errors['currentPwd'] = 'A palavra-passe atual está incorreta.';
         }
         
         if(isInputRequired('pwd') && isInputEmpty($newPwd)){
-            $this->errors['newPwd'] = 'A nova password é obrigatória.';
+            $this->errors['newPwd'] = 'A nova palavra-passe é obrigatória.';
         } elseif (isPwdShort($newPwd)){
-            $this->errors['newPwd'] = 'A nova password deve ter pelo menos 8 caracteres.';
+            $this->errors['newPwd'] = 'A nova palavra-passe deve ter, no mínimo, 8 caracteres.';
         } elseif (isLengthInvalid($newPwd)){
-            $this->errors['newPwd'] = 'A nova password excede o limite de caracteres.';
+            $this->errors['newPwd'] = 'A nova palavra-passe excede o limite de caracteres permitido.';
         } elseif (!isPwdNoMatch($currentPwd, $newPwd)){
-            $this->errors['newPwd'] = 'A nova password não pode ser igual a atual.';
+            $this->errors['newPwd'] = 'A nova palavra-passe não pode ser igual à atual.';
         }
         
         if(isInputRequired('confPwd') && isInputEmpty($confirmNewPwd)){
-            $this->errors['confNewPwd'] = 'A confirmação da nova password é obrigatória.';
+            $this->errors['confNewPwd'] = 'A confirmação da nova palavra-passe é obrigatória.';
         } elseif (isLengthInvalid($confirmNewPwd)){
-            $this->errors['confNewPwd'] = 'A confirmação da nova password excede o limite de caracteres.';
+            $this->errors['confNewPwd'] = 'A confirmação da nova palavra-passe excede o limite de caracteres permitido.';
         } elseif (isPwdNoMatch($newPwd, $confirmNewPwd)){
-            $this->errors['confNewPwd'] = 'As novas passwords não coincidem.';
+            $this->errors['confNewPwd'] = 'As novas palavras-passe não coincidem.';
         }
 
-        // Conecção
+        // Verificação da ligação à base de dados
         if (!$this->conn) {
-            $this->errors['connection'] = 'Falha na connecção com o servidor.';
+            $this->errors['connection'] = 'Falha na ligação ao servidor.';
         }
 
+        // Processa o resultado se não ouver erros
         if (!$this->errors) {
             if ($this->saveNewPwd($newPwd)) {
                 return ['status' => 'valid'];
             } else {
-                return ['status' => 'invalid', 'message' => 'Ocorreu uma falha ao salvar os dados. Tente novamente.'];
+                return ['status' => 'invalid', 'message' => 'Ocorreu um erro ao guardar os dados. Tente novamente.'];
             }
         } else {
             return ['status' => 'invalid', 'message' => $this->errors];
         } 
     }
 
-
     public function updateField($field, $value){
-        //validaçao dos dados
+        // Validação dos dados
         require_once 'validations.inc.php';
 
         switch ($field) {
@@ -113,6 +114,7 @@ class Profile{
                     $this->errors[$field] = 'toLong';
                 }
                 break;
+
             case 'lastName':
                 if (isInputRequired($field) && isInputEmpty($value)){
                     $this->errors[$field] = 'empty';
@@ -122,6 +124,7 @@ class Profile{
                     $this->errors[$field] = 'toLong';
                 }
                 break;
+
             case 'email':
                 if (isInputRequired($field) && isInputEmpty($value)){
                     $this->errors[$field] = 'empty';
@@ -133,6 +136,7 @@ class Profile{
                     $this->errors[$field] = 'toLong';
                 }
                 break;
+
             case 'fullName':
                 if (isInputRequired($field) && isInputEmpty($value)){
                     $this->errors[$field] = 'empty';
@@ -142,6 +146,7 @@ class Profile{
                     $this->errors[$field] = 'toLong';
                 }
                 break;
+
             case 'birthDate':
                 if (isInputRequired($field) && isInputEmpty($value)){
                     $this->errors[$field] = 'empty';
@@ -151,6 +156,7 @@ class Profile{
                     $this->errors[$field] = 'birthInvalid';
                 }
                 break;
+
             case 'gender':
                 if (isInputRequired($field) && isInputEmpty($value)){
                     $this->errors[$field] = 'empty';
@@ -158,6 +164,7 @@ class Profile{
                     $this->errors[$field] = 'invalid';
                 }
                 break;
+
             case 'userAddress':
                 if (isInputRequired($field) && isInputEmpty($value)){
                     $this->errors[$field] = 'empty';
@@ -167,6 +174,7 @@ class Profile{
                     $this->errors[$field] = 'toLong';
                 }
                 break;
+
             case 'nif':
                 if (isInputRequired($field) && isInputEmpty($value)){
                     $this->errors[$field] = 'empty';
@@ -174,6 +182,7 @@ class Profile{
                     $this->errors[$field] = 'invalid';
                 }
                 break;
+
             case 'phone':
                 if (isInputRequired($field) && isInputEmpty($value)){
                     $this->errors[$field] = 'empty';
@@ -181,6 +190,7 @@ class Profile{
                     $this->errors[$field] = 'invalid';
                 }
                 break;
+
             case 'trainingPlan':
                 if (isInputRequired($field) && isInputEmpty($value)){
                     $this->errors[$field] = 'empty';
@@ -188,6 +198,7 @@ class Profile{
                     $this->errors[$field] = 'invalid';
                 }
                 break;
+
             case 'experience':
                 if (isInputRequired($field) && isInputEmpty($value)){
                     $this->errors[$field] = 'empty';
@@ -195,6 +206,7 @@ class Profile{
                     $this->errors[$field] = 'invalid';
                 }
                 break;
+
             case 'nutritionPlan':
             case 'healthIssues':
             case 'terms':
@@ -202,6 +214,7 @@ class Profile{
                     $this->errors[$field] = 'notChecked';
                 }
                 break;
+
             case 'healthDetails':
                 if (isInputRequired($field) && isInputEmpty($value)){
                     $this->errors[$field] = 'empty';
@@ -215,24 +228,25 @@ class Profile{
                 break;
         }
 
-        // Conecção
+        // Verificação da ligação à base de dados
         if (!$this->conn) {
             $this->errors['connection'] = 'connection failed';
         }
 
+        // Retorna resultado final
         if (!$this->errors){
             if ($this->saveField($field, $value)){
                 return ['status' => 'success'];
             } else {
-                return ['status' => 'error', 'message' => 'Failed to save'];
+                return ['status' => 'error', 'message' => 'Erro ao guardar os dados.'];
             }
         } else {
-            // Envias os erros na mensagem
+            // Monta mensagem de erro formatada
             $message = '';
             foreach($this->errors as $field => $error){
                 $message .= "$field: $error, ";
             }
-            $message = rtrim($message, ', ');   //remove o ', ' no final
+            $message = rtrim($message, ', ');
 
             return ['status' => 'error', 'message' => $message];
         }

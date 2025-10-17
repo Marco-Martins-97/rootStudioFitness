@@ -24,14 +24,7 @@ class Signup{
         $this->conn = $dbh->connect();
     }
 
-    /* private function showData(){
-        echo 'Email: '.$this->email.'<br>';
-        echo 'Pwd: '.$this->pwd.'<br>';
-        echo 'CPwd: '.$this->confPwd.'<br>';
-        echo 'Nome: '.$this->firstName.'<br>';
-        echo 'Apelido: '.$this->lastName.'<br>';
-    } */
-
+    // Insere dados na base de dados
     private function createNewUser(){
         $query = 'INSERT INTO users (email, pwd, firstName, lastName) VALUES (:email, :pwd, :firstName, :lastName)';
         $stmt = $this->conn->prepare($query);
@@ -47,12 +40,12 @@ class Signup{
         return $stmt->execute() ? 'success' : 'fail';
     }
 
-    // regista ao uilizador
+    // Regista o utilizador
     public function newSignup(){
-        //validaçao dos dados
+        // Validação dos dados
         require_once 'validations.inc.php';
 
-        // firstName
+        // FirstName
         if (isInputRequired('firstName') && isInputEmpty($this->firstName)){
             $this->errors['firstName'] = 'empty';
         } elseif (isNameInvalid($this->firstName)){
@@ -61,7 +54,7 @@ class Signup{
             $this->errors['firstName'] = 'toLong';
         } 
 
-        // lastName
+        // LastName
         if (isInputRequired('lastName') && isInputEmpty($this->lastName)){
             $this->errors['lastName'] = 'empty';
         } elseif (isNameInvalid($this->lastName)){
@@ -81,7 +74,7 @@ class Signup{
             $this->errors['email'] = 'toLong';
         }
 
-        // Pwd
+        // Password
         if (isInputRequired('pwd') && isInputEmpty($this->pwd)){
             $this->errors['pwd'] = 'empty';
         } elseif (isPwdShort($this->pwd)){
@@ -96,12 +89,12 @@ class Signup{
             $this->errors['confPwd'] = 'noMatch';
         }
 
-        // Conecção
+        // Verificação da ligação à base de dados
         if (!$this->conn) {
-            $this->errors['connection'] = 'connection failed';
+            $this->errors['connection'] = 'failed';
         }
 
-        // Criar utilizador
+        // Criar utilizador se não houver erros
         if (!$this->errors){
             if ($this->createNewUser()){
                 header('Location: ../signup.php?signup=success');
