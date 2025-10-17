@@ -1,25 +1,35 @@
 <?php
 require_once 'configSession.inc.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $orderDataJson = $_POST['orderData'] ?? '';
-    $fullName = htmlspecialchars(trim($_POST['fullName']));
-    $birthDate = htmlspecialchars(trim($_POST["birthDate18"]));
-    $userAddress = htmlspecialchars(trim($_POST["userAddress"]));
-    $checkoutType = trim($_POST["checkoutType"]);
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header('Location: ../index.php');
+    exit;
+}
+
+if (!isset($_SESSION['userId'])) {
+    header('Location: ../login.php');
+    exit;
+}
+
+function getPost($input){
+    return trim($_POST[$input] ?? ''); 
+}
+
+$orderDataJson = getPost('orderData');
+$fullName = getPost('fullName');
+$birthDate = getPost('birthDate18');
+$userAddress = getPost('userAddress');
+$checkoutType = getPost('checkoutType');
     
-    $userId = $_SESSION['userId'];
+$userId = $_SESSION['userId'];
 
-    try { 
-        require_once 'OrdersHandler.php';
-        $order = new Order();
-        $order -> processCheckout($userId, $fullName, $birthDate, $userAddress, $orderDataJson, $checkoutType);
-        
-    } catch (PDOException $e) {
-        die ('Query Falhou: '.$e->getMessage());
-    }
-
-} else{
-    header('Location: ../shop.php');
+try { 
+    require_once 'OrdersHandler.php';
+    $order = new Order();
+    $order -> processCheckout($userId, $fullName, $birthDate, $userAddress, $orderDataJson, $checkoutType);
+    
+} catch (PDOException $e) {
+    error_log('Erro: ' . $e->getMessage());
+    header('Location: ../shop.php?connection=error');
     exit;
 }

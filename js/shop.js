@@ -167,7 +167,11 @@ $(document).ready(function(){
         const status = params.get('invalid');
         
         const messages = {  
-            login: 'É necessário iniciar sessão para comprar.'
+            login: 'É necessário iniciar sessão para efetuar a compra.',
+            type: 'O tipo de checkout não é válido.',
+            productId: 'O ID do produto não é válido.',
+            notFound: 'O produto não existe.',
+            empty: 'Não há produtos para efetuar o checkout.'
         };
 
         // Mostra uma msg personalizada para alguns status e uma genérica para todos os outros

@@ -10,10 +10,9 @@ require_once 'configSession.inc.php';
 
 */
 
-// $pwdLength = 8; //minimo de caracters da password
-
 // Funções de Validação
 function isInputRequired($input){
+    // Lista de campos que são obrigatórios
     $requiredFields = ['firstName','lastName','email','pwd','confPwd',  //registo
                         'loginEmail',   //login
                         'fullName','birthDate','gender','userAddress','nif','phone','trainingPlan','experience','terms',    //cliente
@@ -38,7 +37,7 @@ function isEmailInvalid($value) {
     return !filter_var($value, FILTER_VALIDATE_EMAIL);
 }
 
-function thisEmailExists($value) {  //conecta a base de dados, pesquisa se o email existe an base de dados e retorna true/false
+function thisEmailExists($value) {  // Verifica se o email já existe na base de dados
     $dbh = new Dbh();
     $conn = $dbh->connect();
     $query = 'SELECT EXISTS(SELECT 1 FROM users WHERE email = :email)';
@@ -49,12 +48,12 @@ function thisEmailExists($value) {  //conecta a base de dados, pesquisa se o ema
     return (bool) $stmt->fetchColumn();
 }
 
-function isPwdWrong($value, $userId = null) {  //conecta a base de dados, pesquisa se a pwd está correta e retorna true/false
-    if ($userId ===  null){ // verifica se foi providenciado um userId
-        if (!isset($_SESSION['userId'])){   // verifica se o está logado
+function isPwdWrong($value, $userId = null) {  // Verifica se a password está correta para o userId fornecido ou logado
+    if ($userId ===  null){
+        if (!isset($_SESSION['userId'])){   // verifica se está conetado
             return true;
         }
-        $userId = $_SESSION['userId'];  //atribui ao userId o id do user logado
+        $userId = $_SESSION['userId'];  // Atribui id do user conetado
     }
 
     $dbh = new Dbh();
@@ -104,7 +103,7 @@ function isNifInvalid($value){
     return !preg_match('/^[0-9]{9}$/', $value);
 }
 
-//Apenas aceita numeros Portugueses, ou que contenha 9 digitos e começe por 2 ou 9.
+// Apenas aceita numeros Portugueses, ou que contenha 9 digitos e começe por 2 ou 9.
 function isPhoneInvalid($value){
     return !preg_match('/^[29]\d{8}$/', $value);
 }

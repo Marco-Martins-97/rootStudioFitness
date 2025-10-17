@@ -3,7 +3,7 @@ require_once 'includes/configSession.inc.php';
 
 // Verifica se a página foi acedida através de um pedido POST
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-    header("Location: shop.php");
+    header("Location: index.php");
     exit;
 }
 
@@ -39,7 +39,7 @@ if ($type === 'direct'){
 
     // Verifica se o produto existe
     if (!$product) {
-        header("Location: shop.php?invalid=notfound");
+        header("Location: shop.php?invalid=notFound");
         exit;
     }
     
@@ -82,7 +82,6 @@ function loadOrderSummary($checkoutProducts){
         }
 
         // Converte o produto para JSON e escapa para uso seguro em HTML
-        // $productJSON = htmlspecialchars(json_encode($product, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
         $productJSON = htmlspecialchars(json_encode($product, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), ENT_QUOTES);
         
         $HTMLcontent .= "

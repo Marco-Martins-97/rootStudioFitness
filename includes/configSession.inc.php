@@ -1,24 +1,22 @@
 <?php
-//config da sessão
+// Configuração da sessão
 ini_set('session.use_only_cookies',1);
 
-//cookies paramters
+// Parâmetros dos cookies
 session_set_cookie_params([
-    'lifetime' => 1800,
-    'domain' => 'localhost',    //alterar o dominio
+    'lifetime' => 18000,            // duração do cookie: 30 min
+    'domain' => 'localhost',        // alterar para o domínio real
     'path' => '/',
-    'secure' => false,          //alterar para 'true' quando estiver online
-    'httponly' => true
+    'secure' => false,              // alterar para 'true' quando estiver online com HTTPS
+    'httponly' => true              // impede acesso via JavaScript
 ]);
 
-//inicia a sessao
+// Inicia a sessão
 session_start();
 
-// $interval = 1800; // 30min
-$interval = 18000; // Teste
+$interval = 18000; // 30min
 
-
-//regenera a id da sessão a cada 30 min
+// Regenera o ID da sessão a cada 30 minutos
 if(!isset($_SESSION['last_regeneration'])){
     regenerateSessionId();
 }else{
@@ -27,8 +25,8 @@ if(!isset($_SESSION['last_regeneration'])){
     }
 }
 
-//funçao para regenerar a sessao
+// Função para regenerar o ID da sessão
 function regenerateSessionId(){
-    session_regenerate_id(true);
-    $_SESSION['last_regeneration'] = time();
+    session_regenerate_id(true);                // cria um novo ID e elimina o antigo
+    $_SESSION['last_regeneration'] = time();    // actualiza o timestamp da última regeneração
 }
