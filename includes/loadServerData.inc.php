@@ -15,24 +15,30 @@ if (!isset($_POST['action'])) {
 
 $action = trim($_POST['action']); // Lê a ação
 
-function requireLogin() {
+function requireLogin() {   // Verifica se o utilizador está conectado
     if (!isset($_SESSION["userId"])) {
         echo json_encode(['status' => 'error', 'message' => 'É necessário efetuar login']);
         exit;
     }
 }
 
-function requireAdmin() {
+function requireAdmin() {   // Verifica se o utilizador é administrador
     if (!isset($_SESSION["userRole"]) || $_SESSION["userRole"] !== "admin") {
         echo json_encode(['status' => 'error', 'message' => 'Acesso negado: apenas administradores']);
         exit;
     }
 }
 
+function handleDbError(PDOException $e){
+    error_log("Erro na base de dados: ".$e->getMessage());
+    echo json_encode(['status'=>'error','message'=>'Erro ao conectar ao servidor']);
+    exit;
+}
+
 // Executa a função correspondente à ação
 switch ($action) {
     case 'loadClientApplications':
-        requireAdmin(); // Verifica se o utilizador é administrador
+        requireAdmin();
 
         try {
             require_once "Client.php";
@@ -65,14 +71,12 @@ switch ($action) {
             exit;
 
         } catch (PDOException $e) {
-            error_log("Erro na base de dados: " . $e->getMessage());
-            echo json_encode(['status' => 'error', 'message' => 'Erro ao conectar ao servidor']);
-            exit;
+            handleDbError($e);
         }
         break;
 
     case 'loadProfile':
-        requireLogin(); // Verifica se o utilizador está conectado
+        requireLogin();
 
         $userId = $_SESSION['userId'];
 
@@ -90,9 +94,7 @@ switch ($action) {
             exit;
     
         } catch (PDOException $e) {
-            error_log("Erro na base de dados: " . $e->getMessage());
-            echo json_encode(['status' => 'error', 'message' => 'Erro ao conectar ao servidor']);
-            exit;
+            handleDbError($e);
         }
         break;
         
@@ -109,9 +111,7 @@ switch ($action) {
             exit;
 
         } catch (PDOException $e) {
-            error_log("Erro na base de dados: " . $e->getMessage());
-            echo json_encode(['status' => 'error', 'message' => 'Erro ao conectar ao servidor']);
-            exit;
+            handleDbError($e);
         }
         break;
         
@@ -126,14 +126,12 @@ switch ($action) {
             exit;
     
         } catch (PDOException $e) {
-            error_log("Erro na base de dados: " . $e->getMessage());
-            echo json_encode(['status' => 'error', 'message' => 'Erro ao conectar ao servidor']);
-            exit;
+            handleDbError($e);
         }
         break;
 
     case 'loadProductById':
-        requireLogin(); // Verifica se o utilizador está conectado
+        requireLogin();
 
         $productId = trim($_POST['productId'] ?? '');
 
@@ -151,14 +149,12 @@ switch ($action) {
             exit;
 
         } catch (PDOException $e) {
-            error_log("Erro na base de dados: " . $e->getMessage());
-            echo json_encode(['status' => 'error', 'message' => 'Erro ao conectar ao servidor']);
-            exit;
+            handleDbError($e);
         }
         break;
 
     case 'loadShoppingCart':
-        requireLogin(); // Verifica se o utilizador está conectado
+        requireLogin();
 
         $userId = $_SESSION['userId'];
 
@@ -172,14 +168,12 @@ switch ($action) {
             exit;
 
         } catch (PDOException $e) {
-            error_log("Erro na base de dados: " . $e->getMessage());
-            echo json_encode(['status' => 'error', 'message' => 'Erro ao conectar ao servidor']);
-            exit;
+            handleDbError($e);
         }
         break;
         
     case 'loadOrders':
-        requireLogin(); // Verifica se o utilizador está conectado
+        requireLogin();
 
         $userId = $_SESSION['userId'];
 
@@ -193,9 +187,7 @@ switch ($action) {
             exit;
 
         } catch (PDOException $e) {
-            error_log("Erro na base de dados: " . $e->getMessage());
-            echo json_encode(['status' => 'error', 'message' => 'Erro ao conectar ao servidor']);
-            exit;
+            handleDbError($e);
         }
         break;
 
@@ -212,9 +204,7 @@ switch ($action) {
             exit;
 
         } catch (PDOException $e) {
-            error_log("Erro na base de dados: " . $e->getMessage());
-            echo json_encode(['status' => 'error', 'message' => 'Erro ao conectar ao servidor']);
-            exit;
+            handleDbError($e);
         }
         break;
 

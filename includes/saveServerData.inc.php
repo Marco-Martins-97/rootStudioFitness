@@ -1,37 +1,48 @@
 <?php
 require_once 'configSession.inc.php'; 
 
-//verifica se acessou a pagina ataves de um Post
+// Verifica se a página foi acedida via POST
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     header("Location: ../index.php");
     exit;
 }
 
-//verifica se uma action foi defenida
+// Verifica se a ação foi definida
 if (!isset($_POST['action'])) {
-    echo json_encode(['status' => 'error', 'message' => 'Invalid Request']);
+    echo json_encode(['status' => 'error', 'message' => 'Pedido inválido']);
     exit;
 }
 
 function getPost($property){
-    return htmlspecialchars(trim($_POST[$property] ?? ''));
+    return trim($_POST[$property] ?? '');
 }
-// lê a action
-$action = trim($_POST['action']);
 
+$action = trim($_POST['action']); // Lê a ação
 
-//executa o carregamento dos dados respetivos a action escolhida
+function requireLogin() {   // Verifica se o utilizador está conectado
+    if (!isset($_SESSION["userId"])) {
+        echo json_encode(['status' => 'error', 'message' => 'É necessário efetuar login']);
+        exit;
+    }
+}
+
+function requireAdmin() {    // Verifica se o utilizador é administrador
+    if (!isset($_SESSION["userRole"]) || $_SESSION["userRole"] !== "admin") {
+        echo json_encode(['status' => 'error', 'message' => 'Acesso negado: apenas administradores']);
+        exit;
+    }
+}
+
+function handleDbError(PDOException $e){
+    error_log("Erro na base de dados: ".$e->getMessage());
+    echo json_encode(['status'=>'error','message'=>'Erro ao conectar ao servidor']);
+    exit;
+}
+
+// Executa a função correspondente à ação
 switch ($action) {
-
     case 'reviewApplication':
-        if(!isset($_SESSION["userRole"])){  //verifica e o utilizador esta logado 
-            echo json_encode(['status' => 'error', 'message' => 'Login required']);
-            exit;
-        }
-        if($_SESSION["userRole"] !== "admin"){  //verifica e o utilizador é um admin
-            echo json_encode(['status' => 'error', 'message' => 'Not an Admin']);
-            exit;
-        }
+        requireAdmin();
 
         $applicationId = getPost('applicationId');
         $review = getPost('review');
@@ -46,27 +57,23 @@ switch ($action) {
             exit;
 
         } catch (PDOException $e) {
-            error_log("Database error: " . $e->getMessage()); // Log interno
-            echo json_encode(['status' => 'error', 'message' => 'Erro na ligação ao servidor.']);
-            exit;
+            handleDbError($e);
         }
-        
+        break;
 
     case 'saveProfileField':
-        if(!isset($_SESSION["userRole"])){  //verifica e o utilizador esta logado 
-            echo json_encode(['status' => 'error', 'message' => 'Login required']);
-            exit;
-        }
+        requireLogin(); 
 
         $field = getPost('field');
         $value = getPost('value');
 
         if(empty($field) || empty($value)){
-            echo json_encode(['status' => 'error', 'message' => 'Missing data']);
+            echo json_encode(['status' => 'error', 'message' => 'Dados em falta']);
             exit;
         }
 
         $userId = $_SESSION['userId'];
+
         try {
             require_once "ProfileHandler.php";
             $profile = new Profile($userId);
@@ -76,17 +83,12 @@ switch ($action) {
             exit;
 
         } catch (PDOException $e) {
-            error_log("Database error: " . $e->getMessage()); // Log interno
-            echo json_encode(['status' => 'error', 'message' => 'Erro na ligação ao servidor.']);
-            exit;
+            handleDbError($e);
         }
-        
+        break;
 
     case 'saveNewPwd':
-        if(!isset($_SESSION["userRole"])){  //verifica e o utilizador esta logado 
-            echo json_encode(['status' => 'error', 'message' => 'Login required']);
-            exit;
-        }
+        requireLogin(); 
 
         $currentPwd = getPost('valueCurrentPwd');
         $newPwd = getPost('valueNewPwd');
@@ -102,21 +104,12 @@ switch ($action) {
             exit;
 
         } catch (PDOException $e) {
-            error_log("Database error: " . $e->getMessage()); // Log interno
-            echo json_encode(['status' => 'error', 'message' => 'Erro na ligação ao servidor.']);
-            exit;
+            handleDbError($e);
         }
-        
+        break;
     
     case 'saveNewProduct':
-        if(!isset($_SESSION["userRole"])){  //verifica e o utilizador esta logado 
-            echo json_encode(['status' => 'error', 'message' => 'Login required']);
-            exit;
-        }
-        if($_SESSION["userRole"] !== "admin"){  //verifica e o utilizador é um admin
-            echo json_encode(['status' => 'error', 'message' => 'Not an Admin']);
-            exit;
-        }
+        requireAdmin();
 
         $productImg = $_FILES['imgFile'] ?? null;
         $productName = getPost('valueName');
@@ -132,21 +125,12 @@ switch ($action) {
             exit;
 
         } catch (PDOException $e) {
-            error_log("Database error: " . $e->getMessage());
-            echo json_encode(['status' => 'error', 'message' => 'Erro na ligação ao servidor.']);
-            exit;
+            handleDbError($e);
         }
-        
+        break;
 
     case 'deleteProduct':
-        if(!isset($_SESSION["userRole"])){  //verifica e o utilizador esta logado 
-            echo json_encode(['status' => 'error', 'message' => 'Login required']);
-            exit;
-        }
-        if($_SESSION["userRole"] !== "admin"){  //verifica e o utilizador é um admin
-            echo json_encode(['status' => 'error', 'message' => 'Not an Admin']);
-            exit;
-        }
+        requireAdmin();
 
         $productId = getPost('productId');
 
@@ -159,20 +143,12 @@ switch ($action) {
             exit;
 
         } catch (PDOException $e) {
-            error_log("Database error: " . $e->getMessage());
-            echo json_encode(['status' => 'error', 'message' => 'Erro na ligação ao servidor.']);
-            exit;
+            handleDbError($e);
         }
+        break;
         
     case 'updateProduct':
-        if(!isset($_SESSION["userRole"])){  //verifica e o utilizador esta logado 
-            echo json_encode(['status' => 'error', 'message' => 'Login required']);
-            exit;
-        }
-        if($_SESSION["userRole"] !== "admin"){  //verifica e o utilizador é um admin
-            echo json_encode(['status' => 'error', 'message' => 'Not an Admin']);
-            exit;
-        }
+        requireAdmin();
 
         $productId = getPost('productId');
         $productImg = $_FILES['imgFile'] ?? null;
@@ -189,19 +165,19 @@ switch ($action) {
             exit;
             
         } catch (PDOException $e) {
-            error_log("Database error: " . $e->getMessage());
-            echo json_encode(['status' => 'error', 'message' => 'Erro na ligação ao servidor.']);
-            exit;
+            handleDbError($e);
         }
+        break;
 
     case 'cartHandler':
-        if(!isset($_SESSION["userRole"])){  //verifica e o utilizador esta logado 
-            echo json_encode(['status' => 'processError', 'error' => 'Login required', 'message' => 'Precisa estar logado para poder usar a loja.']);
+        if(!isset($_SESSION["userId"])){    
+            echo json_encode(['status' => 'processError', 'error' => 'É necessário efetuar login', 'message' => 'Precisa estar conectado para poder usar a loja.']);
             exit;
         }
 
         $productId = getPost('productId');
         $cartAction = getPost('cartAction');
+
         $userId = $_SESSION['userId'];
         
         try {
@@ -222,7 +198,7 @@ switch ($action) {
                     break;
                 
                 default:
-                    $res = ['status' => 'error', 'message' => 'Invalid Cart Action'];
+                    $res = ['status' => 'error', 'message' => 'Ação do carrinho inválida'];
                     break;
             }
         
@@ -230,16 +206,12 @@ switch ($action) {
             exit;
 
         } catch (PDOException $e) {
-            error_log("Database error: " . $e->getMessage());
-            echo json_encode(['status' => 'error', 'message' => 'Erro na ligação ao servidor.']);
-            exit;
+            handleDbError($e);
         }
+        break;
 
     case 'reviewOrder':
-        if(!isset($_SESSION["userRole"])){  //verifica e o utilizador esta logado 
-            echo json_encode(['status' => 'error', 'message' => 'Login required']);
-            exit;
-        }
+        requireLogin(); 
         
         $orderId = getPost('orderId');
         $review = getPost('review');
@@ -253,29 +225,11 @@ switch ($action) {
             exit;
 
         } catch (PDOException $e) {
-            error_log("Database error: " . $e->getMessage()); // Log interno
-            echo json_encode(['status' => 'error', 'message' => 'Erro na ligação ao servidor.']);
-            exit;
+            handleDbError($e);
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        break;
 
     default:
-        echo json_encode(['status' => 'error', 'message' => 'Invalid Action']);
+        echo json_encode(['status' => 'error', 'message' => 'Ação inválida']);
         break;
 }
