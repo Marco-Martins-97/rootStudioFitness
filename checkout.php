@@ -1,19 +1,19 @@
 <?php
 require_once 'includes/configSession.inc.php'; 
 
-//verifica se acessou a pagina ataves de um Post
+// Verifica se a página foi acedida através de um pedido POST
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     header("Location: shop.php");
     exit;
 }
 
-//verifica e o utilizador esta logado 
-if(!isset($_SESSION["userRole"])){  
+// Verifica se o utilizador está autenticado
+if (!isset($_SESSION["userRole"], $_SESSION["userId"])) {
     header("Location: shop.php?invalid=login");
     exit;
 }
 
-//verifica se uma tipo de checkout é valido
+// Verifica se o tipo de checkout é válido
 if (!isset($_POST['type']) || !in_array($_POST['type'], ['direct', 'cart'])) {
     header("Location: shop.php?invalid=type");
     exit;
@@ -24,30 +24,34 @@ $checkoutProducts = [];
 $userId = $_SESSION['userId'];
 
 if ($type === 'direct'){
+    // Verifica se o produto foi enviado corretamente
     if(!isset($_POST['productId'])) {
         header("Location: shop.php?invalid=productId");
         exit;
     }
  
-    $productId = htmlspecialchars(trim($_POST['productId']));
+    $productId = intval($_POST['productId']);
 
-    //carrega os dados do produto da base de dados e insere dentro o array
+    // Carrega os dados do produto a partir da base de dados
     require_once "includes/ShopHandler.php";
     $shop = new Shop();
     $product = $shop->loadProductbyId($productId);
 
+    // Verifica se o produto existe
     if (!$product) {
         header("Location: shop.php?invalid=notfound");
         exit;
     }
     
+    // Ajusta os dados do produto para o checkout direto
     $product['productQuantity'] = 1;
     $product['productId'] = $productId;
-    unset($product['id'], $product['productStock']);    // remove dados desnecessarios
+    unset($product['id']);    // Remove dados desnecessários
+    unset($product['productStock']);
     $checkoutProducts[] = $product;
 
 } else {
-    //carrega os dados do produtos no carrinho da base de dadosw
+    // Carrega os produtos do carrinho a partir da base de dados
     require_once "includes/ShopHandler.php";
     $shop = new Shop();
     $checkoutProducts = $shop->loadShoppingCart($userId);
@@ -55,7 +59,7 @@ if ($type === 'direct'){
 
 
 function loadOrderSummary($checkoutProducts){
-    // verifica se existem produtos para concluir o checkout
+    // Verifica se existem produtos para o checkout (antes de enviar qualquer HTML)
     if (empty($checkoutProducts)) {
         header("Location: shop.php?invalid=empty");
         exit;
@@ -77,8 +81,9 @@ function loadOrderSummary($checkoutProducts){
             $totalProductContainer .= " <span class='cart-product-price-qty'>($qty x " . number_format($price, 2) . "€)</span>";
         }
 
-        // converte o produto para JSON para ser usado no JS
-        $productJSON = htmlspecialchars(json_encode($product, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+        // Converte o produto para JSON e escapa para uso seguro em HTML
+        // $productJSON = htmlspecialchars(json_encode($product, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+        $productJSON = htmlspecialchars(json_encode($product, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), ENT_QUOTES);
         
         $HTMLcontent .= "
             <li class='order-product' data-product='$productJSON'>
@@ -97,8 +102,8 @@ function loadOrderSummary($checkoutProducts){
     }
     $HTMLcontent .= '</ul>
         <div class="pay-summary">
-            <span>Total a Pagar:</span>
-            <span class="order-total">'. number_format($totalCheckout, 2, '.', '') .' €</span>
+            <span>Total a pagar:</span>
+            <span class="order-total">'. number_format($totalCheckout, 2, '.', '') . '€</span>
         </div>
     ';
     echo $HTMLcontent;
@@ -116,12 +121,13 @@ function loadOrderSummary($checkoutProducts){
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="robots" content="noindex, nofollow">
         <!-- Style -->
         <link id="favicon" rel="shortcut icon" href="imgs/logo/iconPreto.png" type="image/x-icon">
         <link rel="stylesheet" href="css/style.css">
         <link rel="stylesheet" href="css/checkout.css">
-        <script src="https://kit.fontawesome.com/d132031da6.js?v=2" crossorigin="anonymous"></script>
         <!-- Script -->
+        <script src="https://kit.fontawesome.com/d132031da6.js?v=2" crossorigin="anonymous"></script>
         <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
     </head>
     <body>
@@ -149,11 +155,12 @@ function loadOrderSummary($checkoutProducts){
                             </div>
                             <div class="dropdown">
                                 <a href="profile.php">Perfil</a>
+                                <a href="orders.php">Encomendas</a>
                                 <?php if(isset($_SESSION["userRole"]) && $_SESSION["userRole"] === 'admin'){ ?>
-                                    <a href="shopAdmin.php">Administração Loja</a>
-                                    <a href="clientsAdmin.php">Administração Clientes</a>
+                                    <a href="clientsAdmin.php">Administração de Clientes</a>
+                                    <a href="shopAdmin.php">Administração da Loja</a>
+                                    <a href="ordersAdmin.php">Administração de Encomendas</a>
                                 <?php } ?>
-                                <a href="profile.php">Encomendas</a>
                                 
                                 <form action="includes/logout.inc.php" method="post">
                                     <button>Sair</button>
@@ -172,7 +179,7 @@ function loadOrderSummary($checkoutProducts){
             <div class="order-summary">
                 <?php loadOrderSummary($checkoutProducts); ?>
             </div>
-            <div class="custumer-details">
+            <div class="customer-details">
                 <div class="form-container">
                     <h2>Dados de Envio</h2>
                     <form action="includes/checkout.inc.php" method="post" id="checkout-form">
@@ -180,7 +187,7 @@ function loadOrderSummary($checkoutProducts){
                         <!-- Nome Completo -->
                         <div class="field-container required">
                             <div class="field">
-                                <label for="fullName">Nome Completo:</label>
+                                <label for="fullName">Nome completo:</label>
                                 <input type="text" id="fullName" name="fullName" maxlength="255">
                             </div>
                             <div class="error"></div>
@@ -188,7 +195,7 @@ function loadOrderSummary($checkoutProducts){
                         <!-- Data de Nascimento -->
                         <div class="field-container required">
                             <div class="field">
-                                <label for="birthDate18">Data de Nascimento:</label>
+                                <label for="birthDate18">Data de nascimento:</label>
                                 <input type="date" id="birthDate18" name="birthDate18">
                             </div>
                             <div class="error"></div>
@@ -217,9 +224,9 @@ function loadOrderSummary($checkoutProducts){
                     <a href="https://instagram.com/root.studiofitness" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
                     <a href="https://api.whatsapp.com/send?phone=351925677310" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
                 </div>
-                <p>&copy; 2025 Root Studio Fitness</p>
+                <p>&copy; 2025 Root Studio Fitness. Todos os direitos reservados.</p>
             </div>
-        </footer> 
+        </footer>
 
         <script src="js/navMenu.js"></script>
         <script src="js/checkout.js"></script>

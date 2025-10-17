@@ -1,23 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt">
     <head>
+        <title>Root Fitness Studio - Termos e Condições</title>
+        <meta name="author" content="Marco Martins">
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Termos e Condições | ROOT Fitness Studio</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <link id="favicon" rel="shortcut icon" href="imgs/logo/iconPreto.png" type="image/x-icon">
+        <link rel="stylesheet" href="css/style.css">
+
         <style>
-            :root{
-                --PRIMARY-BG-COLOR: #FEF4E8;
-                --SECONDARY-BG-COLOR: #E8D8C3;
-                --TERTIARY-BG-COLOR: #E9DDCD;
-
-                --PRIMARY-TXT-COLOR: #4b3017;
-                --SECONDARY-TXT-COLOR: #6A3E27;
-
-                --PRIMARY-BORDER-COLOR: #4b3017;
-
-                --SHADOW-COLOR: #0000001a;
-            }
-            
             body {
                 background-color: var(--PRIMARY-BG-COLOR);
                 color: var(--PRIMARY-TXT-COLOR);
@@ -94,7 +86,7 @@
         </main>
 
         <footer>
-            &copy; 2025 ROOT Fitness — Todos os direitos reservados.
+            &copy; 2025 Root Studio Fitness. Todos os direitos reservados.
         </footer>
     </body>
 </html>

@@ -10,7 +10,7 @@ function validateField(input){
         }
         
         if (response.status === 'invalid'){
-            console.warn('Input Invalido:', response.message);
+            console.warn('Campo inválido:', response.message);
             field.addClass('invalid').find('.error').html(response.message);
             return;
         }
@@ -18,7 +18,7 @@ function validateField(input){
         field.removeClass('invalid').find('.error').html('');
 
     }, 'json').fail(function () {
-        console.error('Erro ao validar os dados.');
+        console.error('Ocorreu um erro ao validar os dados.');
     });
 }
 
@@ -29,7 +29,7 @@ function noEmptyFields(formId){
 
         if (input.val() === null || input.val().trim() === ''){
             emptyFields = true;
-            $(this).closest('.field-container').addClass('invalid').find('.error').html('Campo de preenchimento obrigatório!');
+            $(this).closest('.field-container').addClass('invalid').find('.error').html('Preenchimento deste campo é obrigatório.');
         }
     });
     return !emptyFields;
@@ -39,42 +39,43 @@ function isFormValid(formId){
     return $(formId).find('.field-container.invalid').length === 0;
 }
 
+function showPopup(msg, delay = 2000, success = false) {
+    $('.popup').remove();// Remove um popup antes de criar outro (se existir)
+    
+    // Cria o elemento popup
+    const popup = $('<div class="popup"></div>').text(msg);
+    
+    // Adiciona a classe "popup-success" apenas se success for true ou 1
+    if (success === true || success === 1 || success === '1') {
+        popup.addClass('popup-success');
+    }
+    // Insere no main e aplica delay + fadeOut
+    popup.appendTo('main').delay(delay).fadeOut(300, function() { $(this).remove(); });
+}
+
 function validateStock(productId, qty){
-    const errorPopup = $(`<div class='popup'></div>`);
-    return $.post('includes/validateInputs.inc.php', { input: 'stock', productId: productId, quantity: qty }, 'json')
+    return $.post('includes/validateInputs.inc.php', { input: 'stock', productId: productId, quantity: qty }, null, 'json')
     .then(response => {
-        const res = typeof response === 'string' ? JSON.parse(response) : response;
         $('.popup').remove();
 
-        if (res.status === 'error'){
-            console.error('Erro:', res.message);
-            errorPopup.text('Erro ao validar o stock.').appendTo('main');
-            setTimeout(function(){
-                errorPopup.fadeOut(500, function(){ $(this).remove(); });
-            }, 2000);
+        if (response.status === 'error'){
+            console.error('Erro:', response.message);
+            showPopup('Erro ao validar o stock.');
             return false;
         }
-        if (res.status === 'invalid'){
-            console.warn('Input Invalido:', res.message);
-            errorPopup.text('Sem Stock Disponivel!').appendTo('main');
-            setTimeout(function(){
-                errorPopup.fadeOut(500, function(){ $(this).remove(); });
-            }, 2000);
+        if (response.status === 'invalid'){
+            console.warn('Campo inválido:', response.message);
+            showPopup('Sem Stock Disponivel!');
             return false;
         }
         return true;
     })
     .catch(() => {
         console.error('Erro ao validar o stock.');
-        $('.popup').remove();
-        errorPopup.text('Erro ao validar o stock.').appendTo('main');
-        setTimeout(function(){
-            errorPopup.fadeOut(500, function(){ $(this).remove(); });
-        }, 2000);
+        showPopup('Erro ao validar o stock.');
         return false;
     });
 }
-
 
 function updateOrderTotal() {
     let total = 0;
@@ -88,8 +89,8 @@ function updateOrderTotal() {
 }
 
 function updateOrderSummary($product, data){
-    const price = parseFloat(data.productPrice);
-    const qty = parseInt(data.productQuantity);
+    const price = parseFloat(data.productPrice) || 0;
+    const qty = parseInt(data.productQuantity) || 0;
     const total = price * qty;
     const $totalContainer = $product.find('.order-product-total'); 
 
@@ -126,20 +127,19 @@ function attachOrderData(formId){
         } catch (e) {
             console.error('Erro ao carregar dados:', dataAttr);
         }
-
-        let orderInput = formId.find('input[name="orderData"]');
-        if (!orderInput.length) {
-            orderInput = $('<input>', { type: 'hidden', name: 'orderData' });
-            formId.append(orderInput);
-        }
-
-        orderInput.val(JSON.stringify(products));
     });
+    let orderInput = formId.find('input[name="orderData"]');
+    if (!orderInput.length) {
+        orderInput = $('<input>', { type: 'hidden', name: 'orderData' });
+        formId.append(orderInput);
+    }
+
+    orderInput.val(JSON.stringify(products));
+    
 }
 
 $(document).ready(function(){
     const checkoutForm = $('#checkout-form');
-    
 
     $(document).on('click', '.btn-add', function() {
         const $product = $(this).closest('.order-product');
@@ -187,19 +187,14 @@ $(document).ready(function(){
         });
     });
 
-
-    $('#fullName').on('input', function(){ validateField(this); });
-    $('#birthDate18').on('input', function(){ validateField(this); });
-    $('#userAddress').on('input', function(){ validateField(this); });
-
-
+    $('#fullName, #birthDate18, #userAddress').on('input', function(){ validateField(this); });
 
     checkoutForm.on('submit', function(e){
         e.preventDefault();
 
         if(noEmptyFields(checkoutForm) && isFormValid(checkoutForm)){
             $('.validSub').remove();
-            const successDiv = $('<div class="validSub">Enviando...</div>');
+            const successDiv = $('<div class="validSub">A enviar...</div>');
             $('.form-disclaimer').after(successDiv);
 
             // anexa os dados dos produtos no formulario
@@ -210,7 +205,7 @@ $(document).ready(function(){
                 checkoutForm.off('submit').submit();
             }, 1000);
         } else {
-            console.error('Invalid Form!');
+            console.error('O formulário contém erros. Verifique os campos assinalados.');
         }
     });
 
