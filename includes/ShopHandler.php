@@ -282,10 +282,10 @@ class Shop{
             $imgDir = $delImgRes['dir'];
             if ($this->backupImg !== null){
                 if (!file_put_contents($imgDir, $this->backupImg)) {
-                    return ['status' => 'processError', 'error' => 'Falha ao restaurar a imagem.', 'message' => 'Ocorreu um erro. Não foi possível apagar o produto.'];
+                    return ['status' => 'processError', 'error' => 'Falha ao repor o backup da imagem.', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Apagar o Produto!'];
                 }
             }
-            return ['status' => 'processError', 'error' => 'Não foi possível apagar os dados do produto.', 'message' => 'Ocorreu um erro. Não foi possível apagar o produto.'];
+            return ['status' => 'processError', 'error' => 'Não foi possivel apagar os dados do produto.', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Apagar o Produto!'];
         }
         return ['status' => 'valid'];
     }

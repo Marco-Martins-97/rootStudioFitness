@@ -99,8 +99,8 @@
             <section id="video">
                 <div class="video-container">
                     <iframe 
-                        src="https://youtu.be/TDQ6FEE_sok"
-                        title="YouTube video player"
+                        src="https://www.youtube.com/embed/TDQ6FEE_sok"
+                        title="Video YouTube Root"
                         frameborder="0" 
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                         allowfullscreen

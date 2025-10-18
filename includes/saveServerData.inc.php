@@ -138,7 +138,7 @@ switch ($action) {
             require_once "ShopHandler.php";
             $shop = new Shop();
             $res = $shop->deleteProduct($productId);
-
+            
             echo json_encode($res);
             exit;
 
