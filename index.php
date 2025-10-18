@@ -83,7 +83,7 @@
                         <h3>Treinos Personalizados</h3>
                     </a>
                     <a href="plans.php#group" class="plan-container">
-                        <img src="imgs/content/aulasGrupo.jpeg" alt="Aulas de Grupo">
+                        <img src="imgs/content/aulasGrupo.jpg" alt="Aulas de Grupo">
                         <h3>Aulas de Grupo</h3>
                     </a>
                     <a href="plans.php#specialties" class="plan-container">
@@ -98,13 +98,13 @@
             </section>
             <section id="video">
                 <div class="video-container">
-                    <!-- <iframe 
-                        src="https://www.youtube.com/embed/XPSEZeGeeqk"
+                    <iframe 
+                        src="https://youtu.be/TDQ6FEE_sok"
                         title="YouTube video player"
                         frameborder="0" 
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                         allowfullscreen
-                    ></iframe> -->
+                    ></iframe>
                 </div>
             </section>
         </main>

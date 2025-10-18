@@ -15,7 +15,7 @@ function loadShopProducts(){
         const products = response.products;
         let HTMLcontent = `   
             <li class='product-card'>
-                <img src='imgs/products/newProduct.jpg' alt='Novo Produto' class='product-img'>
+                <img src='imgs/products/newProduct.png' alt='Novo Produto' class='product-img'>
                 <h4 class='product-name'>Novo Produto</h4>
                 <div class='product-info'>0,00 €</div>
                 <div class='product-info'>Stock: 0</div>
@@ -29,7 +29,7 @@ function loadShopProducts(){
             products.forEach(product => {
                 HTMLcontent += `   
                     <li class='product-card'>
-                        <img src='imgs/products/${product.productImgSrc}' alt='${product.productName}' class='product-img' onerror='this.src="imgs/products/defaultProduct.jpg"'>
+                        <img src='imgs/products/${product.productImgSrc}' alt='${product.productName}' class='product-img' onerror='this.src="imgs/products/defaultProduct.png"'>
                         <h4 class='product-name'>${product.productName}</h4>
                         <div class='product-info'>${product.productPrice}€</div>
                         <div class='product-info'>Stock: ${product.productStock}</div>

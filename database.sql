@@ -112,3 +112,7 @@ CREATE TABLE orders(
     FOREIGN KEY (productId) REFERENCES products(id)
 );
 
+-- create backup
+-- mysqldump -u root_admin -p root_studio_fitness > backup_root_studio_fitness.sql
+-- restaurar
+-- mysql -u root_admin -p root_studio_fitness < backup_root_studio_fitness.sql

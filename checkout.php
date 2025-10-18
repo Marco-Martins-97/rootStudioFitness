@@ -86,7 +86,7 @@ function loadOrderSummary($checkoutProducts){
         
         $HTMLcontent .= "
             <li class='order-product' data-product='$productJSON'>
-                <img src='imgs/products/" . $product['productImgSrc'] . "' alt='" . $product['productName'] . "' class='order-product-img' onerror='this.src=\"imgs/products/defaultProduct.jpg\"'>
+                <img src='imgs/products/" . $product['productImgSrc'] . "' alt='" . $product['productName'] . "' class='order-product-img' onerror='this.src=\"imgs/products/defaultProduct.png\"'>
                 <div class='order-product-info'>
                     <div class='order-product-actions'>
                         <button class='btn-add'>+</button>

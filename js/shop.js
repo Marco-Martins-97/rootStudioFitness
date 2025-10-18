@@ -26,7 +26,7 @@ function loadShopProducts(){
                 const stockStatus = stockReplacements[product.productStock] || product.productStock;    // troca para portugues
                 HTMLcontent += `   
                     <li class='product-card'>
-                        <img src='imgs/products/${product.productImgSrc}' alt='${product.productName}' class='product-img' onerror='this.src="imgs/products/defaultProduct.jpg"'>
+                        <img src='imgs/products/${product.productImgSrc}' alt='${product.productName}' class='product-img' onerror='this.src="imgs/products/defaultProduct.png"'>
                         <h4 class='product-name'>${product.productName}</h4>
                         <div class='product-price'>${product.productPrice}€</div>
                         <div class='product-stock ${product.productStock}'>Stock: <span>${stockStatus}</span></div>
@@ -93,7 +93,7 @@ function loadCartProducts(){
 
                 HTMLcontent += `
                     <li class='cart-product'>
-                        <img src='imgs/products/${product.productImgSrc}' alt='${product.productName}' class='cart-product-img' onerror='this.src="imgs/products/defaultProduct.jpg"'>
+                        <img src='imgs/products/${product.productImgSrc}' alt='${product.productName}' class='cart-product-img' onerror='this.src="imgs/products/defaultProduct.png"'>
                         <div class='cart-product-info'>
                             <div class='cart-product-actions'>
                             <button class='btn-add' data-id='${product.productId}'>+</button>

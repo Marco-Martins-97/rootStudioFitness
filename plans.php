@@ -95,7 +95,7 @@
             <section id="group">
                 <div class="plan-container">
                     <div class="plan-img-container">
-                        <img src="imgs/content/aulasGrupo.jpeg" alt="Aulas de Grupo">
+                        <img src="imgs/content/aulasGrupo.jpg" alt="Aulas de Grupo">
                     </div>
                     <div class="plan-description">
                         <h2>Aulas de Grupo</h2>

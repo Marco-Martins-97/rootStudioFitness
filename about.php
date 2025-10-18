@@ -91,7 +91,7 @@
                     <div class="text-container">
                         <h2>Sophie Rocha</h2>
                         <p>Olá, sou a Sophie e sempre vivi com o desporto no coração. Sou licenciada em Gestão Pública e mestre em Gestão das Organizações, mas foi durante a pandemia que a vida me desafiou a olhar para dentro — e decidir seguir o meu verdadeiro sonho: trabalhar na área do exercício físico.</p>
-                        <p>Formei-me como Técnica de Exercício Físico pela <a href="https://www.instagram.com/fitnessacademy/">@fitnessacademy</a>, onde obtive o meu título profissional. Desde então, especializei-me em aulas de grupo, e foi aí que encontrei a minha grande paixão: o step.</p>
+                        <p>Formei-me como Técnica de Exercício Físico pela <a href="https://www.instagram.com/fitnessacademy/"  target="_blank">@fitnessacademy</a>, onde obtive o meu título profissional. Desde então, especializei-me em aulas de grupo, e foi aí que encontrei a minha grande paixão: o step.</p>
                         <p>Sou movida por alegria, empatia e energia positiva. Gosto de criar um ambiente leve, onde o treino é mais do que esforço — é conexão, evolução e bem-estar.</p>
                     </div>
                 </div>

@@ -55,6 +55,13 @@
     font-size: 2rem;
 }
 
+.text-container a{
+    color: var(--PRIMARY-TXT-COLOR);
+}
+
+.text-container a:hover{
+    text-decoration: underline;
+}
 .text-container p{
     font-size: 1.1rem;
     text-align: justify;
