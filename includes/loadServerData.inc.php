@@ -154,7 +154,11 @@ switch ($action) {
         break;
 
     case 'loadShoppingCart':
-        requireLogin();
+        // requireLogin();
+        if (!isset($_SESSION["userId"])) {
+            echo json_encode(['status' => 'invalid', 'message' => 'É necessário efetuar login']);
+            exit;
+        }
 
         $userId = $_SESSION['userId'];
 

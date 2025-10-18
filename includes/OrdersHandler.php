@@ -1,5 +1,6 @@
 <?php
 require_once 'Dbh.php';
+require_once 'configSession.inc.php';
 
 class Order{
     private $conn;
@@ -10,6 +11,7 @@ class Order{
         $this->conn = $dbh->connect();
     }
 
+    // Carrega dados da base de dados
     private function getStock($productId){
         $query="SELECT productStock FROM products WHERE id = :productId;";
         $stmt = $this->conn->prepare($query);
@@ -17,7 +19,7 @@ class Order{
         $stmt->execute();
 
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $result['productStock'] ?? false;
+        return $result ? $result['productStock'] : false;
     }
 
     private function getOrderStatus($orderId){
@@ -27,7 +29,7 @@ class Order{
         $stmt->execute();
 
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $result['orderStatus'] ?? false;
+        return $result ? $result['orderStatus'] : false;
     }
 
     private function getProductData($productId){
@@ -40,6 +42,26 @@ class Order{
         return $result;
     }
 
+    public function loadOrders($userId){
+        $query = "SELECT o.orderId, o.productName, o.productQuantity, o.productPrice, o.orderDate, o.orderStatus, p.productImgSrc FROM orders AS o INNER JOIN products AS p ON o.productId = p.id WHERE userId = :userId ORDER BY orderDate DESC;";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':userId', $userId);
+        $stmt -> execute();
+
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $result;
+    }
+    
+    public function loadCustomerOrders(){
+        $query = "SELECT o.orderId, o.productName, o.productQuantity, o.productPrice, o.customerName, o.customerAddress, o.orderDate, o.orderStatus, p.productImgSrc FROM orders AS o INNER JOIN products AS p ON o.productId = p.id ORDER BY orderDate DESC;";
+        $stmt = $this->conn->prepare($query);
+        $stmt -> execute();
+
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $result;
+    }
+
+    // Verifica se exite na base de dados
     private function orderIdExists($orderId){
         $query = 'SELECT EXISTS(SELECT 1 FROM orders WHERE orderId = :orderId)';
         $stmt = $this->conn->prepare($query);
@@ -49,6 +71,7 @@ class Order{
         return (bool) $stmt->fetchColumn();
     }
 
+    // Insere dados na base de dados
     private function updateOrderStatus($orderId, $newStatus){
         $query = "UPDATE orders SET orderStatus = :newStatus WHERE orderId = :orderId;";
         $stmt = $this->conn->prepare($query);
@@ -73,6 +96,7 @@ class Order{
         return $stmt->execute();
     }
 
+    // Apaga dados na base de dados
     private function deleteProductFromCart($productId, $userId){
         $query = "DELETE FROM shoppingcart WHERE productId = :productId AND userId = :userId;";
         $stmt = $this->conn->prepare($query);
@@ -82,31 +106,12 @@ class Order{
         return $stmt->execute();
     }
 
-
-    public function loadOrders($userId){
-        $query = "SELECT o.orderId, o.productName, o.productQuantity, o.productPrice, o.orderDate, o.orderStatus, p.productImgSrc FROM orders AS o INNER JOIN products AS p ON o.productId = p.id WHERE userId = :userId ORDER BY orderDate DESC;";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':userId', $userId);
-        $stmt -> execute();
-
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        return $result;
-    }
-    
-    public function loadCustomerOrders(){
-        $query = "SELECT o.orderId, o.productName, o.productQuantity, o.productPrice, o.customerName, o.customerAddress, o.orderDate, o.orderStatus, p.productImgSrc FROM orders AS o INNER JOIN products AS p ON o.productId = p.id ORDER BY orderDate DESC;";
-        $stmt = $this->conn->prepare($query);
-        $stmt -> execute();
-
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        return $result;
-    }
-
+    // Funçoes de execução
     private function dispatchOrder($orderId){
         try {
-            $this->conn->beginTransaction();    // inicia a transaçao
+            $this->conn->beginTransaction();    // inicia a transação
 
-            // pega o productId e quantidade dos produtos da ordem
+            // Obtém o productId e quantidade dos produtos da encomenda
             $query="SELECT productId, productQuantity FROM orders WHERE orderId = :orderId";
             $stmt = $this->conn->prepare($query);
             $stmt->bindParam(':orderId', $orderId);
@@ -114,12 +119,12 @@ class Order{
 
             $orderProducts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            //verifica se nao está vazio
+            // Verifica se a encomenda existe
             if(empty($orderProducts)){
                 throw new Exception("Falha ao carregar os dados da encomenda: $orderId");
             }
 
-            //remove a quantidade de cada produto do stock
+            // Atualiza o stock dos produtos
             $updateQuery = "UPDATE products SET productStock = productStock - :productQty WHERE id = :productId AND productStock >= :productQty";
             $updateStmt = $this->conn->prepare($updateQuery);
 
@@ -129,18 +134,18 @@ class Order{
                     ':productId' => $product['productId']
                 ]);
 
-                //caso o stock seja insficiente, reverte operaçao
+                // Se o stock for insuficiente, reverte a operação
                 if ($updateStmt->rowCount() === 0) {
                     throw new Exception("Stock Insuficiente");
                 }
             }
 
-            // altera o status para enviado            
+            // Altera o estado da encomenda para "enviado"       
             if(!$this->updateOrderStatus($orderId, 'dispatched')){
-                throw new Exception("Falha ao atualizar o status");
+                throw new Exception("Falha ao atualizar o estado");
             }
 
-            //se tudo for bem suceddido , salva as alteraçoes;
+            // Confirma a transação
             $this->conn->commit();
             return true;
 
@@ -169,12 +174,12 @@ class Order{
                 }
 
                 if(!$this->createNewOrder($uniqueId, $userId, $fullName, $userAddress, $checkoutType, $productId, $qty, $productData['productName'], $productData['productPrice'])){
-                    throw new Exception("Falha ao criar a ordem do produto $productId");
+                    throw new Exception("Falha ao criar a encomenda do produto $productId");
                 }
 
                 if($checkoutType === 'cart'){
                     if(!$this->deleteProductFromCart($productId, $userId)){
-                        throw new Exception("Falha ao apagar o produto $productId do carrinho");
+                        throw new Exception("Falha ao remover o produto $productId do carrinho");
                     }
                 }
             }
@@ -183,26 +188,23 @@ class Order{
             return true;
 
         } catch (Exception $e) {
-            $this->conn->rollback();
+            $this->conn->rollBack();
             return false;
         }
     }
 
-        
-
-
     public function processCheckout($userId, $fullName, $birthDate, $userAddress, $orderDataJson, $checkoutType){
-        //validaçao dos dados
+        // Validação dos dados
         require_once 'validations.inc.php';
         
         $orderData = json_decode($orderDataJson, true);
 
-        // checkoutType
+        // Tipo de checkout
         if(!in_array($checkoutType, ['direct', 'cart'])){
             $this->errors['type'] = 'invalid';
         }
 
-        //orderData
+        // Dados da encomenda
         if(json_last_error() !== JSON_ERROR_NONE){
             $this->errors['orderData'] = 'invalidJSON';
         } elseif (!is_array($orderData)){
@@ -211,7 +213,7 @@ class Order{
             $this->errors['orderData'] = 'empty';
         }
 
-        // order products
+        // Validação dos produtos
         foreach ($orderData as $product) {
             $productId = htmlspecialchars($product['id']) ?? null;
             $qty = htmlspecialchars($product['qty']) ?? 0;
@@ -226,7 +228,7 @@ class Order{
             }
         }
 
-        // fullName
+        // FullName
         if (isInputRequired('fullName') && isInputEmpty($fullName)){
             $this->errors['fullName'] = 'empty';
         } elseif (isNameInvalid($fullName)){
@@ -235,7 +237,7 @@ class Order{
             $this->errors['fullName'] = 'toLong';
         }
 
-        // birthDate
+        // BirthDate
         if (isInputRequired('birthDate') && isInputEmpty($birthDate)){
             $this->errors['birthDate'] = 'empty';
         } elseif (isDateInvalid($birthDate)){
@@ -246,7 +248,7 @@ class Order{
             $this->errors['birthDate'] = 'under18';
         } 
         
-        //userAddress
+        // UserAddress
         if (isInputRequired('userAddress') && isInputEmpty($userAddress)){
             $this->errors['userAddress'] = 'empty';
         } elseif (isAddressInvalid($userAddress)){
@@ -255,13 +257,12 @@ class Order{
             $this->errors['userAddress'] = 'toLong';
         }
 
-        // Conecção
+        // Verificação da ligação à base de dados
         if (!$this->conn) {
             $this->errors['connection'] = 'failed';
         }
 
-
-        // Criar utilizador
+        // Criar a encomenda
         if (!$this->errors){
             if ($this->createOrders($userId, $fullName, $userAddress, $orderData, $checkoutType)){
                 header('Location: ../shop.php?checkout=success');
@@ -277,40 +278,43 @@ class Order{
     }
 
     public function reviewOrder($orderId, $review){
-        $allowedReviews = ['received', 'canceled', 'accepted', 'dispatched', 'rejected'];
-        $validTransitions = [
+        $allowedReviews = ['received', 'canceled', 'accepted', 'dispatched', 'rejected'];    // Lista de estados possíveis que podem ser atribuídos a uma encomenda
+        $validTransitions = [   // Define transições válidas entre estados das encomendas
             'pending'    => ['accepted', 'canceled', 'rejected'],
             'accepted'   => ['dispatched', 'canceled'],
             'dispatched' => ['received'],
         ];
 
-        if(!in_array($review, $allowedReviews)){
-            return ['status' => 'error', 'message' => 'Invalid Review'];
+        // Verifica se o estado fornecido é válido
+        if(!in_array($review, $allowedReviews)){    
+            return ['status' => 'error', 'message' => 'Revisão inválida'];
         }
 
-        if($_SESSION["userRole"] !== "admin" && in_array($review, ['accepted', 'dispatched', 'rejected'])){ 
-            return ['status' => 'error', 'message' => 'Not an Admin'];
+        // Verifica permissões: apenas administradores podem mudar certos estados
+        if((!isset($_SESSION["userRole"]) || $_SESSION["userRole"] !== "admin") && in_array($review, ['accepted', 'dispatched', 'rejected'])){ 
+            return ['status' => 'error', 'message' => 'Acesso negado: apenas administradores'];
         }
 
         $status = $this->getOrderStatus($orderId);
 
-        if(!$status){
-            return ['status' => 'error', 'message' => 'Order not found'];
+        // Verifica se a encomenda existe
+        if(!$status){   
+            return ['status' => 'error', 'message' => 'Encomenda não encontrada'];
         }
 
+        // Verifica se a transição de estado é válida
         if (!isset($validTransitions[$status]) || !in_array($review, $validTransitions[$status])) {
             return ['status' => 'error', 'message' => 'Invalid transition'];
         }
 
+        // Se o novo estado for 'dispatched', processa envio (retira stock e atualiza status)
         if ($review === 'dispatched'){
-            //remove stock da loja e altera o status da encomenda para enviado
             if(!$this->dispatchOrder($orderId)){
-                return ['status' => 'error', 'message' => 'Failed to process dispatch'];
+                return ['status' => 'error', 'message' => 'Falha ao processar envio'];
             }
-        } else {
-
+        } else {    // Para os outros estados, apenas atualiza o status da encomenda
             if(!$this->updateOrderStatus($orderId, $review)){
-                return ['status' => 'error', 'message' => 'Failed to Change Status'];
+                return ['status' => 'error', 'message' => 'Falha ao alterar estado'];
             }
         }
        

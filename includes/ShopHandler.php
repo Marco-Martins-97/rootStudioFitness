@@ -13,42 +13,7 @@ class Shop{
         $dbh = new Dbh();
         $this->conn = $dbh->connect();
     }
-    // PRIVATE QUERY
-    private function createNewProduct($productImgSrc, $productName, $productPrice, $productStock){
-        $query = 'INSERT INTO products (productImgSrc, productName, productPrice, productStock) VALUES (:productImgSrc, :productName, :productPrice, :productStock)';
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':productImgSrc', $productImgSrc);
-        $stmt->bindParam(':productName', $productName);
-        $stmt->bindParam(':productPrice', $productPrice);
-        $stmt->bindParam(':productStock', $productStock);
-
-        return $stmt->execute();
-    }
-    
-    private function updatedProductData($productId, $productImgSrc = null, $productName, $productPrice, $productStock){
-        $query = 'UPDATE products SET ';
-        $productImgSrc !== null && $query .= 'productImgSrc = :productImgSrc, ';
-        $query .= 'productName = :productName, productPrice = :productPrice, productStock = :productStock  WHERE id = :productId';
-
-        $stmt = $this->conn->prepare($query);
-        $productImgSrc !== null && $stmt->bindParam(':productImgSrc', $productImgSrc);
-        $stmt->bindParam(':productName', $productName);
-        $stmt->bindParam(':productPrice', $productPrice);
-        $stmt->bindParam(':productStock', $productStock);
-        $stmt->bindParam(':productId', $productId);
-
-        return $stmt->execute();
-    }
-
-    private function productExists($productId){
-        $query = 'SELECT EXISTS(SELECT 1 FROM products WHERE id = :productId)';
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':productId', $productId);
-        $stmt->execute();
-    
-        return (bool) $stmt->fetchColumn();
-    }
-
+    // Carrega dados da base de dados
     private function getImgSrc($productId){
         $query="SELECT productImgSrc FROM products WHERE id = :productId;";
         $stmt = $this->conn->prepare($query);
@@ -56,15 +21,7 @@ class Shop{
         $stmt->execute();
 
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $result['productImgSrc'] ?? false;
-    }
-
-    private function deleteProductData($productId){
-        $query = "DELETE FROM products WHERE id = :productId";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':productId', $productId);
-
-        return $stmt->execute();
+        return $result ? $result['productImgSrc'] : false;
     }
 
     private function getStock($productId){
@@ -74,7 +31,7 @@ class Shop{
         $stmt->execute();
 
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $result['productStock'] ?? false;
+        return $result ? $result['productStock'] : false;
     }
 
     private function getProductInCart($productId, $userId){
@@ -85,37 +42,9 @@ class Shop{
         $stmt->execute();
 
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $result ?? false;
+        return $result ? $result : false;
     }
 
-    private function updateCartProductQty($cartProductId, $cartProductQty){
-        $query = 'UPDATE shoppingcart SET productQuantity = :productQuantity WHERE id = :cartProductId;';
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':productQuantity', $cartProductQty);
-        $stmt->bindParam(':cartProductId', $cartProductId);
-
-        return $stmt->execute();
-    }
-
-    private function addNewProductToCart($productId, $userId, $productQty = 1){
-        $query = 'INSERT INTO shoppingcart (userId, productId, productQuantity) VALUES (:userId, :productId, :productQuantity)';
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':userId', $userId);
-        $stmt->bindParam(':productId', $productId);
-        $stmt->bindParam(':productQuantity', $productQty);
-
-        return $stmt->execute();
-    }
-    private function deleteProductFromCart($cartProductId){
-        $query = "DELETE FROM shoppingcart WHERE id = :productId;";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':productId', $cartProductId);
-
-        return $stmt->execute();
-    }
-
-
-    // PUBLIC QUERY
     public function loadAdmProducts(){
         $query = "SELECT * FROM products ORDER BY id DESC;";
         $stmt = $this->conn->prepare($query);
@@ -146,7 +75,6 @@ class Shop{
 
     public function loadShoppingCart($userId){
         $query = 'SELECT p.productImgSrc, p.productName, p.productPrice, p.id AS productId, sc.productQuantity FROM shoppingcart sc JOIN products p ON sc.productId = p.id WHERE sc.userId = :userId;';
-        // $query = "SELECT * FROM shoppingcart WHERE userId = :userId;";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':userId', $userId);
         $stmt -> execute();
@@ -155,18 +83,95 @@ class Shop{
         return $result;
     }
 
-    // PRIVATE FUNCTIONS
+    // Verifica se exite na base de dados
+    private function productExists($productId){
+        $query = 'SELECT EXISTS(SELECT 1 FROM products WHERE id = :productId)';
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':productId', $productId);
+        $stmt->execute();
+    
+        return (bool) $stmt->fetchColumn();
+    }
+
+    // Insere dados na base de dados
+    private function createNewProduct($productImgSrc, $productName, $productPrice, $productStock){
+        $query = 'INSERT INTO products (productImgSrc, productName, productPrice, productStock) VALUES (:productImgSrc, :productName, :productPrice, :productStock)';
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':productImgSrc', $productImgSrc);
+        $stmt->bindParam(':productName', $productName);
+        $stmt->bindParam(':productPrice', $productPrice);
+        $stmt->bindParam(':productStock', $productStock);
+
+        return $stmt->execute();
+    }
+    
+    private function updatedProductData($productId, $productName, $productPrice, $productStock, $productImgSrc = null){
+        $query = 'UPDATE products SET ';
+        if($productImgSrc !== null) {
+            $query .= 'productImgSrc = :productImgSrc, ';
+        }
+        $query .= 'productName = :productName, productPrice = :productPrice, productStock = :productStock  WHERE id = :productId';
+
+        $stmt = $this->conn->prepare($query);
+        if ($productImgSrc !== null) {
+            $stmt->bindParam(':productImgSrc', $productImgSrc);
+        }
+        $stmt->bindParam(':productName', $productName);
+        $stmt->bindParam(':productPrice', $productPrice);
+        $stmt->bindParam(':productStock', $productStock);
+        $stmt->bindParam(':productId', $productId);
+
+        return $stmt->execute();
+    }
+
+    private function updateCartProductQty($cartProductId, $cartProductQty){
+        $query = 'UPDATE shoppingcart SET productQuantity = :productQuantity WHERE id = :cartProductId;';
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':productQuantity', $cartProductQty);
+        $stmt->bindParam(':cartProductId', $cartProductId);
+
+        return $stmt->execute();
+    }
+
+    private function addNewProductToCart($productId, $userId, $productQty = 1){
+        $query = 'INSERT INTO shoppingcart (userId, productId, productQuantity) VALUES (:userId, :productId, :productQuantity)';
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':userId', $userId);
+        $stmt->bindParam(':productId', $productId);
+        $stmt->bindParam(':productQuantity', $productQty);
+
+        return $stmt->execute();
+    }
+    
+    // Apaga dados na base de dados
+    private function deleteProductData($productId){
+        $query = "DELETE FROM products WHERE id = :productId";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':productId', $productId);
+
+        return $stmt->execute();
+    }
+    
+    private function deleteProductFromCart($cartProductId){
+        $query = "DELETE FROM shoppingcart WHERE id = :productId;";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':productId', $cartProductId);
+
+        return $stmt->execute();
+    }
+
+
+    // Funçoes de execução
     private function uploadImg(){
-        // verifica se o ficheiro nao existe e cria um
+        // Verifica se a pasta existe e cria se necessário
         if (!file_exists($this->uploadDir)){
             if(!mkdir($this->uploadDir, 0777, true)){
-                return ['status' => 'processError', 'error' => 'Não foi possível criar o diretório.', 'message' => 'Ocorreu um erro, Não foi possivel salvar a imagem.'];
+                return ['status' => 'processError', 'error' => 'Não foi possível criar o diretório.', 'message' => 'Ocorreu um erro. Não foi possível guardar a imagem.'];
             }
         }
 
-        //pega a extensao do ficheiro
+        // Obtém a extensão do ficheiro
         $ext = pathinfo($this->uploadedImg['name'], PATHINFO_EXTENSION);
-        //cria um id unico
         $uniqueId = uniqid('', true);
         // Renomeia o ficheiro com um nome unico (#uniqueId.$ext)
         $this->uploadedImg['name'] = $uniqueId.'.'.$ext;
@@ -176,7 +181,7 @@ class Shop{
 
         //move o ficheiro para o local correto
         if(!move_uploaded_file($tmpDir, $destDir)){
-            return ['status' => 'processError', 'error' => 'Falla ao realocar o ficheiro.', 'message' => 'Ocorreu um erro, Não foi possivel salvar a imagem.'];
+            return ['status' => 'processError', 'error' => 'Falha ao mover o ficheiro.', 'message' => 'Ocorreu um erro. Não foi possível guardar a imagem.'];
         }
 
         return ['status' => 'valid'];
@@ -185,29 +190,33 @@ class Shop{
     private function deleteProductImg($productId){
         $imgSrc = $this->getImgSrc($productId);
         if (!$imgSrc){
-            return ['status' => 'processError', 'error' => 'Não foi possivel obter a Src da imagem.', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Apagar o Produto!'];
+            return ['status' => 'processError', 'error' => 'Não foi possível obter a imagem.', 'message' => 'Ocorreu um erro. Não foi possível apagar o produto.'];
         }
         
         $imgDir = $this->uploadDir.$imgSrc;
         if(file_exists($imgDir)){
-            $this->backupImg = file_get_contents($imgDir);    //salva uma copia da imagem antes de a apagar
+            // $this->backupImg = file_get_contents($imgDir);    //salva uma copia da imagem antes de a apagar
+            $backup = file_get_contents($imgDir);
+            if ($backup === false){
+                return ['status'=>'processError','error'=>'Não foi possível criar backup da imagem','message'=>'Ocorreu um erro. Não foi possível apagar o produto.'];
+            }
+            $this->backupImg = $backup;
             if(!unlink($imgDir)){
-                return ['status' => 'processError', 'error' => 'Não foi possivel apagar a imagem.', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Apagar o Produto!'];
+                return ['status' => 'processError', 'error' => 'Não foi possível apagar a imagem.', 'message' => 'Ocorreu um erro. Não foi possível apagar o produto.'];
             }
         }
         return ['status' => 'valid', 'dir' => $imgDir];
     }
 
-    // PUBLIC FUNCTIONS
-    //SHOP ADMIN
     public function addNewProduct($productImg, $productName, $productPrice, $productStock){
-        //validaçao dos dados
+        $this->errors = [];
+        // Validação dos dados
         require_once 'validations.inc.php';
 
         if(!$productImg){
             $this->errors['productImg'] = 'A imagem do produto é obrigatória.';
         } elseif ($productImg['error'] !== 0){
-            $this->errors['productImg'] = 'Não foi carregar a imagem.';
+            $this->errors['productImg'] = 'Não foi possível carregar a imagem.';
         } else if (isSizeInvalid($productImg['size'])){
             $this->errors['productImg'] = 'A imagem excede o tamanho permitido.';
         } elseif (isTypeInvalid($productImg['type'])){
@@ -234,13 +243,13 @@ class Shop{
             $this->errors['productStock'] = 'A quantidade de stock deve ser um número inteiro maior que zero.';
         }
 
-        // Conecção
+        // Verificação da ligação à base de dados
         if (!$this->conn) {
-            $this->errors['connection'] = 'connection failed';
+            $this->errors['connection'] = 'failed';
         }
 
         if (!$this->errors){
-            $this->uploadedImg = $productImg;   //salva o ficheiro na variavel
+            $this->uploadedImg = $productImg;
             $uploadRes = $this->uploadImg();
             if($uploadRes['status'] !== 'valid'){
                 return $uploadRes;
@@ -248,7 +257,7 @@ class Shop{
 
             $productImgSrc = $this->uploadedImg['name'];
             if(!$this->createNewProduct($productImgSrc, $productName, $productPrice, $productStock)){
-                return ['status' => 'processError', 'error' => 'Falla ao criar o produto.', 'message' => 'Ocorreu um erro, Não foi possivel criar o produto.'];
+                return ['status' => 'processError', 'error' => 'Falha ao criar o produto.', 'message' => 'Ocorreu um erro. Não foi possível criar o produto.'];
             }
 
             return ['status' => 'valid'];
@@ -261,7 +270,7 @@ class Shop{
     public function deleteProduct($productId){
         //verifica se o produto existe
         if(!$this->productExists($productId)){
-            return ['status' => 'processError', 'error' => 'O produto não existe.', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Apagar o Produto!'];
+            return ['status' => 'processError', 'error' => 'O produto não existe.', 'message' => 'Ocorreu um erro. Não foi possível apagar o produto.'];
         }
   
         $delImgRes = $this->deleteProductImg($productId);
@@ -273,15 +282,16 @@ class Shop{
             $imgDir = $delImgRes['dir'];
             if ($this->backupImg !== null){
                 if (!file_put_contents($imgDir, $this->backupImg)) {
-                    return ['status' => 'processError', 'error' => 'Falha ao repor o backup da imagem.', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Apagar o Produto!'];
+                    return ['status' => 'processError', 'error' => 'Falha ao restaurar a imagem.', 'message' => 'Ocorreu um erro. Não foi possível apagar o produto.'];
                 }
             }
-            return ['status' => 'processError', 'error' => 'Não foi possivel apagar os dados do produto.', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Apagar o Produto!'];
+            return ['status' => 'processError', 'error' => 'Não foi possível apagar os dados do produto.', 'message' => 'Ocorreu um erro. Não foi possível apagar o produto.'];
         }
         return ['status' => 'valid'];
     }
 
     public function updateProduct($productId, $productImg, $productName, $productPrice, $productStock){
+        $this->errors = [];
         //validaçao dos dados
         require_once 'validations.inc.php';
 
@@ -319,11 +329,10 @@ class Shop{
             $this->errors['productStock'] = 'A quantidade de stock deve ser um número inteiro maior ou igual a zero.';
         }
 
-        // Conecção
+        // Verificação da ligação à base de dados
         if (!$this->conn) {
-            $this->errors['connection'] = 'connection failed';
+            $this->errors['connection'] = 'failed';
         }
-        
         
         if (!$this->errors){
             $productImgSrc = null;
@@ -344,13 +353,13 @@ class Shop{
             }
 
 
-            if(!$this->updatedProductData($productId, $productImgSrc, $productName, $productPrice, $productStock)){
+            if(!$this->updatedProductData($productId, $productName, $productPrice, $productStock, $productImgSrc)){
                 //restaura a imagem antiga, caso falhe a salvar os dados
                 if($productImg){
                     $oldImgDir = $delImgRes['dir'];
                     if ($this->backupImg !== null){
                         if (!file_put_contents($oldImgDir, $this->backupImg)) {
-                            return ['status' => 'processError', 'error' => 'Falha ao restaurar o backup da imagem.', 'message' => 'Ocorreu Um Erro, Não Foi Salvar o Produto!'];
+                            return ['status' => 'processError', 'error' => 'Falha ao restaurar a imagem antiga.', 'message' => 'Ocorreu um erro. Não foi possível guardar o produto.'];
                         }
                     }
                 }
@@ -358,10 +367,10 @@ class Shop{
                 $newImgDir = $this->uploadDir.$this->uploadedImg['name'];
                 if(file_exists($newImgDir)){
                     if(!unlink($newImgDir)){
-                        return ['status' => 'processError', 'error' => 'Não foi possivel apagar a imagem.', 'message' => 'Ocorreu Um Erro, Não Foi Salvar o Produto!'];
+                        return ['status' => 'processError', 'error' => 'Não foi possível apagar a imagem.', 'message' => 'Ocorreu um erro. Não foi possível guardar o produto.'];
                     }
                 }
-                return ['status' => 'processError', 'error' => 'Falha ao salvar o produto.', 'message' => 'Ocorreu Um Erro, Não Foi Salvar o Produto.'];
+                return ['status' => 'processError', 'error' => 'Falha ao atualizar o produto.', 'message' => 'Ocorreu um erro. Não foi possível guardar o produto.'];
             }
 
             return ['status' => 'valid'];
@@ -372,11 +381,10 @@ class Shop{
 
     //Shop
     public function addProductToCart($productId, $userId){
-        //verifica se o produto existe e pega o stock
         $productStock = $this->getStock($productId);
 
-        if($productStock === false){    //retorna um erro caso o id seja invalido
-            return ['status' => 'processError', 'error' => 'O produto não existe.', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Adicionar o Produto!'];
+        if($productStock === false){
+            return ['status' => 'processError', 'error' => 'O produto não existe.', 'message' => 'Ocorreu um erro. Não foi possível adicionar o produto ao carrinho.'];
         }
         
         $cartProduct = $this->getProductInCart($productId, $userId);
@@ -386,12 +394,12 @@ class Shop{
 
             $cartProductQty++;  
 
-            if($productStock < $cartProductQty){
+            if($cartProductQty > $productStock){
                 return ['status' => 'processError', 'error' => 'Não existe stock suficiente do produto.', 'message' => 'Não existe stock suficiente do produto.'];
             }
 
             if(!$this->updateCartProductQty($cartProductId, $cartProductQty)){
-                return ['status' => 'processError', 'error' => 'Não foi possivel adicionar ao produto no carrinho', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Adicionar o Produto!'];
+                return ['status' => 'processError', 'error' => 'Não foi possivel adicionar ao produto no carrinho', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Adicionar o Produto.'];
             }
         } else {    //adiciona o produto ao carrinho
             if($productStock < 1){
@@ -399,7 +407,7 @@ class Shop{
             }
 
             if(!$this->addNewProductToCart($productId, $userId)){
-                return ['status' => 'processError', 'error' => 'Não foi possivel adicionar o produto no carrinho', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Adicionar o Produto!'];
+                return ['status' => 'processError', 'error' => 'Não foi possivel adicionar o produto no carrinho', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Adicionar o Produto.'];
             }
         }
 
@@ -409,8 +417,8 @@ class Shop{
     public function removeProductFromCart($productId, $userId){
         $cartProduct = $this->getProductInCart($productId, $userId);
 
-        if($cartProduct === false){    //retorna um erro caso o id seja invalido
-            return ['status' => 'processError', 'error' => 'O produto não existe no carrinho.', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Adicionar o Produto!'];
+        if(!$cartProduct){    //retorna um erro caso o id seja invalido
+            return ['status' => 'processError', 'error' => 'O produto não existe no carrinho.', 'message' => 'Ocorreu um erro. Não foi possível remover o produto do carrinho.'];
         }   
         
         $cartProductId = $cartProduct['id'];
@@ -420,13 +428,12 @@ class Shop{
 
         if($cartProductQty < 1){
             if(!$this->deleteProductFromCart($cartProductId)){
-                return ['status' => 'processError', 'error' => 'Não foi possivel apagar o produto no carrinho', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Adicionar o Produto!'];
+                return ['status' => 'processError', 'error' => 'Não foi possível apagar o produto do carrinho', 'message' => 'Ocorreu um erro. Não foi possível apagar o produto do carrinho.'];
             }
         } else {    //apaga o produto ao carrinho
             if(!$this->updateCartProductQty($cartProductId, $cartProductQty)){
-                return ['status' => 'processError', 'error' => 'Não foi possivel remover ao produto no carrinho', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Adicionar o Produto!'];
+                return ['status' => 'processError', 'error' => 'Não foi possível atualizar a quantidade do produto', 'message' => 'Ocorreu um erro. Não foi possível remover o produto do carrinho.'];
             }
-
         }
 
         return ['status' => 'valid'];
@@ -435,17 +442,16 @@ class Shop{
     public function deleteProductInCart($productId, $userId){
         $cartProduct = $this->getProductInCart($productId, $userId);
 
-        if($cartProduct === false){    //retorna um erro caso o id seja invalido
-            return ['status' => 'processError', 'error' => 'O produto não existe no carrinho.', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Adicionar o Produto!'];
+        if(!$cartProduct){    //retorna um erro caso o id seja invalido
+            return ['status' => 'processError', 'error' => 'O produto não existe no carrinho.', 'message' => 'Ocorreu um erro. Não foi possível apagar o produto do carrinho.'];
         }   
         
         $cartProductId = $cartProduct['id'];
 
         if(!$this->deleteProductFromCart($cartProductId)){
-            return ['status' => 'processError', 'error' => 'Não foi possivel apagar o produto no carrinho', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Adicionar o Produto!'];
+            return ['status' => 'processError', 'error' => 'Não foi possível apagar o produto do carrinho', 'message' => 'Ocorreu um erro. Não foi possível apagar o produto do carrinho.'];
         }
 
         return ['status' => 'valid'];
     }
-   
 }
