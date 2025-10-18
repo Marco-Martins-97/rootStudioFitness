@@ -159,14 +159,6 @@
     font-size: 1.1rem;
 }
 
-.error{
-    display: none;
-    color: red;
-    font-size: 0.8rem;
-    font-weight: bold;
-    text-align: center;
-    padding-top: 3px;
-}
 
 .field-container.invalid .error{
     display: block;

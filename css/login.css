@@ -54,15 +54,6 @@ main{
     outline: 1px solid var(--PRIMARY-BORDER-COLOR);
 }
 
-.error{
-    display: none;
-    color: red;
-    font-size: 0.8rem;
-    font-weight: bold;
-    text-align: center;
-    padding-top: 3px;
-}
-
 .form-container.invalid .error{
     display: block;
 }

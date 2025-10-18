@@ -68,15 +68,15 @@
 }
 
 .pending{
-	color: #F4A300;
+	color: var(--CUSTOM_YELLOW);
 }
 
 .accepted{
-	color: #3BA55C;
+	color: var(--CUSTOM_GREEN);
 }
 
 .rejected{
-	color: #D64545;
+	color: var(--CUSTOM_RED);
 }
 
 .application-data{
@@ -153,121 +153,4 @@
 	.application-data{
 		padding: 16px 24px 8px 24px;
 	}
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* .applications-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
-  padding: 2rem;
-}
-
-.application-container {
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  padding: 1.5rem;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.application-container:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
-}
-
-.application-title {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.application-title h3 {
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: #333;
-  margin: 0;
-}
-
-.application-info p {
-  font-size: 0.9rem;
-  color: #666;
-  margin: 0.2rem 0;
-}
-
-.application-data p {
-  margin: 0.4rem 0;
-  font-size: 0.95rem;
-  color: #444;
-  text-align:justify;
-}
-
-.application-data span {
-  font-weight: 600;
-  color: #222;
-}
-
-.application-container button {
-  margin: 0.5rem 0.3rem 0 0;
-  padding: 0.6rem 1.2rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 0.95rem;
-  font-weight: 500;
-  transition: background 0.2s ease, transform 0.2s ease;
-}
-
-.accept-btn {
-  background-color: #4CAF50;
-  color: #fff;
-}
-
-.accept-btn:hover {
-  background-color: #43a047;
-  transform: scale(1.05);
-}
-
-.reject-btn {
-  background-color: #e53935;
-  color: #fff;
-}
-
-.reject-btn:hover {
-  background-color: #d32f2f;
-  transform: scale(1.05);
-}
- */

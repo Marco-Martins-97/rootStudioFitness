@@ -247,15 +247,15 @@
 }
 
 .product-stock.unavailable > span{
-  	color: #D64545;
+  	color: var(--CUSTOM_RED);
 }
 
 .product-stock.limited > span{
-  	color: #F4A300;
+  	color: var(--CUSTOM_YELLOW);
 }
 
 .product-stock.available > span{
-  	color: #3BA55C;
+  	color: var(--CUSTOM_GREEN);
 }
 
 /* CART BUTTON */

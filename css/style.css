@@ -21,6 +21,11 @@
     --ERROR: #F00;
     --SUCCESS: #008000;
     --INFO: #00F;
+
+    --CUSTOM_YELLOW:#F4A300;
+    --CUSTOM_GREEN:#3BA55C;
+    --CUSTOM_RED:#D64545;
+
 }
 
 /* RESET */
@@ -200,6 +205,15 @@ footer img{
 
 .social a:hover{
     color: var(--SECONDARY-TXT-COLOR);
+}
+
+.error{
+    display: none;
+    color: red;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-align: center;
+    padding-top: 3px;
 }
 
 /* POPUP */

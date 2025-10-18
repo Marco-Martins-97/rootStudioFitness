@@ -156,15 +156,6 @@
     font-size: 1.1rem;
 }
 
-.error{
-    display: none;
-    color: var(--ERROR);
-    font-size: 0.8rem;
-    font-weight: bold;
-    text-align: center;
-    padding-top: 3px;
-}
-
 .field-container.invalid .error{
     display: block;
 }
@@ -242,6 +233,7 @@
     transition: background-color 0.8s ease;
     letter-spacing: 1px;
 }
+
 .connect a:hover{
     background-color: var(--SECONDARY-BTN-COLOR);
     color: var(--PRIMARY-TXT-COLOR);

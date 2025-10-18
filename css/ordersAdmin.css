@@ -63,15 +63,15 @@
 }
 
 .pending{
-	color: #F4A300;
+	color: var(--CUSTOM_YELLOW);
 }
 
 .accepted, .dispatched, .received{
-	color: #3BA55C;
+	color: var(--CUSTOM_GREEN);
 }
 
 .rejected, .canceled{
-	color: #D64545;
+	color: var(--CUSTOM_RED);
 }
 
 .order-products{

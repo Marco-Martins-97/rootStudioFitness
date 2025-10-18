@@ -75,8 +75,42 @@ function isFormValid(formId){
     return $(formId).find('.field-container.invalid').length === 0;
 }
 
+function showPopup(msg, delay = 2000, success = false) {
+    $('.popup').remove();// Remove um popup antes de criar outro (se existir)
+    
+    // Cria o elemento popup
+    const popup = $('<div class="popup"></div>').text(msg);
+    
+    // Adiciona a classe "popup-success" apenas se success for true ou 1
+    if (success === true || success === 1 || success === '1') {
+        popup.addClass('popup-success');
+    }
+    // Insere no main e aplica delay + fadeOut
+    popup.appendTo('main').delay(delay).fadeOut(300, function() { $(this).remove(); });
+}
+
 $(document).ready(function(){
     const applicationForm = $('#application-form');
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.has('application')) {
+        const status = params.get('application');
+        const messages = {
+            success: 'Candidatura enviada com sucesso.',
+            failed: 'Ocorreu um erro ao guardar a candidatura..',
+            duplicated: 'Não é possível enviar múltiplas candidaturas.',
+            invalid: 'A candidatura contém dados incorretos.'
+        };
+        // Mostra uma msg personalizada para alguns status e uma genérica para todos os outros
+        const msg = messages[status] || 'Ocorreu um erro. Tente novamente!';
+
+        if (status === 'success'){
+            const delay = 2000;
+            showPopup(msg, delay, true);
+        } else {    // Mostra o popup e o erro
+            showPopup(msg);
+        }
+    }
 
     $('.join-btn').on('click', function(){
         const option = $(this).data('option');
