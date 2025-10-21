@@ -90,14 +90,20 @@ function loadCartProducts(){
                 if(qty > 1){
                     totalProductContainer += ` <span class='cart-product-price-qty'>(${qty} x ${price.toFixed(2)}€)</span>`;
                 }
-
+                const status = product.isActive ? 'active' : 'inactive';
                 HTMLcontent += `
-                    <li class='cart-product'>
+                    <li class='cart-product ${status}'>
                         <img src='imgs/products/${product.productImgSrc}' alt='${product.productName}' class='cart-product-img' onerror='this.src="imgs/products/defaultProduct.png"'>
                         <div class='cart-product-info'>
                             <div class='cart-product-actions'>
+                `;
+                if (status === 'active'){
+                    HTMLcontent += `
                             <button class='btn-add' data-id='${product.productId}'>+</button>
                             <button class='btn-remove' data-id='${product.productId}'>-</button>
+                    `;
+                }
+                HTMLcontent += `
                             <button class='btn-delete' data-id='${product.productId}'><i class="fas fa-trash"></i></button>
                             </div>
                             <h4 class='cart-product-name'>${product.productName}</h4>
@@ -171,7 +177,8 @@ $(document).ready(function(){
             type: 'O tipo de checkout não é válido.',
             productId: 'O ID do produto não é válido.',
             notFound: 'O produto não existe.',
-            empty: 'Não há produtos para efetuar o checkout.'
+            empty: 'Não há produtos para efetuar o checkout.',
+            inactive: 'Este produto não está mais disponível para compra.'
         };
 
         // Mostra uma msg personalizada para alguns status e uma genérica para todos os outros

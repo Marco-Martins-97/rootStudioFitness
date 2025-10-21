@@ -81,6 +81,7 @@ CREATE TABLE products(
     productName VARCHAR(255) NOT NULL,
     productPrice DECIMAL(10, 2) NOT NULL,
     productStock INT NOT NULL DEFAULT 0, 
+    isActive BOOLEAN NOT NULL DEFAULT TRUE,
     PRIMARY KEY (id)
 );
 

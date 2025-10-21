@@ -55,7 +55,7 @@ class Shop{
     }
 
     public function loadProducts(){
-        $query = 'SELECT products.*, CASE WHEN productStock = 0 THEN "unavailable" WHEN productStock < 10 THEN "limited" ELSE "available" END AS productStock FROM products ORDER BY id DESC;';
+        $query = 'SELECT products.*, CASE WHEN productStock = 0 THEN "unavailable" WHEN productStock < 10 THEN "limited" ELSE "available" END AS productStock FROM products WHERE isActive = TRUE ORDER BY id DESC;';
         $stmt = $this->conn->prepare($query);
         $stmt -> execute();
 
@@ -74,7 +74,7 @@ class Shop{
     }
 
     public function loadShoppingCart($userId){
-        $query = 'SELECT p.productImgSrc, p.productName, p.productPrice, p.id AS productId, sc.productQuantity FROM shoppingcart sc JOIN products p ON sc.productId = p.id WHERE sc.userId = :userId;';
+        $query = 'SELECT p.productImgSrc, p.productName, p.productPrice, p.isActive, p.id AS productId, sc.productQuantity FROM shoppingcart sc JOIN products p ON sc.productId = p.id WHERE sc.userId = :userId;';
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':userId', $userId);
         $stmt -> execute();
@@ -91,6 +91,22 @@ class Shop{
         $stmt->execute();
     
         return (bool) $stmt->fetchColumn();
+    }
+
+    private function isProductReferenced($productId) {
+        $query = 'SELECT EXISTS(SELECT 1 FROM shoppingcart WHERE productId = :productId)';
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':productId', $productId);
+        $stmt->execute();
+        $inCart = $stmt->fetchColumn() > 0;
+
+        $query = 'SELECT EXISTS(SELECT 1 FROM orders WHERE productId = :productId)';
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':productId', $productId);
+        $stmt->execute();
+        $inOrder = $stmt->fetchColumn() > 0;
+
+        return $inCart || $inOrder;
     }
 
     // Insere dados na base de dados
@@ -133,6 +149,15 @@ class Shop{
         return $stmt->execute();
     }
 
+    private function setProductStatus($ProductId, $productStatus = 0){
+        $query = 'UPDATE products  SET isActive = :productStatus WHERE id = :ProductId;';
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':ProductId', $ProductId);
+        $stmt->bindParam(':productStatus', $productStatus);
+
+        return $stmt->execute();
+    }
+
     private function addNewProductToCart($productId, $userId, $productQty = 1){
         $query = 'INSERT INTO shoppingcart (userId, productId, productQuantity) VALUES (:userId, :productId, :productQuantity)';
         $stmt = $this->conn->prepare($query);
@@ -156,6 +181,14 @@ class Shop{
         $query = "DELETE FROM shoppingcart WHERE id = :productId;";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':productId', $cartProductId);
+
+        return $stmt->execute();
+    }
+    
+    private function removeProductFromCarts($productId){
+        $query = "DELETE FROM shoppingcart WHERE productId = :productId;";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':productId', $productId);
 
         return $stmt->execute();
     }
@@ -272,22 +305,53 @@ class Shop{
         if(!$this->productExists($productId)){
             return ['status' => 'processError', 'error' => 'O produto não existe.', 'message' => 'Ocorreu um erro. Não foi possível apagar o produto.'];
         }
-  
-        $delImgRes = $this->deleteProductImg($productId);
-        if($delImgRes['status'] !== 'valid'){
-            return $delImgRes;
-        }
-        
-        if (!$this->deleteProductData($productId)){
-            $imgDir = $delImgRes['dir'];
-            if ($this->backupImg !== null){
-                if (!file_put_contents($imgDir, $this->backupImg)) {
-                    return ['status' => 'processError', 'error' => 'Falha ao repor o backup da imagem.', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Apagar o Produto!'];
+        try {
+            $this->conn->beginTransaction();
+
+            $isReferenced = $this->isProductReferenced($productId); // Verifica se o produto existe em algum carrinho ou encomenda
+
+            if ($isReferenced) {
+                if(!$this->setProductStatus($productId)){
+                    throw new Exception('Falha ao desativar o produto.');
                 }
+                
+                // Remove o produto de todos os carrinhos
+                if (!$this->removeProductFromCarts($productId)) {
+                    throw new Exception('Falha ao remover o produto dos carrinhos.');
+                }
+
+                $this->conn->commit();
+                return ['status' => 'valid', 'message' => 'O produto foi desativado.'];
             }
-            return ['status' => 'processError', 'error' => 'Não foi possivel apagar os dados do produto.', 'message' => 'Ocorreu Um Erro, Não Foi Possivel Apagar o Produto!'];
+
+            $delImgRes = $this->deleteProductImg($productId);
+            if ($delImgRes['status'] !== 'valid') {
+                $this->conn->rollBack();
+                return $delImgRes;
+            }
+
+            if (!$this->deleteProductData($productId)) {
+                $imgDir = $delImgRes['dir'];
+                if ($this->backupImg !== null) {
+                    if (!file_put_contents($imgDir, $this->backupImg)) {
+                        throw new Exception('Falha ao repor o backup da imagem.');
+                    }
+                }
+                throw new Exception('Não foi possivel apagar os dados do produto.');
+            }
+
+            $this->conn->commit();
+            return ['status' => 'valid'];
+
+        } catch (Exception $e) {
+            $this->conn->rollBack();
+
+            if (isset($delImgRes['dir']) && $this->backupImg !== null) {
+                file_put_contents($delImgRes['dir'], $this->backupImg);
+            }
+
+            return ['status' => 'processError', 'error' => $e->getMessage(), 'message' => 'Ocorreu Um Erro, Não Foi Possivel Apagar o Produto!'];
         }
-        return ['status' => 'valid'];
     }
 
     public function updateProduct($productId, $productImg, $productName, $productPrice, $productStock){
@@ -301,7 +365,7 @@ class Shop{
 
         if($productImg){
             if ($productImg['error'] !== 0){
-                $this->errors['productImg'] = 'Não foi carregar a imagem.';
+                $this->errors['productImg'] = 'Não foi possível carregar a imagem.';
             } else if (isSizeInvalid($productImg['size'])){
                 $this->errors['productImg'] = 'A imagem excede o tamanho permitido.';
             } elseif (isTypeInvalid($productImg['type'])){
@@ -334,49 +398,72 @@ class Shop{
             $this->errors['connection'] = 'failed';
         }
         
-        if (!$this->errors){
+        if ($this->errors){
+            return ['status' => 'invalid', 'message' => $this->errors];
+        }
+
+        try {
+            $this->conn->beginTransaction();
             $productImgSrc = null;
-            if($productImg){    // salva a imagem se existir
+            $delImgRes = null;
+
+            if ($productImg) {
+                // Carrega a imagem
                 $this->uploadedImg = $productImg;
                 $uploadRes = $this->uploadImg();
-                if($uploadRes['status'] !== 'valid'){
+
+                if ($uploadRes['status'] !== 'valid') {
+                    $this->conn->rollBack();
                     return $uploadRes;
                 }
-                
-                $productImgSrc = $this->uploadedImg['name'];
 
-                //apaga imagem antiga
+                $productImgSrc = $this->uploadedImg['name'];
+                
+                // Faz uma cópia e apaga a imagem antiga
                 $delImgRes = $this->deleteProductImg($productId);
                 if($delImgRes['status'] !== 'valid'){
+                    $this->conn->rollBack();
                     return $delImgRes;
                 }
             }
 
-
-            if(!$this->updatedProductData($productId, $productName, $productPrice, $productStock, $productImgSrc)){
-                //restaura a imagem antiga, caso falhe a salvar os dados
-                if($productImg){
-                    $oldImgDir = $delImgRes['dir'];
-                    if ($this->backupImg !== null){
-                        if (!file_put_contents($oldImgDir, $this->backupImg)) {
-                            return ['status' => 'processError', 'error' => 'Falha ao restaurar a imagem antiga.', 'message' => 'Ocorreu um erro. Não foi possível guardar o produto.'];
-                        }
-                    }
-                }
-                // apaga a imagem carregada, caso falhe a salvar os dados
-                $newImgDir = $this->uploadDir.$this->uploadedImg['name'];
-                if(file_exists($newImgDir)){
-                    if(!unlink($newImgDir)){
-                        return ['status' => 'processError', 'error' => 'Não foi possível apagar a imagem.', 'message' => 'Ocorreu um erro. Não foi possível guardar o produto.'];
-                    }
-                }
-                return ['status' => 'processError', 'error' => 'Falha ao atualizar o produto.', 'message' => 'Ocorreu um erro. Não foi possível guardar o produto.'];
+            if (!$this->updatedProductData($productId, $productName, $productPrice, $productStock, $productImgSrc)) {
+                throw new Exception('Falha ao atualizar os dados do produto.');
             }
 
+            $this->conn->commit();
+
             return ['status' => 'valid'];
-        } else {
-            return ['status' => 'invalid', 'message' => $this->errors];
+        } catch (Exception $e) {
+            $this->conn->rollBack();    // Reverte as alterações
+            
+            // Tenta restaurar a imagem antiga
+            if ($productImg && isset($delImgRes['dir']) && $this->backupImg !== null) {
+                file_put_contents($delImgRes['dir'], $this->backupImg);
+            }
+
+            // Apaga a imagem carregada
+            if ($productImg && isset($this->uploadedImg['name'])) {
+                $newImgDir = $this->uploadDir . $this->uploadedImg['name'];
+                if (file_exists($newImgDir)) {
+                    unlink($newImgDir);
+                }
+            }
+
+            return ['status' => 'processError', 'error' => $e->getMessage(), 'message' => 'Ocorreu um erro. Não foi possível guardar o produto.'];
         }
+    }
+
+    public function activateProduct($productId){
+        if(!$this->productExists($productId)){
+            return ['status' => 'processError', 'error' => 'O produto não existe.', 'message' => 'Ocorreu um erro. Não foi possível ativar o produto.'];
+        }
+
+        if(!$this->setProductStatus($productId, 1)){
+            return ['status' => 'processError', 'error' => 'Falha ao ativar o produto.', 'message' => 'Ocorreu um erro. Não foi possível ativar o produto.'];
+        }
+
+        return ['status' => 'valid'];
     }
 
     //Shop

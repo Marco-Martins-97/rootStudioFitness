@@ -12,6 +12,11 @@ function loadShopProducts(){
             return;
         }
 
+        const statusReplacements = {
+            'active': 'Ativado',
+            'inactive': 'Desativado',
+        };
+
         const products = response.products;
         let HTMLcontent = `   
             <li class='product-card'>
@@ -19,6 +24,7 @@ function loadShopProducts(){
                 <h4 class='product-name'>Novo Produto</h4>
                 <div class='product-info'>0,00 €</div>
                 <div class='product-info'>Stock: 0</div>
+                <div class='product-info active'>Status: <span>Ativado</span></div>
                 <div class='product-actions'>
                     <button class='btn-add-product'>Adicionar</button>
                 </div>
@@ -27,15 +33,25 @@ function loadShopProducts(){
 
         if(products.length > 0){
             products.forEach(product => {
+                const isActive = product.isActive ? 'active' : 'inactive';
+                const activeStatus = statusReplacements[isActive] || isActive;
                 HTMLcontent += `   
                     <li class='product-card'>
                         <img src='imgs/products/${product.productImgSrc}' alt='${product.productName}' class='product-img' onerror='this.src="imgs/products/defaultProduct.png"'>
                         <h4 class='product-name'>${product.productName}</h4>
                         <div class='product-info'>${product.productPrice}€</div>
                         <div class='product-info'>Stock: ${product.productStock}</div>
-                        <div class='product-actions'>
-                            <button class='btn-edit-product' data-id='${product.id}'>Editar</button>
-                            <button class='btn-delete-product' data-id='${product.id}'>Apagar</button>
+                        <div class='product-info ${isActive}'>Status: <span>${activeStatus}</span></div>
+                        <div class='product-actions'> `;
+                if(product.isActive){
+                    HTMLcontent += `
+                        <button class='btn-edit-product' data-id='${product.id}'>Editar</button>
+                        <button class='btn-delete-product' data-id='${product.id}'>Apagar</button>
+                        `;
+                    } else {
+                        HTMLcontent += `<button class='btn-activate-product' data-id='${product.id}'>Ativar</button>`;
+                }
+                HTMLcontent += `
                         </div>
                     </li>
                 `;
@@ -214,9 +230,10 @@ function deleteProduct(productName, productId){
                 $('.error').text(response.message);
                 return;
             } 
+
+            const msg = response.message || 'Produto apagado com sucesso!';
             
-            console.log(`${productName} foi apagado com sucesso!`);
-            $('.error').css('color', 'green').text('Produto apagado com sucesso!');
+            $('.error').css('color', 'green').text(msg);
             setTimeout(() => {
                 $('#deleteProduct').remove();
                 loadShopProducts();
@@ -228,6 +245,23 @@ function deleteProduct(productName, productId){
     });
 }
 
+function activateProduct(productId){
+    $.post('includes/saveServerData.inc.php', {action: 'activateProduct', productId: productId}, function(response){
+            if (response.status === 'error') {
+                console.error('Erro do servidor:', response.message || 'Erro desconhecido');
+                return;
+            }
+            if (response.status === 'processError') {
+                console.error('Erro: ', response.error);
+                return;
+            } 
+            
+            loadShopProducts();
+        
+        }, 'json').fail(function () {
+            console.error('Erro na ligação ao servidor.');
+        });
+}
 
 function editProduct(productId){
     const editModal = `<div class='modal' id='editProduct'>
@@ -444,5 +478,10 @@ $(document).ready(function(){
     $(document).on('click', '.btn-edit-product', function() {
         const productId = $(this).data('id');
         editProduct(productId);
+    });
+    
+    $(document).on('click', '.btn-activate-product', function() {
+        const productId = $(this).data('id');
+        activateProduct(productId);
     });
 });

@@ -73,7 +73,7 @@ function loadOrders(){
 
                     HTMLcontent += `        
                     <li class='order-product'>
-                        <img src='imgs/products/${product.productImgSrc}' alt='${product.productName}' class='order-product-img' onerror='this.src="imgs/products/defaultProduct.jpg"'>
+                        <img src='imgs/products/${product.productImgSrc}' alt='${product.productName}' class='order-product-img' onerror='this.src="imgs/products/defaultProduct.png"'>
                             <div class='order-product-info'>
                                 <h4 class='order-product-name'>${product.productName}</h4>
                                 <div class='order-product-total'>${totalProductContainer}</div>

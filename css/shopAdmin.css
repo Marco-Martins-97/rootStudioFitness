@@ -43,6 +43,14 @@
     margin-bottom: 6px;
 }
 
+.product-info.inactive > span{
+  	color: var(--CUSTOM_RED);
+}
+
+.product-info.active > span{
+  	color: var(--CUSTOM_GREEN);
+}
+
 .product-actions {
     display: flex;
     gap: 4px;

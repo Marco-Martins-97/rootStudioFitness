@@ -146,6 +146,24 @@ switch ($action) {
             handleDbError($e);
         }
         break;
+    
+    case 'activateProduct':
+        requireAdmin();
+
+        $productId = getPost('productId');
+
+        try {
+            require_once "ShopHandler.php";
+            $shop = new Shop();
+            $res = $shop->activateProduct($productId);
+            
+            echo json_encode($res);
+            exit;
+
+        } catch (PDOException $e) {
+            handleDbError($e);
+        }
+        break;
         
     case 'updateProduct':
         requireAdmin();

@@ -43,11 +43,17 @@ if ($type === 'direct'){
         exit;
     }
     
+    if (!$product['isActive']) {
+        header("Location: shop.php?invalid=inactive");
+        exit;
+    }
+    
     // Ajusta os dados do produto para o checkout direto
     $product['productQuantity'] = 1;
     $product['productId'] = $productId;
     unset($product['id']);    // Remove dados desnecessários
     unset($product['productStock']);
+    unset($product['isActive']);
     $checkoutProducts[] = $product;
 
 } else {
@@ -69,7 +75,12 @@ function loadOrderSummary($checkoutProducts){
     $HTMLcontent = '<ul class="order-container">';
 
 
-    foreach ($checkoutProducts as $index => $product) {
+    foreach ($checkoutProducts as $product) {
+        if (!$product['isActive']) {
+            header("Location: shop.php?invalid=inactive");
+            exit;
+        }
+
         $price = floatval($product['productPrice']);
         $qty = intval($product['productQuantity']);
         $total = $price * $qty;
