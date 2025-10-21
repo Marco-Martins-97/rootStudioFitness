@@ -42,14 +42,13 @@ function loadShopProducts(){
                         <div class='product-info'>${product.productPrice}€</div>
                         <div class='product-info'>Stock: ${product.productStock}</div>
                         <div class='product-info ${isActive}'>Status: <span>${activeStatus}</span></div>
-                        <div class='product-actions'> `;
+                        <div class='product-actions'>
+                            <button class='btn-edit-product' data-id='${product.id}'>Editar</button>
+                `;
                 if(product.isActive){
-                    HTMLcontent += `
-                        <button class='btn-edit-product' data-id='${product.id}'>Editar</button>
-                        <button class='btn-delete-product' data-id='${product.id}'>Apagar</button>
-                        `;
-                    } else {
-                        HTMLcontent += `<button class='btn-activate-product' data-id='${product.id}'>Ativar</button>`;
+                    HTMLcontent += ` <button class='btn-delete-product' data-id='${product.id}'>Apagar</button> `;
+                } else {
+                    HTMLcontent += ` <button class='btn-activate-product' data-id='${product.id}'>Ativar</button> `;
                 }
                 HTMLcontent += `
                         </div>

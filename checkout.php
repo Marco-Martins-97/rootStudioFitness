@@ -30,7 +30,7 @@ if ($type === 'direct'){
         exit;
     }
  
-    $productId = intval($_POST['productId']);
+    $productId = trim($_POST['productId']);
 
     // Carrega os dados do produto a partir da base de dados
     require_once "includes/ShopHandler.php";
@@ -43,17 +43,11 @@ if ($type === 'direct'){
         exit;
     }
     
-    if (!$product['isActive']) {
-        header("Location: shop.php?invalid=inactive");
-        exit;
-    }
-    
     // Ajusta os dados do produto para o checkout direto
     $product['productQuantity'] = 1;
     $product['productId'] = $productId;
     unset($product['id']);    // Remove dados desnecessários
     unset($product['productStock']);
-    unset($product['isActive']);
     $checkoutProducts[] = $product;
 
 } else {
@@ -76,7 +70,7 @@ function loadOrderSummary($checkoutProducts){
 
 
     foreach ($checkoutProducts as $product) {
-        if (!$product['isActive']) {
+        if ((int)$product['isActive'] !== 1) {
             header("Location: shop.php?invalid=inactive");
             exit;
         }

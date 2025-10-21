@@ -178,7 +178,7 @@ $(document).ready(function(){
             productId: 'O ID do produto não é válido.',
             notFound: 'O produto não existe.',
             empty: 'Não há produtos para efetuar o checkout.',
-            inactive: 'Este produto não está mais disponível para compra.'
+            inactive: 'O produto não está mais disponível para compra.'
         };
 
         // Mostra uma msg personalizada para alguns status e uma genérica para todos os outros

@@ -315,7 +315,7 @@ class Shop{
                     throw new Exception('Falha ao desativar o produto.');
                 }
                 
-                // Remove o produto de todos os carrinhos
+                // Remove o produto de todos os carrinhos (Opcional)
                 if (!$this->removeProductFromCarts($productId)) {
                     throw new Exception('Falha ao remover o produto dos carrinhos.');
                 }
