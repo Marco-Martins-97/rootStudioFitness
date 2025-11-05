@@ -65,6 +65,7 @@ $(document).ready(function(){
 
     if (params.has('login')) {
         const status = params.get('login');
+        const redirect = params.get('redirect');
         const messages = {
             success: 'Sessão iniciada com sucesso!',
             failed: 'Ocorreu um erro na ligação à base de dados.',
@@ -74,10 +75,18 @@ $(document).ready(function(){
         // Mostra uma msg personalizada para alguns status e uma genérica para todos os outros
         const msg = messages[status] || 'Ocorreu um erro. Tente novamente!';
 
-        if (status === 'success'){  // Mostra msg de sucesso e redireciona para a pagina inicial
+        if (status === 'success'){  // Mostra msg de sucesso e redireciona para a respetiva pagina
             const delay = 2000;
             showPopup(msg, delay, true);
-            setTimeout(function(){ window.location.href = 'index.php'; }, delay);
+            setTimeout(function(){ 
+                if (redirect === '2') {
+                    window.location.href = 'clientsAdmin.php';
+                } else if (redirect === '1') {
+                    window.location.href = 'areaClient.php';
+                } else {
+                    window.location.href = 'index.php';
+                }
+            }, delay);
         } else {    // Mostra o popup e o erro
             showPopup(msg);
             formContainer.addClass('invalid');

@@ -153,6 +153,7 @@ function loadOrderSummary($checkoutProducts){
                                 <a href="signup.php">Registar</a>
                             </div>
                         <?php } else{ ?>
+                            <a href="areaClient.php">Área de Cliente</a>
                             <div class="dropdown-toggle">
                                 <i class="fas fa-chevron-down"></i>
                                 <?php echo $_SESSION['username']; ?>

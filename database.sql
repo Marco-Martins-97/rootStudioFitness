@@ -34,6 +34,7 @@ CREATE TABLE users (
     userRole VARCHAR(16) NOT NULL DEFAULT 'user',
     firstName VARCHAR(255) NOT NULL,
     lastName VARCHAR(255) NOT NULL,
+    is_admin BOOLEAN DEFAULT FALSE,
     PRIMARY KEY (id)
 );
 

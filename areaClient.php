@@ -9,9 +9,9 @@
 <html lang="pt">
     <head>
         <!-- Titulo & Descrição -->
-        <title>Root Fitness Studio - Perfil</title>
-        <meta name="description" content="PPerfil de utilizador no Root Studio Fitness em Esposende. Acompanha a tua evolução, treinos personalizados e a tua jornada de bem-estar.">
-        <meta name="keywords" content="perfil utilizador ROOT Studio, fitness Esposende, treino funcional, treino personalizado, evolução fitness, saúde e bem-estar, comunidade ROOT Studio">
+        <title>Root Fitness Studio - Área de Cliente</title>
+        <meta name="description" content="Acede à tua Área de Cliente do ROOT Studio Fitness. Gere as tuas reservas, acompanha os teus planos de treino e mantém-te conectado ao teu progresso e objetivos de fitness.">
+        <meta name="keywords" content="área de cliente ROOT Studio, conta ROOT Fitness, reservas ginásio Esposende, planos de treino, acompanhamento fitness, gestão de treinos, cliente ROOT Studio, progresso físico, treino personalizado, ROOT Studio Fitness Esposende">
         <meta name="author" content="Marco Martins">
         <!-- Browser -->
         <meta charset="UTF-8">
@@ -20,7 +20,7 @@
         <!-- Style -->
         <link id="favicon" rel="shortcut icon" href="imgs/logo/iconPreto.png" type="image/x-icon">
         <link rel="stylesheet" href="css/style.css">
-        <link rel="stylesheet" href="css/profile.css">
+        <link rel="stylesheet" href="css/areaClient.css">
         <!-- Script -->
         <script src="https://kit.fontawesome.com/d132031da6.js?v=2" crossorigin="anonymous"></script>
         <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
@@ -68,7 +68,7 @@
             </nav>
         </header>
         <main>
-            <div class="profile-container"></div>
+            <div class="display-content"></div>
         </main>
         <footer>
             <img src="imgs/logo/iconOriginal.png" alt="Root Studio logo">
@@ -82,6 +82,6 @@
         </footer> 
 
         <script src="js/navMenu.js"></script>
-        <script src="js/profile.js"></script>
+        <script src="js/areaClient.js"></script>
     </body>
 </html>

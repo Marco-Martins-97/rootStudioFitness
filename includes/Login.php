@@ -40,14 +40,15 @@ class Login{
     private function createSessionData($userData){
         $_SESSION['userId'] = $userData['id'];
         $_SESSION['userRole'] = $userData['userRole'];
+        $_SESSION['isAdmin'] = $userData['isAdmin'];
         $_SESSION['username'] = $userData['firstName'].' '.$userData['lastName'];
         if ($this->hasUserApplied($userData['id'])){
             $_SESSION['userApplied'] = true;
         }
     }
 
-    private function returnLoginStatus($status){
-        header('Location: ../login.php?login='.$status);
+    private function returnLoginStatus($status, $redirectFlag = 0){
+        header('Location: ../login.php?login='.$status.'&redirect='.$redirectFlag);
         exit;
     }
     
@@ -70,7 +71,13 @@ class Login{
         }
         
         $this->createSessionData($userData);    // Inicia a Sessão
-        
-        $this->returnLoginStatus('success');
+
+        if ($userData['userRole'] === 'admin') {
+            $this->returnLoginStatus('success', 2); // clientsAdmin
+        }else if ($userData['userRole'] === 'client') {
+            $this->returnLoginStatus('success', 1); // areaClient
+        } else {
+            $this->returnLoginStatus('success', 0); // homepage
+        }
     }
 }
