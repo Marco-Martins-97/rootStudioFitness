@@ -68,7 +68,23 @@
             </nav>
         </header>
         <main>
-            <div class="applications-container"></div>
+            <div class="sub-menu-container">
+                <select id="sub-menu">
+                    <option value="general" selected>Geral</option>
+                    <option value="applications">Candidaturas</option>
+                    <option value="exercises">Exercicios</option>
+                    <option value="training">Planos de Treino</option>
+                    <option value="nutrition">Planos Alimentares</option>
+                    <option value="assessment">Avaliações Fisicas</option>
+                    <option value="challenges">Desafios</option>
+                    <option value="calendar">Calendario</option>
+                </select>
+                <div class="search-box">
+                    <input type="text" id="search-input">
+                    <button id="search-btn"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+            <div class="display-container"></div>
         </main>
         <footer>
             <img src="imgs/logo/iconOriginal.png" alt="Root Studio logo">

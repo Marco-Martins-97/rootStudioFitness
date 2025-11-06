@@ -389,6 +389,42 @@ switch ($input) {
         exit;
 
 
+    case 'addNewExercise':
+        $errors = [];
+        $datapack = $_POST['datapack'] ?? [];
+
+        if(!$datapack){
+            echo json_encode(['status' => 'error', 'message' => 'Ocorreu um erro ao enviar os dados!']);
+            exit;
+        }
+ 
+        $uploadImg = filter_var($datapack['uploadImg'] ?? false, FILTER_VALIDATE_BOOLEAN);
+        $valueImgSize = filter_var($datapack['valueImgSize'] ?? 0, FILTER_VALIDATE_INT);
+        $valueImgType = trim($datapack['valueImgType'] ?? '');
+        $valueName = trim($datapack['valueName'] ?? '');
+
+        if(!$uploadImg){
+            $errors['exerciseImg'] = 'A imagem do exercicio é obrigatória.';
+        } else{
+            if (isSizeInvalid($valueImgSize)){
+                $errors['exerciseImg'] = 'A imagem excede o tamanho permitido.';
+            } elseif (isTypeInvalid($valueImgType)){
+                $errors['exerciseImg'] = 'A imagem não tem um formato válido (png, jpg, gif).';
+            }
+        }    
+
+        if(isInputRequired('exerciseName') && isInputEmpty($valueName)){
+            $errors['exerciseName'] = 'O nome do exercicio é obrigatório.';
+        } elseif (isNameInvalid($valueName)){
+            $errors['exerciseName'] = 'O nome do exercicio contém caracteres inválidos.';
+        } elseif (isLengthInvalid($valueName)){
+            $errors['exerciseName'] = 'O nome do exercicio excede o limite de caracteres.';
+        }
+
+        echo json_encode($errors ? ['status' => 'invalid', 'message' => $errors] : ['status' => 'valid']);
+        exit;
+
+
     default:
         echo json_encode(['status' => 'error', 'message' => 'Input inválido']);
         break;

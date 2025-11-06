@@ -119,3 +119,21 @@ CREATE TABLE orders(
 -- mysqldump -u root_admin -p root_studio_fitness > backup_root_studio_fitness.sql
 -- restaurar backup
 -- mysql -u root_admin -p root_studio_fitness < backup_root_studio_fitness.sql
+
+
+CREATE TABLE exercises(
+	id INT(11) NOT NULL AUTO_INCREMENT,
+    exerciseImgSrc VARCHAR(255) NOT NULL,
+    exerciseName VARCHAR(255) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE exercises(
+	id INT(11) NOT NULL AUTO_INCREMENT,
+    exerciseImgSrc VARCHAR(255) NOT NULL,
+    exerciseName VARCHAR(255) NOT NULL,
+    exerciseSeries INT NOT NULL DEFAULT 0, 
+    exerciseRep INT NOT NULL DEFAULT 0,
+    exerciseLoad INT NOT NULL DEFAULT 0,
+    PRIMARY KEY (id)
+);

@@ -2,6 +2,9 @@
 require_once 'Dbh.php';
 
 class Client{
+    private $uploadDir = "../imgs/exercises/";
+    private $uploadedImg = null;
+
     private $conn;
     private $errors = [];
 
@@ -27,6 +30,15 @@ class Client{
         $stmt -> execute();
 
         $result = $stmt -> fetch(PDO::FETCH_ASSOC);
+        return $result;
+    }
+    
+    public function loadExercises(){
+        $query = "SELECT * FROM exercises";
+        $stmt = $this->conn->prepare($query);
+        $stmt -> execute();
+
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $result;
     }
 
@@ -114,7 +126,41 @@ class Client{
         return $stmt->execute();
     }
 
+    private function createNewExercise($exerciseImgSrc, $exerciseName){
+        $query = 'INSERT INTO exercises (exerciseImgSrc, exerciseName) VALUES (:exerciseImgSrc, :exerciseName)';
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':exerciseImgSrc', $exerciseImgSrc);
+        $stmt->bindParam(':exerciseName', $exerciseName);
+
+        return $stmt->execute();
+    }
+
     // Funçoes de execução
+    private function uploadImg(){
+        // Verifica se a pasta existe e cria se necessário
+        if (!file_exists($this->uploadDir)){
+            if(!mkdir($this->uploadDir, 0777, true)){
+                return ['status' => 'processError', 'error' => 'Não foi possível criar o diretório.', 'message' => 'Ocorreu um erro. Não foi possível guardar a imagem.'];
+            }
+        }
+
+        // Obtém a extensão do ficheiro
+        $ext = pathinfo($this->uploadedImg['name'], PATHINFO_EXTENSION);
+        $uniqueId = uniqid('', true);
+        // Renomeia o ficheiro com um nome unico (#uniqueId.$ext)
+        $this->uploadedImg['name'] = $uniqueId.'.'.$ext;
+
+        $tmpDir = $this->uploadedImg['tmp_name'];
+        $destDir = $this->uploadDir.$this->uploadedImg['name'];
+
+        //move o ficheiro para o local correto
+        if(!move_uploaded_file($tmpDir, $destDir)){
+            return ['status' => 'processError', 'error' => 'Falha ao mover o ficheiro.', 'message' => 'Ocorreu um erro. Não foi possível guardar a imagem.'];
+        }
+
+        return ['status' => 'valid'];
+    }
+
     public function submitClientApplication($userId, $fullName, $birthDate, $gender, $userAddress, $nif, $phone, $trainingPlan, $experience, $nutritionPlan, $healthIssues, $healthDetails, $terms){
         // Validação dos dados
         require_once 'validations.inc.php';
@@ -266,4 +312,52 @@ class Client{
             return ['status' => 'success'];
         }
     }
+
+    public function addNewExercise($exerciseImg, $exerciseName){
+        $this->errors = [];
+        // Validação dos dados
+        require_once 'validations.inc.php';
+
+        if(!$exerciseImg){
+            $this->errors['exerciseImg'] = 'A imagem do exercicio é obrigatória.';
+        } elseif ($exerciseImg['error'] !== 0){
+            $this->errors['exerciseImg'] = 'Não foi possível carregar a imagem.';
+        } else if (isSizeInvalid($exerciseImg['size'])){
+            $this->errors['exerciseImg'] = 'A imagem excede o tamanho permitido.';
+        } elseif (isTypeInvalid($exerciseImg['type'])){
+            $this->errors['exerciseImg'] = 'A imagem não tem um formato válido (png, jpg, gif).';
+        }
+
+        if(isInputRequired('exerciseName') && isInputEmpty($exerciseName)){
+            $this->errors['exerciseName'] = 'O nome do exercicio é obrigatório.';
+        } elseif (isNameInvalid($exerciseName)){
+            $this->errors['exerciseName'] = 'O nome contém caracteres inválidos.';
+        } elseif (isLengthInvalid($exerciseName)){
+            $this->errors['exerciseName'] = 'O nome excede o limite de caracteres.';
+        }
+
+        // Verificação da ligação à base de dados
+        if (!$this->conn) {
+            $this->errors['connection'] = 'failed';
+        }
+
+        if ($this->errors){
+            return ['status' => 'invalid', 'message' => $this->errors];
+        }
+
+        $this->uploadedImg = $exerciseImg;
+        $uploadRes = $this->uploadImg();
+        if($uploadRes['status'] !== 'valid'){
+            return $uploadRes;
+        }
+            $exerciseImgSrc = $this->uploadedImg['name'];
+        if(!$this->createNewExercise($exerciseImgSrc, $exerciseName)){
+            return ['status' => 'processError', 'error' => 'Falha ao criar o exercicio.', 'message' => 'Ocorreu um erro. Não foi possível criar o produto.'];
+        }
+
+        return ['status' => 'valid'];
+    }
+
+
+
 }

@@ -16,7 +16,8 @@ function isInputRequired($input){
     $requiredFields = ['firstName','lastName','email','pwd','confPwd',  //registo
                         'loginEmail',   //login
                         'fullName','birthDate','gender','userAddress','nif','phone','trainingPlan','experience','terms',    //cliente
-                        'productName', 'productPrice', 'productStock'   //criar novo produto
+                        'productName', 'productPrice', 'productStock',   //criar novo produto
+                        'exerciseName'  // criar novo exercicio
                     ];
     return in_array($input, $requiredFields);
 }

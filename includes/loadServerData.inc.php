@@ -212,6 +212,23 @@ switch ($action) {
         }
         break;
 
+    case 'loadExercises':
+        requireAdmin();
+
+        try {
+            require_once "Client.php";
+            $client = new Client();
+            
+            $exercisesData = $client->loadExercises();
+            
+            echo json_encode(['status' => 'success', 'data' => $exercisesData]);
+            exit;
+
+        } catch (PDOException $e) {
+            handleDbError($e);
+        }
+        break;
+
 
     default:
         echo json_encode(['status' => 'error', 'message' => 'Ação inválida']);

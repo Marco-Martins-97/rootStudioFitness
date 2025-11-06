@@ -247,6 +247,29 @@ switch ($action) {
         }
         break;
 
+    case 'saveNewExercise':
+        requireAdmin();
+
+        $exerciseImg = $_FILES['imgFile'] ?? null;
+        $exerciseName = getPost('valueName');
+
+        try {
+            require_once "Client.php";
+            $client = new Client();
+            $res = $client->addNewExercise($exerciseImg, $exerciseName);
+
+            echo json_encode($res);
+            exit;
+
+        } catch (PDOException $e) {
+            handleDbError($e);
+        }
+        break;
+
+
+
+
+
     default:
         echo json_encode(['status' => 'error', 'message' => 'Ação inválida']);
         break;
