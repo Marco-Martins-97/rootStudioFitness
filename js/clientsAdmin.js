@@ -1,4 +1,4 @@
-function loadApplications(){
+function loadApplications(type = 'all'){
     return new Promise((resolve) => {
         $.post('includes/loadServerData.inc.php', {action: 'loadClientApplications'}, function(response){
             if (!response || typeof response !== 'object') {
@@ -14,7 +14,11 @@ function loadApplications(){
             }
 
             let HTMLcontent = '';
-            const applications = response.data;
+            let applications = response.data;
+
+            if (type === 'pending'){
+                applications = response.data.filter(app => app.status === 'pending');
+            }
 
             if(applications.length > 0){
                 // Lista de palavras a substituir
@@ -79,113 +83,8 @@ function loadApplications(){
                     `;
                     if(applicationStatus === 'pending'){
                         HTMLcontent += `
-                            <button id="accept-btn" data-id="${application.applicationId}">Aceitar</button>
-                            <button id="reject-btn" data-id="${application.applicationId}">Recusar</button>
-                        `;
-                    }
-                    HTMLcontent += `
-                            </div>
-                        </div>
-                    `;
-                });
-            } else {
-                HTMLcontent = '<h4>Não existem candidaturas Pendentes.</h4>';
-            }
-
-            resolve(`<div class="applications-container">${HTMLcontent}</div>`);
-            
-
-        }, 'json').fail(function () {
-            resolve('Ocorreu um erro. Não foi possível carregar as candidaturas!');
-        });
-    });
-}
-
-function loadPendingApplications(){
-    return new Promise((resolve) => {
-        $.post('includes/loadServerData.inc.php', {action: 'loadClientApplications'}, function(response){
-            if (!response || typeof response !== 'object') {
-                console.error('Resposta JSON inválida:', response);
-                resolve('Ocorreu um erro. Não foi possível carregar as candidaturas!');
-                return;
-            }
-
-            if (response.status === 'error') {
-                console.warn('Erro do servidor:', response.message || 'Erro desconhecido');
-                resolve('Ocorreu um erro. Não foi possível carregar as candidaturas!');
-                return;
-            }
-
-            let HTMLcontent = '';
-            // const applications = response.data;
-
-            const applications = response.data.filter(app => app.status === 'pending');
-
-            if(applications.length > 0){
-                // Lista de palavras a substituir
-                const replacements = {
-                    'pending': 'Pendente',
-                    'accepted': 'Aceite',
-                    'rejected': 'Recusado',
-                    'male': 'Masculino',
-                    'female': 'Feminino',
-                    'yes': 'Sim',
-                    'no': 'Não',
-                    'beginner': 'Iniciante',
-                    'intermediate': 'Intermédio',
-                    'advanced': 'Avançado',
-                    'personalized1': 'Individual',
-                    'personalized2': 'Grupos Reduzidos',
-                    'group': 'Aulas de Grupo',
-                    'terapy': 'Treino Terapêutico',
-                    'padel': 'Padel',
-                    'openStudio': 'Acesso ao Estúdio',
-                };
-                applications.forEach(application => {
-                    const applicationStatus = application.status;
-                
-                    for (let key in application) {
-                        if (typeof application[key] === 'string') {
-                            // Substitui para palavras em português
-                            for (let word in replacements) {
-                                const regex = new RegExp(`\\b${word}\\b`, "gi");
-                                application[key] = application[key].replace(regex, replacements[word]);
-                            }
-                        }
-                    }
-
-                    // Cria o HTML com os dados da candidatura
-                    HTMLcontent += `
-                        <div class="application-container">
-                            <div class="application-title">
-                                <div class="application-info">
-                                    <h3>${application.username}</h3>
-                                    <p>${application.submissionDate}</p>
-                                </div>
-                                <div class="application-status ${applicationStatus}">
-                                    <p>${application.status}</p>
-                                </div>
-                                <div class="application-arrow"><i class="fas fa-chevron-down"></i></div>
-                            </div>
-                            <div class="application-data">
-                                <div class="data-container"><span>Nome Completo:</span><p>${application.fullName}</p></div>
-                                <div class="data-container"><span>Data de Nascimento:</span><p>${application.birthDate}</p></div>
-                                <div class="data-container"><span>Gênero:</span><p>${application.gender}</p></div>
-                                <div class="data-container"><span>Morada:</span><p>${application.userAddress}</p></div>
-                                <div class="data-container"><span>Nif:</span><p>${application.nif}</p></div>
-                                <div class="data-container"><span>Telefone:</span><p>${application.phone}</p></div>
-                                <div class="data-container"><span>Plano de Treino:</span><p>${application.trainingPlan}</p></div>
-                                <div class="data-container"><span>Experiência:</span><p>${application.experience}</p></div>
-                                <div class="data-container"><span>Plano Alimentar:</span><p>${application.nutritionPlan}</p></div>
-                                <div class="data-container"><span>Problemas de Saúde:</span><p>${application.healthIssues}</p></div>
-                                <div class="data-container"><span class="details">Detalhes de Saúde:</span><p>${application.healthDetails}</p></div>
-                            </div>
-                            <div class="application-btns">
-                    `;
-                    if(applicationStatus === 'pending'){
-                        HTMLcontent += `
-                            <button id="accept-btn" data-id="${application.applicationId}">Aceitar</button>
-                            <button id="reject-btn" data-id="${application.applicationId}">Recusar</button>
+                            <button class="accept-btn" data-id="${application.applicationId}">Aceitar</button>
+                            <button class="reject-btn" data-id="${application.applicationId}">Recusar</button>
                         `;
                     }
                     HTMLcontent += `
@@ -208,7 +107,9 @@ function loadPendingApplications(){
 
 async function loadExercises(){
     let exercisesHTML = `
-        <button id="create-new-exercise-btn">Criar novo exercicio</button>
+        <div class='create-new-exercise-container'>
+            <button id="create-new-exercise-btn">Criar novo exercicio</button>
+        </div>
     `;
 
     exercisesHTML += await $.ajax({
@@ -223,21 +124,28 @@ async function loadExercises(){
         }
 
         const exercisesData = response.data;
-
         let exerciseHTML = '';
+
         if (exercisesData.length > 0){
-            // exercises.forEach(exercise => {
-                
-                exerciseHTML = exercisesData;
-            // });
-
+            exerciseHTML += `<ul class='exercises-container'>`;
+            exercisesData.forEach(exercise => {
+                exerciseHTML += `
+                    <li class='exercise-card'>
+                        <img src='imgs/exercises/${exercise.exerciseImgSrc}' alt='${exercise.exerciseName}' class='exercise-img' onerror='this.src="imgs/logo/logoOriginal.png"'>
+                        <h4 class='exercise-name'>${exercise.exerciseName}</h4>
+                        <div class='exercise-actions'>
+                            <button class='btn-edit-exercise' data-id='${exercise.id}' data-name='${exercise.exerciseName}'>Editar</button>
+                            <button class='btn-delete-exercise' data-id='${exercise.id}' data-name='${exercise.exerciseName}'>Apagar</button>
+                        </div>
+                    </li>
+                `;
+            });
+            exerciseHTML += `</ul>`;
         } else {
-            exerciseHTML = `<p>Sem exercícios disponíveis.</p>`;
-
+            exerciseHTML += `<p>Sem exercícios disponíveis.</p>`;
         }
 
         return exerciseHTML;
-
     }).catch(() => `<p>Erro ao carregar exercícios.</p>`);
 
     // console.log(exercisesHTML);
@@ -364,6 +272,179 @@ function createNewExercise(optionVal){
     });
 }
 
+function editExercise(optionVal, exerciseId, exerciseName){
+    const modal =  `<div class='modal' id='editExercise'>
+                        <div class='modal-content'>
+                            <span id='close-edit-modal'>&times;</span>
+                            <h2>Editar Exercicio: ${exerciseName}</h2>
+                            <div class='field-container'>
+                                <div class='field'>
+                                    <label for='exercise-img'>Imagem (upload):</label>
+                                    <input type='file' name='exercise-img' id='exerciseImg' accept='image/*'>
+                                </div>
+                                <div class='field'>
+                                    <label for='exercise-name'>Nome:</label>
+                                    <input type='text' name='exercise-name' id='exerciseName' maxlength='255' value='${exerciseName}'>
+                                </div>
+                                <div class="error"></div>
+                            </div>
+                            <div class='btn-container'>
+                                <button id='saveEdit'>Salvar</button>
+                                <button id='canceledit'>Cancelar</button>
+                            </div>
+                        </div>
+                    </div>`;
+    $('.display-container').append(modal);
+
+    $('#close-edit-modal, #canceledit').on('click', function() {
+        $('#editExercise').remove(); // remove o modal
+    });
+
+    $('#saveEdit').on('click', function() {
+        const exerciseNewImg = $('#exerciseImg')[0].files[0];
+        const exerciseNewName = $('#exerciseName').val().trim();
+        const $error = $('.error');
+
+        const sameName = exerciseName === exerciseNewName;
+
+        // verifica se foram realizadas alteraçoes antes de validar e salvar
+        if (!exerciseNewImg && sameName){
+            console.warn('Não foram realizadas alterações.')
+            $('#editExercise').remove();
+            return;
+        }
+
+        let uploadImg = false;
+        let imgSize = 0;
+        let imgType = '';
+
+        if (exerciseNewImg){
+            uploadImg = true;
+            imgSize = exerciseNewImg.size;
+            imgType = exerciseNewImg.type;
+        }
+
+        const datapack = {
+            uploadImg: uploadImg,
+            valueImgSize: imgSize,
+            valueImgType: imgType,
+            valueName: exerciseNewName, 
+        };
+
+        //VALIDA OS INPUTS
+        $.post('includes/validateInputs.inc.php', {input: 'updateExercise', datapack}, function(response){
+            if (response.status === 'error'){
+                console.error('Erro:', response.message);
+                return;
+            }
+            if (response.status === 'invalid'){
+                let msg = '';
+                $.each(response.message, function(field, message){
+                    msg += message + '<br>';
+                    console.warn(`Input Invalido: ${field}: ${message}`);
+                });
+
+                $error.html(msg);
+                return;
+            }
+            $error.text('');
+            
+            //SALVA O PRODUTO
+            const formData = new FormData();
+            formData.append('action', 'updateExercise');
+            formData.append('exerciseId', exerciseId);
+            formData.append('imgFile', exerciseNewImg);
+            formData.append('valueName', exerciseNewName);
+            
+            $.ajax({
+                url: 'includes/saveServerData.inc.php',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+                success: function(response) {
+                   if (response.status === 'error'){
+                        console.error('Erro:', response.message);
+                        return;
+                    }
+                    if (response.status === 'processError'){
+                        console.error('Erro:', response.error);
+                        $error.html(response.message);
+                        return;
+                    }
+                    if (response.status === 'invalid'){
+                        let msg = '';
+                        $.each(response.message, function(field, message){
+                            msg += message + '<br>';
+                            console.warn(`Input Inválido: ${field}: ${message}`);
+                        });
+
+                        $error.html(msg);
+                        return;
+                    }
+
+                    $error.css('color', 'green').text('Exercicio salvo com sucesso!');
+                    setTimeout(() => {
+                        $('#editExercise').remove();
+                        updateContent(optionVal);
+                    }, 1000);
+
+                }, error: function(xhr, status, error) {
+                    console.error('AJAX Error:', error);
+                    $error.text('Erro ao validar os dados.');
+                }
+            });
+        }, 'json').fail(function () {
+            console.error('Erro ao validar os dados.');
+            $error.text('Erro ao validar os dados.');
+        });
+    });
+}
+function deleteExercise(optionVal, exerciseId, exerciseName){
+    const modal =  `<div class='modal' id='deleteExercise'>
+                        <div class='modal-content'>
+                            <span id='close-del-modal'>&times;</span>
+                            <h2>Apagar ${exerciseName}</h2>
+                            <div class="error"></div>
+                            <div class='btn-container'>
+                                <button id='delete'>Apagar</button>
+                                <button id='cancelDel'>Cancelar</button>
+                            </div>
+                        </div>
+                    </div>`;
+    $('.display-container').append(modal);
+
+    $('#close-del-modal, #cancelDel').on('click', function() {
+        $('#deleteExercise').remove(); // remove o modal
+    });
+
+    $('#delete').on('click', function() {
+        $.post('includes/saveServerData.inc.php', {action: 'deleteExercise', exerciseId: exerciseId}, function(response){
+            if (response.status === 'error') {
+                console.error('Erro do servidor:', response.message || 'Erro desconhecido');
+                return;
+            }
+            if (response.status === 'processError') {
+                console.error('Erro: ', response.error);
+                $('.error').text(response.message);
+                return;
+            } 
+
+            const msg = response.message || 'Exercicio apagado com sucesso!';
+            
+            $('.error').css('color', 'green').text(msg);
+            setTimeout(() => {
+                $('#deleteExercise').remove();
+                updateContent(optionVal);
+            }, 1000);   
+        
+        }, 'json').fail(function () {
+            console.error('Erro na ligação ao servidor.');
+        });
+    });
+}
+
 function training(){
     return `<h2>Bem-vindo!</h2><p>Esta é a página treino da tua área de cliente.</p>`;
 }
@@ -394,7 +475,7 @@ function reviewApplication(applicationId, review, optionVal){
 }
 
 const contentMap = {
-    general: loadPendingApplications,
+    general: () => loadApplications('pending'),
     applications: loadApplications,
     exercises: loadExercises,
     training: training,
@@ -433,7 +514,8 @@ async function updateContent(id){
 
 
 $(document).ready(function(){
-    let optionVal = 'general'
+    // let optionVal = 'general';
+    let optionVal = 'exercises';
     updateContent(optionVal);
 
     $("#sub-menu").on("change", function() {
@@ -441,19 +523,33 @@ $(document).ready(function(){
         updateContent(optionVal);
     });
 
+    // General / Applications
     toggleApplication();
 
-    $(document).on('click', '#accept-btn', function() {
+    $(document).on('click', '.accept-btn', function() {
         const applicationId = $(this).data('id');
         reviewApplication(applicationId, 'accepted', optionVal);
     });
 
-    $(document).on('click', '#reject-btn', function() {
+    $(document).on('click', '.reject-btn', function() {
         const applicationId = $(this).data('id');
         reviewApplication(applicationId, 'rejected', optionVal);
     });
     
+    // Exercises
     $(document).on('click', '#create-new-exercise-btn', function() {
         createNewExercise(optionVal);
+    });
+
+    $(document).on('click', '.btn-edit-exercise', function() {
+        const exerciseId = $(this).data('id');
+        const exerciseName = $(this).data('name');
+        editExercise(optionVal, exerciseId, exerciseName);
+    });
+
+    $(document).on('click', '.btn-delete-exercise', function() {
+        const exerciseId = $(this).data('id');
+        const exerciseName = $(this).data('name');
+        deleteExercise(optionVal, exerciseId, exerciseName);
     });
 });

@@ -424,6 +424,42 @@ switch ($input) {
         echo json_encode($errors ? ['status' => 'invalid', 'message' => $errors] : ['status' => 'valid']);
         exit;
 
+    case 'updateExercise':
+        $errors = [];
+        $datapack = $_POST['datapack'] ?? [];
+
+        if(!$datapack){
+            echo json_encode(['status' => 'error', 'message' => 'Ocorreu um erro ao enviar os dados!']);
+            exit;
+        }
+ 
+        $uploadImg = filter_var($datapack['uploadImg'] ?? false, FILTER_VALIDATE_BOOLEAN);
+        $valueImgSize = filter_var($datapack['valueImgSize'] ?? 0, FILTER_VALIDATE_INT);
+        $valueImgType = trim($datapack['valueImgType'] ?? '');
+        $valueName = trim($datapack['valueName'] ?? '');
+
+        if($uploadImg){
+            if (isSizeInvalid($valueImgSize)){
+                $errors['productImg'] = 'A imagem excede o tamanho permitido.';
+            } elseif (isTypeInvalid($valueImgType)){
+                $errors['productImg'] = 'A imagem não tem um formato válido (png, jpg, gif).';
+            }
+        }    
+
+        if(isInputRequired('productName') && isInputEmpty($valueName)){
+            $errors['productName'] = 'O nome do produto é obrigatório.';
+        } elseif (isNameInvalid($valueName)){
+            $errors['productName'] = 'O nome do produto contém caracteres inválidos.';
+        } elseif (isLengthInvalid($valueName)){
+            $errors['productName'] = 'O nome do produto excede o limite de caracteres.';
+        }
+
+        echo json_encode($errors ? ['status' => 'invalid', 'message' => $errors] : ['status' => 'valid']);
+        exit;
+
+
+    
+
 
     default:
         echo json_encode(['status' => 'error', 'message' => 'Input inválido']);

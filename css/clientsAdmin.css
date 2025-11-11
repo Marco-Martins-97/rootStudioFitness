@@ -20,10 +20,10 @@
 .search-box input{
 	flex: 1;
 }
+
 .search-box input:focus, .search-box button:hover{
 	outline: 1px solid var(--PRIMARY-BORDER-COLOR);
 }
-
 
 .sub-menu-container select{
 	width: 100%;
@@ -144,31 +144,6 @@
     text-align: center;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| */
 .applications-container{
 	width: 100%;
 	display: flex;
@@ -316,6 +291,97 @@
 	color: var(--SECONDARY-TXT-COLOR);
 }
 
+.create-new-exercise-container{
+	width: 100%;
+	padding: 12px 24px;
+	margin-bottom: 32px;
+}
+
+#create-new-exercise-btn {
+	width: 100%;
+	padding: 24px 36px;
+	border: none;
+	background: var(--PRIMARY-BTN-COLOR);
+	color: var(--TERTIARY-TXT-COLOR);
+	font-weight: bold;
+	transition: background-color 0.8s ease;
+	border-radius: 12px;
+	cursor: pointer;
+	font-size: 2rem;
+}
+#create-new-exercise-btn:hover {
+    background-color: var(--SECONDARY-BTN-COLOR);
+    color: var(--PRIMARY-TXT-COLOR);
+}
+
+.exercises-container {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(0, 250px));
+	justify-content: space-evenly;
+	gap: 16px;
+	padding: 16px;
+	list-style: none;
+	margin: 0;
+}
+
+.exercises-card {
+	width: 100%;
+	max-width: 250px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background: var(--TERTIARY-BG-COLOR);
+	box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+	border-radius: 8px;
+	padding: 12px;
+	text-align: center;
+	color: var(--PRIMARY-TXT-COLOR);
+}
+
+.exercise-img {
+	width: 100%;
+	aspect-ratio: 1 / 1;
+	object-fit: cover;
+	border-radius: 6px;
+	margin-bottom: 8px;
+}
+
+.exercise-name {
+	font-size: 0.9rem;
+	font-weight: bold;
+	margin-bottom: 6px;
+	text-align: center;
+}
+
+.exercise-actions {
+	display: flex;
+	gap: 4px;
+	width: 100%;
+	justify-content: center;
+}
+
+.exercise-actions button {
+	flex: 1;
+	padding: 8px 12px;
+	border: none;
+	border-radius: 12px;
+	cursor: pointer;
+	font-size: 0.8rem;
+	font-weight: bold;
+	transition: background-color 0.8s ease;
+	background: var(--PRIMARY-BTN-COLOR);
+	color: var(--TERTIARY-TXT-COLOR);
+	letter-spacing: 1px;
+}
+
+.exercise-actions button:hover {
+	background-color: var(--SECONDARY-BTN-COLOR);
+	color: var(--PRIMARY-TXT-COLOR);
+}
+
+
+
+
 @media (min-width: 768px) {
 	.data-container span{
 		width: 150px;
@@ -325,3 +391,5 @@
 		padding: 16px 24px 8px 24px;
 	}
 }
+
+

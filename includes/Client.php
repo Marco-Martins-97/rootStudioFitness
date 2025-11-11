@@ -4,6 +4,7 @@ require_once 'Dbh.php';
 class Client{
     private $uploadDir = "../imgs/exercises/";
     private $uploadedImg = null;
+    private $backupImg = null;
 
     private $conn;
     private $errors = [];
@@ -42,6 +43,16 @@ class Client{
         return $result;
     }
 
+    private function getExerciseImgSrc($exerciseId){
+        $query="SELECT exerciseImgSrc FROM exercises WHERE id = :exerciseId;";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':exerciseId', $exerciseId);
+        $stmt->execute();
+
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result ? $result['exerciseImgSrc'] : false;
+    }
+
     // Verifica se exite na base de dados
     private function hasUserApplied($userId){
         $query = 'SELECT EXISTS(SELECT 1 FROM clientApplications WHERE userId = :userId AND applicationStatus IN ("pending", "accepted"))';
@@ -68,6 +79,15 @@ class Client{
         $stmt->execute();
     
         return (bool) $stmt->fetchColumn(0);
+    }
+
+    private function exerciseExists($exerciseId){
+        $query = 'SELECT EXISTS(SELECT 1 FROM exercises WHERE id = :exerciseId)';
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':exerciseId', $exerciseId);
+        $stmt->execute();
+    
+        return (bool) $stmt->fetchColumn();
     }
 
     // Insere dados na base de dados
@@ -135,6 +155,42 @@ class Client{
         return $stmt->execute();
     }
 
+    private function updatedExerciseData($exerciseId, $exerciseName, $exerciseImgSrc = null){
+        $query = 'UPDATE exercises SET ';
+        if($exerciseImgSrc !== null) {
+            $query .= 'exerciseImgSrc = :exerciseImgSrc, ';
+        }
+        $query .= 'exerciseName = :exerciseName WHERE id = :exerciseId';
+
+        $stmt = $this->conn->prepare($query);
+        if ($exerciseImgSrc !== null) {
+            $stmt->bindParam(':exerciseImgSrc', $exerciseImgSrc);
+        }
+        $stmt->bindParam(':exerciseName', $exerciseName);
+        $stmt->bindParam(':exerciseId', $exerciseId);
+
+        return $stmt->execute();
+    }
+
+    // Apaga dados na base de dados
+    private function removeExerciseFromPlans($exerciseId){
+        $query = "DELETE FROM exercisesplan WHERE exerciseId = :exerciseId;";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':exerciseId', $exerciseId);
+
+        return $stmt->execute();
+    }
+
+    private function deleteExerciseData($exerciseId){
+        $query = "DELETE FROM exercises WHERE id = :exerciseId";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':exerciseId', $exerciseId);
+
+        return $stmt->execute();
+    }
+
+
+
     // Funçoes de execução
     private function uploadImg(){
         // Verifica se a pasta existe e cria se necessário
@@ -159,6 +215,27 @@ class Client{
         }
 
         return ['status' => 'valid'];
+    }
+
+    private function deleteExerciseImg($exerciseId){
+        $imgSrc = $this->getExerciseImgSrc($exerciseId);
+        if (!$imgSrc){
+            return ['status' => 'processError', 'error' => 'Não foi possível obter a imagem.', 'message' => 'Ocorreu um erro. Não foi possível apagar o produto.'];
+        }
+        
+        $imgDir = $this->uploadDir.$imgSrc;
+        if(file_exists($imgDir)){
+            // $this->backupImg = file_get_contents($imgDir);    //salva uma copia da imagem antes de a apagar
+            $backup = file_get_contents($imgDir);
+            if ($backup === false){
+                return ['status'=>'processError','error'=>'Não foi possível criar backup da imagem','message'=>'Ocorreu um erro. Não foi possível apagar o produto.'];
+            }
+            $this->backupImg = $backup;
+            if(!unlink($imgDir)){
+                return ['status' => 'processError', 'error' => 'Não foi possível apagar a imagem.', 'message' => 'Ocorreu um erro. Não foi possível apagar o produto.'];
+            }
+        }
+        return ['status' => 'valid', 'dir' => $imgDir];
     }
 
     public function submitClientApplication($userId, $fullName, $birthDate, $gender, $userAddress, $nif, $phone, $trainingPlan, $experience, $nutritionPlan, $healthIssues, $healthDetails, $terms){
@@ -358,6 +435,137 @@ class Client{
         return ['status' => 'valid'];
     }
 
+    public function updateExercise($exerciseId, $exerciseImg, $exerciseName){
+        $this->errors = [];
+        // Validação dos dados
+        require_once 'validations.inc.php';
 
+        if(!$this->exerciseExists($exerciseId)){
+            $this->errors['exerciseId'] = 'O produto não existe.';
+        }
+
+        if($exerciseImg){
+            if ($exerciseImg['error'] !== 0){
+                $this->errors['exerciseImg'] = 'Não foi possível carregar a imagem.';
+            } else if (isSizeInvalid($exerciseImg['size'])){
+                $this->errors['exerciseImg'] = 'A imagem excede o tamanho permitido.';
+            } elseif (isTypeInvalid($exerciseImg['type'])){
+                $this->errors['exerciseImg'] = 'A imagem não tem um formato válido (png, jpg, gif).';
+            }
+        }
+
+        if(isInputRequired('exerciseName') && isInputEmpty($exerciseName)){
+            $this->errors['exerciseName'] = 'O nome do exercicio é obrigatório.';
+        } elseif (isNameInvalid($exerciseName)){
+            $this->errors['exerciseName'] = 'O nome contém caracteres inválidos.';
+        } elseif (isLengthInvalid($exerciseName)){
+            $this->errors['exerciseName'] = 'O nome excede o limite de caracteres.';
+        }
+
+        // Verificação da ligação à base de dados
+        if (!$this->conn) {
+            $this->errors['connection'] = 'failed';
+        }
+
+        if ($this->errors){
+            return ['status' => 'invalid', 'message' => $this->errors];
+        }
+
+        // Salva na base de dados
+
+        try {
+            $this->conn->beginTransaction();
+            $exerciseImgSrc = null;
+            $delImgRes = null;
+
+            if ($exerciseImg) {
+                // Carrega a imagem
+                $this->uploadedImg = $exerciseImg;
+                $uploadRes = $this->uploadImg();
+
+                if ($uploadRes['status'] !== 'valid') {
+                    $this->conn->rollBack();
+                    return $uploadRes;
+                }
+
+                $exerciseImgSrc = $this->uploadedImg['name'];
+                
+                // Faz uma cópia e apaga a imagem antiga
+                $delImgRes = $this->deleteExerciseImg($exerciseId);
+                if($delImgRes['status'] !== 'valid'){
+                    $this->conn->rollBack();
+                    return $delImgRes;
+                }
+            }
+            
+            if (!$this->updatedExerciseData($exerciseId, $exerciseName, $exerciseImgSrc)) {
+                throw new Exception('Falha ao atualizar os dados do produto.');
+            }
+            
+            $this->conn->commit();
+            return ['status' => 'valid'];
+
+        } catch (Exception $e) {
+            $this->conn->rollBack();    // Reverte as alterações
+            
+            // Tenta restaurar a imagem antiga
+            if ($exerciseImg && isset($delImgRes['dir']) && $this->backupImg !== null) {
+                file_put_contents($delImgRes['dir'], $this->backupImg);
+            }
+
+            // Apaga a imagem carregada
+            if ($exerciseImg && isset($this->uploadedImg['name'])) {
+                $newImgDir = $this->uploadDir . $this->uploadedImg['name'];
+                if (file_exists($newImgDir)) {
+                    unlink($newImgDir);
+                }
+            }
+
+            return ['status' => 'processError', 'error' => $e->getMessage(), 'message' => 'Ocorreu um erro. Não foi possível guardar o produto.'];
+        }
+    }
+
+    public function deleteExercise($exerciseId){
+        //verifica se o produto existe
+        if(!$this->exerciseExists($exerciseId)){
+            return ['status' => 'processError', 'error' => 'O Exercico não existe.', 'message' => 'Ocorreu um erro. Não foi possível apagar o Exercico.'];
+        }
+
+        try {
+            $this->conn->beginTransaction();
+
+            if (!$this->removeExerciseFromPlans($exerciseId)) {
+                throw new Exception('Falha ao remover o exercicio dos planos.');
+            }
+
+            $delImgRes = $this->deleteExerciseImg($exerciseId);
+            if ($delImgRes['status'] !== 'valid') {
+                $this->conn->rollBack();
+                return $delImgRes;
+            }
+
+            if (!$this->deleteExerciseData($exerciseId)) {
+                $imgDir = $delImgRes['dir'];
+                if ($this->backupImg !== null) {
+                    if (!file_put_contents($imgDir, $this->backupImg)) {
+                        throw new Exception('Falha ao repor o backup da imagem.');
+                    }
+                }
+                throw new Exception('Não foi possivel apagar os dados do exercicio.');
+            }
+
+            $this->conn->commit();
+            return ['status' => 'valid'];
+
+        } catch (Exception $e) {
+            $this->conn->rollBack();
+
+            if (isset($delImgRes['dir']) && $this->backupImg !== null) {
+                file_put_contents($delImgRes['dir'], $this->backupImg);
+            }
+
+            return ['status' => 'processError', 'error' => $e->getMessage(), 'message' => 'Ocorreu Um Erro, Não Foi Possivel Apagar o Exercico!'];
+        }
+    }
 
 }

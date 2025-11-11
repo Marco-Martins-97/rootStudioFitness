@@ -125,15 +125,22 @@ CREATE TABLE exercises(
 	id INT(11) NOT NULL AUTO_INCREMENT,
     exerciseImgSrc VARCHAR(255) NOT NULL,
     exerciseName VARCHAR(255) NOT NULL,
+    -- exerciseDescription TEXT,
     PRIMARY KEY (id)
 );
 
-CREATE TABLE exercises(
+
+CREATE TABLE exercisesplan(
 	id INT(11) NOT NULL AUTO_INCREMENT,
-    exerciseImgSrc VARCHAR(255) NOT NULL,
-    exerciseName VARCHAR(255) NOT NULL,
-    exerciseSeries INT NOT NULL DEFAULT 0, 
-    exerciseRep INT NOT NULL DEFAULT 0,
-    exerciseLoad INT NOT NULL DEFAULT 0,
-    PRIMARY KEY (id)
+    planName VARCHAR(255) NOT NULL,
+    planId VARCHAR(4) NOT NULL, 
+    userId INT NOT NULL, 
+    exerciseId INT NOT NULL, 
+    exerciseSeries JSON, 
+    exerciseRep JSON,
+    exerciseLoad JSON,
+    exerciseRest JSON,
+    PRIMARY KEY (id),
+    FOREIGN KEY (userId) REFERENCES users(id),
+    FOREIGN KEY (exerciseId) REFERENCES exercises(id)
 );

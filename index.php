@@ -38,7 +38,9 @@
                                 <a href="signup.php">Registar</a>
                             </div>
                         <?php } else{ ?>
+                            <?php if (isset($_SESSION["userRole"]) && ($_SESSION["userRole"] === 'client' || $_SESSION["userRole"] === 'admin')) {  ?>
                             <a href="areaClient.php">Área de Cliente</a>
+                            <?php } ?>
                             <div class="dropdown-toggle">
                                 <i class="fas fa-chevron-down"></i>
                                 <?php echo $_SESSION['username']; ?>

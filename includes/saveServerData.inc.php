@@ -266,7 +266,43 @@ switch ($action) {
         }
         break;
 
+    case 'updateExercise':
+        requireAdmin();
 
+        $exerciseId = getPost('exerciseId');
+        $exerciseImg = $_FILES['imgFile'] ?? null;
+        $exerciseName = getPost('valueName');
+
+        try {
+            require_once "Client.php";
+            $client = new Client();
+            $res = $client->updateExercise($exerciseId, $exerciseImg, $exerciseName);
+
+            echo json_encode($res);
+            exit;
+            
+        } catch (PDOException $e) {
+            handleDbError($e);
+        }
+        break;
+    
+    case 'deleteExercise':
+        requireAdmin();
+
+        $exerciseId = getPost('exerciseId');
+
+        try {
+            require_once "Client.php";
+            $client = new Client();
+            $res = $client->deleteExercise($exerciseId);
+            
+            echo json_encode($res);
+            exit;
+
+        } catch (PDOException $e) {
+            handleDbError($e);
+        }
+        break;
 
 
 
