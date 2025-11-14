@@ -229,6 +229,59 @@ switch ($action) {
         }
         break;
 
+    case 'loadClientsTrainingPlans':
+        requireAdmin(); // Verifica se o utilizador é administrador
+
+        try {
+            require_once "Client.php";
+            $client = new Client();
+            
+            $plansData = $client->loadClientsTrainingPlans();
+
+            echo json_encode(['status' => 'success', 'data' => $plansData]);
+            exit;
+
+        } catch (PDOException $e) {
+            handleDbError($e);
+        }
+        break;
+    
+    case 'loadClients':
+        requireAdmin(); // Verifica se o utilizador é administrador
+
+        try {
+            require_once "Client.php";
+            $client = new Client();
+            
+            $clients = $client->loadClients();
+
+            echo json_encode(['status' => 'success', 'data' => $clients]);
+            exit;
+
+        } catch (PDOException $e) {
+            handleDbError($e);
+        }
+        break;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     default:
         echo json_encode(['status' => 'error', 'message' => 'Ação inválida']);

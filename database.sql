@@ -130,7 +130,17 @@ CREATE TABLE exercises(
 );
 
 
-CREATE TABLE exercisesplan(
+CREATE TABLE trainingPlans(
+	id INT(11) NOT NULL AUTO_INCREMENT,
+    planName VARCHAR(255) NOT NULL,
+    userId INT NOT NULL,
+    planId VARCHAR(4) NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (userId) REFERENCES users(id)
+);
+
+
+CREATE TABLE trainingPlans(
 	id INT(11) NOT NULL AUTO_INCREMENT,
     planName VARCHAR(255) NOT NULL,
     planId VARCHAR(4) NOT NULL, 

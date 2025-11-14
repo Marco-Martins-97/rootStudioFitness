@@ -457,7 +457,20 @@ switch ($input) {
         echo json_encode($errors ? ['status' => 'invalid', 'message' => $errors] : ['status' => 'valid']);
         exit;
 
+    case 'trainingPlanName':
+        $error = '';
+        $value = getValue('value');
 
+        if(isInputRequired($input) && isInputEmpty($value)){
+            $error = 'O nome é obrigatório.';
+        } elseif (isNameInvalid($value)){
+            $error = 'O nome contém caracteres inválidos.';
+        } elseif (isLengthInvalid($value)){
+            $error = 'O nome excede o limite de caracteres.';
+        }
+
+        echo json_encode($error ? ['status' => 'invalid', 'message' => $error] : ['status' => 'valid']);
+        exit;
     
 
 

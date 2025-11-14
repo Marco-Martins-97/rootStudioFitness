@@ -303,6 +303,24 @@ switch ($action) {
             handleDbError($e);
         }
         break;
+    
+    case 'saveTrainingPlan':
+        requireAdmin();
+
+        $planData = getPost('planData');
+
+        try {
+            require_once "Client.php";
+            $client = new Client();
+            $res = $client->createTrainingPlan($planData);
+            
+            echo json_encode($res);
+            exit;
+
+        } catch (PDOException $e) {
+            handleDbError($e);
+        }
+        break;
 
 
 

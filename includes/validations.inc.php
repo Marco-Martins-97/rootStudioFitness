@@ -17,7 +17,8 @@ function isInputRequired($input){
                         'loginEmail',   //login
                         'fullName','birthDate','gender','userAddress','nif','phone','trainingPlan','experience','terms',    //cliente
                         'productName', 'productPrice', 'productStock',   //criar novo produto
-                        'exerciseName'  // criar novo exercicio
+                        'exerciseName',  // criar novo exercicio
+                        'trainingPlanName'  // criar novo plano de treino
                     ];
     return in_array($input, $requiredFields);
 }

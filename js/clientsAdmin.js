@@ -401,6 +401,7 @@ function editExercise(optionVal, exerciseId, exerciseName){
         });
     });
 }
+
 function deleteExercise(optionVal, exerciseId, exerciseName){
     const modal =  `<div class='modal' id='deleteExercise'>
                         <div class='modal-content'>
@@ -445,8 +446,261 @@ function deleteExercise(optionVal, exerciseId, exerciseName){
     });
 }
 
-function training(){
-    return `<h2>Bem-vindo!</h2><p>Esta é a página treino da tua área de cliente.</p>`;
+async function loadTrainingPlan(){
+    let plansHTML = `
+        <div class='create-new-plan-container'>
+            <button id="create-new-plan-btn">Criar novo Plano de treino</button>
+        </div>
+    `;
+
+    plansHTML += await $.ajax({
+        url: 'includes/loadServerData.inc.php',
+        method: 'POST',
+        dataType: 'json',
+        data: { action: 'loadClientsTrainingPlans' }
+    }).then(response => {
+        // console.log(response);
+        if (!response.data || response.data === 'error') {
+            console.error('Erro do servidor:', response.message || 'Erro desconhecido')
+            return `<p>Erro ao carregar os planos de treino.</p>`;
+        }
+
+        const plansData = response.data;
+        let planHTML = '';
+
+        if (plansData.length > 0){
+            // planHTML += `<ul class='exercises-container'>`;
+            // plansData.forEach(exercise => {
+            //     planHTML += `
+            //         <li class='exercise-card'>
+            //             <img src='imgs/exercises/${exercise.exerciseImgSrc}' alt='${exercise.exerciseName}' class='exercise-img' onerror='this.src="imgs/logo/logoOriginal.png"'>
+            //             <h4 class='exercise-name'>${exercise.exerciseName}</h4>
+            //             <div class='exercise-actions'>
+            //                 <button class='btn-edit-exercise' data-id='${exercise.id}' data-name='${exercise.exerciseName}'>Editar</button>
+            //                 <button class='btn-delete-exercise' data-id='${exercise.id}' data-name='${exercise.exerciseName}'>Apagar</button>
+            //             </div>
+            //         </li>
+            //     `;
+            // });
+            // planHTML += `</ul>`;
+            console.log(plansData);
+        } else {
+            planHTML += `<p>Sem planos de treino disponíveis.</p>`;
+        }
+
+        return planHTML;
+    }).catch(() => `<p>Erro ao carregar os planos de treino.</p>`);
+
+    return plansHTML;
+}
+
+function validateField(input){
+    const name = $(input).attr('name');
+    const value = $(input).val();
+    const field = $(input).closest('.field-container');
+
+    $.post('includes/validateInputs.inc.php', {input: name, value: value}, function(response){
+        if (!response || typeof response.status === 'undefined') {
+            console.error('A resposta do servidor é inválida.');
+            return;
+        }
+
+        if (response.status === 'error'){
+            console.error('Ocorreu um erro:', response.message);
+            return;
+        }
+        
+        if (response.status === 'invalid'){
+            console.warn('Campo inválido:', response.message);
+            field.addClass('invalid').find('.error').html(response.message);
+            return;
+        }
+
+        field.removeClass('invalid').find('.error').html('');
+
+    }, 'json').fail(function () {
+        console.error('Ocorreu um erro ao validar os dados.');
+    });
+}
+
+function noEmptyFields(formId){
+    let emptyFields = false;
+    $(formId).find('.field-container').each(function(){
+        let input = $(this).find('input, textarea, select').first();
+
+        /* // Radio Buttons
+        if (input.is('input[type="radio"]') && $(this).find('input[type="radio"]:checked').length === 0){
+            emptyFields = true;
+            $(this).closest('.field-container').addClass('invalid').find('.error').html('Preenchimento deste campo é obrigatório.');
+        }
+        // Ckeckbox
+        if (input.is('input[type="checkbox"]') && $(this).find('input[type="checkbox"]:checked').length === 0){
+            emptyFields = true;
+            $(this).closest('.field-container').addClass('invalid').find('.error').html('Preenchimento deste campo é obrigatório.');
+        } */
+
+        if (input.val() === null || input.val().trim() === ''){
+            emptyFields = true;
+            $(this).closest('.field-container').addClass('invalid').find('.error').html('Preenchimento deste campo é obrigatório.');
+        }
+    });
+    return !emptyFields;
+}
+
+function isFormValid(formId){
+    return $(formId).find('.field-container.invalid').length === 0;
+}
+
+  
+
+
+/* function showPopup(msg, delay = 2000, success = false) {
+    $('.popup').remove();// Remove um popup antes de criar outro (se existir)
+    
+    // Cria o elemento popup
+    const popup = $('<div class="popup"></div>').text(msg);
+    
+    // Adiciona a classe "popup-success" apenas se success for true ou 1
+    if (success === true || success === 1 || success === '1') {
+        popup.addClass('popup-success');
+    }
+    // Insere no main e aplica delay + fadeOut
+    popup.appendTo('main').delay(delay).fadeOut(300, function() { $(this).remove(); });
+} */
+
+function createNewTrainingPlan(optionVal){
+    // let exercises = [];
+    // const clients = loadClients();
+
+    const modal =  `<div class='modal' id='createNewTrainingPlan'>
+                        <div class='modal-content'>
+                            <span id='close-add-modal'>&times;</span>
+                            <h2>Novo Plano de Treino</h2>
+                            <div class='plan-container'>
+                                <div class='field-container'>
+                                    <div class='field'>
+                                        <label for='trainingPlanName'>Nome do Plano:</label>
+                                        <input type='text' name='trainingPlanName' id='trainingPlanName' maxlength='255'>
+                                    </div>
+                                    <div class="error"></div>
+                                </div>
+                                <div class='field-container'>
+                                    <div class='field'>
+                                        <label for='trainingPlanClient'>Nome do Cliente:</label>
+                                        <select name="trainingPlanClient" id="trainingPlanClients">
+                                            <option value="" disabled selected>Selecione um Cliente</option>
+                                        </select>
+                                    </div>
+                                    <div class="error"></div>
+                                </div>
+                                <div class='btn-container'>
+                                    <button id='addExercise'>Exercicio</button>
+                                </div>
+                            </div>
+                            <div class='btn-container'>
+                                <button id='save'>Salvar</button>
+                                <button id='cancelAdd'>Cancelar</button>
+                            </div>
+                        </div>
+                    </div>`;
+    $('.display-container').append(modal);
+
+    $.post('includes/loadServerData.inc.php', {action: 'loadClients'}, function(response){
+        console.log(response);
+        let clients;
+        if (response.status !== 'success') {
+            console.error('Erro do servidor:', response.message || 'Erro desconhecido');
+        }
+
+        clients = response.data;
+
+        clients.forEach(client => {
+        $("#trainingPlanClients").append(
+            $("<option>", {
+                value: client.id,
+                text: client.username
+            })
+        );
+    });
+
+    }, 'json').fail(function () {
+        console.error('Ocorreu um erro. Não foi possível carregar os clientes!');
+    });
+
+    
+
+
+    $('#addExercise').on('click', function() {
+        $(this).parent().before(`
+            <div class="exercise-container">
+                NEW
+                <div class="error"></div>
+            </div>
+            `);
+    });
+
+
+            // <div class="field">
+            //     <label for='exercise-name'>Nome:</label>
+            //     <input type='text' name='exercise-name' id='exerciseName' maxlength='255'>
+            // </div>
+            // <div class="field">
+            //     <label for='exercise-rep'>Repetições:</label>
+            //     <input type='number' name='exercise-rep' id='exerciseRep' min='1' value='1' step='1'>
+            // </div>
+            // <div class="field">
+            //     <label for='load-rep'>Carga:</label>Load' min='0' value='0' step='1'>
+            // </div>
+
+
+
+
+
+
+
+    $('#close-add-modal, #cancelAdd').on('click', function() {
+        $('#createNewTrainingPlan').remove(); // remove o modal
+    });
+
+    $('#trainingPlanName').on('input', function(){ validateField(this); });
+    $('#trainingPlanClients').on('change', function(){ $(this).closest('.field-container').removeClass('invalid').find('.error').html(''); });
+
+    $('#save').on('click', function() {
+        const modalId = $('#createNewTrainingPlan');
+
+        if(noEmptyFields(modalId) && isFormValid(modalId)){
+            // compact data to a json
+            const data = {
+                planName: $('#trainingPlanName').val().trim(),
+                userId: $('#trainingPlanClients').val().trim(),
+                exercises: []
+            }
+
+
+            $.post('includes/saveServerData.inc.php', {action: 'saveTrainingPlan', planData: JSON.stringify(data)}, function(response){
+                if (response.status === 'error') {
+                    console.error('Erro do servidor:', response.message || 'Erro desconhecido');
+                    return;
+                } else if (response.status !== 'success') {
+                    console.warn('Falha ao processar a ação!');
+                    return
+                }
+            
+                console.log(response.data);
+
+                setTimeout(function(){
+                    $('#createNewTrainingPlan').remove();
+                    updateContent(optionVal);
+                }, 1000);
+
+            }, 'json').fail(function () {
+                console.error('Erro na ligação ao servidor.');
+            });
+            
+        } else {
+            console.error('O Plano contém erros. Verifique os campos assinalados.');
+        }
+    });
 }
 
 function toggleApplication(){
@@ -478,7 +732,7 @@ const contentMap = {
     general: () => loadApplications('pending'),
     applications: loadApplications,
     exercises: loadExercises,
-    training: training,
+    trainingPlans: loadTrainingPlan,
     nutrition: () => `<h2>Bem-vindo!</h2><p>Esta é a página alimentar da tua área de cliente.</p>`,
     assessment: () => `<h2>Bem-vindo!</h2><p>Esta é a página avaliaçao da tua área de cliente.</p>`,
     calendar: () => `<h2>Bem-vindo!</h2><p>Esta é a página calendario da tua área de cliente.</p>`,
@@ -515,7 +769,7 @@ async function updateContent(id){
 
 $(document).ready(function(){
     // let optionVal = 'general';
-    let optionVal = 'exercises';
+    let optionVal = 'trainingPlans';
     updateContent(optionVal);
 
     $("#sub-menu").on("change", function() {
@@ -551,5 +805,10 @@ $(document).ready(function(){
         const exerciseId = $(this).data('id');
         const exerciseName = $(this).data('name');
         deleteExercise(optionVal, exerciseId, exerciseName);
+    });
+
+    // Plans
+    $(document).on('click', '#create-new-plan-btn', function() {
+        createNewTrainingPlan(optionVal);
     });
 });

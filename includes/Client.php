@@ -23,6 +23,15 @@ class Client{
         $result = $stmt -> fetchAll(PDO::FETCH_ASSOC);
         return $result;
     }
+    
+    public function loadClients(){
+        $query = "SELECT id , CONCAT(firstName, ' ', lastName) AS username FROM users WHERE userRole = 'client' ORDER BY username ASC;";
+        $stmt = $this->conn->prepare($query);
+        $stmt -> execute();
+
+        $result = $stmt -> fetchAll(PDO::FETCH_ASSOC);
+        return $result;
+    }
 
     private function getEssencialData($applicationId){
         $query = "SELECT ca.*, u.userRole FROM clientApplications ca INNER JOIN users u ON ca.userId = u.id WHERE ca.id = :applicationId";
@@ -51,6 +60,38 @@ class Client{
 
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return $result ? $result['exerciseImgSrc'] : false;
+    }
+
+    public function loadClientsTrainingPlans(){
+        /* $query = "  SELECT 
+                        tp.id AS trainingPlanId,
+                        tp.planName,
+                        tp.planId,
+                        tp.exerciseSeries,
+                        tp.exerciseRep,
+                        tp.exerciseLoad,
+                        tp.exerciseRest,
+                        
+                        u.id AS userId,
+                        u.email,
+                        u.userRole,
+                        u.firstName,
+                        u.lastName,
+                        u.is_admin,
+                        
+                        e.id AS exerciseId,
+                        e.exerciseName,
+                        e.exerciseImgSrc
+                    FROM trainingplans tp
+                    JOIN users u ON tp.userId = u.id
+                    JOIN exercises e ON tp.exerciseId = e.id;
+                "; */
+        $query =  "SELECT * FROM trainingplans;";
+        $stmt = $this->conn->prepare($query);
+        $stmt -> execute();
+
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $result;
     }
 
     // Verifica se exite na base de dados
@@ -174,7 +215,7 @@ class Client{
 
     // Apaga dados na base de dados
     private function removeExerciseFromPlans($exerciseId){
-        $query = "DELETE FROM exercisesplan WHERE exerciseId = :exerciseId;";
+        $query = "DELETE FROM trainingPlans WHERE exerciseId = :exerciseId;";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':exerciseId', $exerciseId);
 
@@ -566,6 +607,64 @@ class Client{
 
             return ['status' => 'processError', 'error' => $e->getMessage(), 'message' => 'Ocorreu Um Erro, Não Foi Possivel Apagar o Exercico!'];
         }
+    }
+
+    public function createTrainingPlan($planData){
+        $data = json_decode($planData, true);
+        $newId = $this->getPlanId();
+
+
+
+        // user try catch + transaction
+        if(!$this->saveTrainingPlan($data['planName'], $data['userId'], $newId)){
+            return ['status' => 'error', 'message' => 'Ocorreu Um Erro, Não Foi Possivel criar o Plano!'];
+            // return ['status' => 'processError', 'error' => $e->getMessage(), 'message' => 'Ocorreu Um Erro, Não Foi Possivel Apagar o Exercico!'];
+        }
+
+        return ['status' => 'success', 'data' => $data, 'ids'=>$newId];
+    }
+
+    private function saveTrainingPlan($planName, $userId, $planId){
+        $query = 'INSERT INTO trainingplans (planName, userId, planId) VALUES (:planName, :userId, :planId)';
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':planName', $planName);
+        $stmt->bindParam(':userId', $userId);
+        $stmt->bindParam(':planId', $planId);
+
+        return $stmt->execute();
+    }
+    
+    /* private function getPlanId(){
+        $query = 'SELECT planId FROM trainingplans ORDER BY planId ASC';
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        $existingIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        
+        $id = 1;
+        foreach ($existingIds as $existingId) {
+            if ($existingId == $id) {
+                $id++;
+            } else {
+                break;
+            }
+        }
+        return $id;
+    } */
+
+    private function getPlanId() {
+        $query = "
+            SELECT t1.planId + 1 AS firstAvailable
+            FROM trainingplans t1
+            LEFT JOIN trainingplans t2 ON t1.planId + 1 = t2.planId
+            WHERE t2.planId IS NULL
+            ORDER BY t1.planId
+            LIMIT 1
+        ";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $result ? (int)$result['firstAvailable'] : 1;
     }
 
 }

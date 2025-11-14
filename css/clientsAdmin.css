@@ -291,13 +291,13 @@
 	color: var(--SECONDARY-TXT-COLOR);
 }
 
-.create-new-exercise-container{
+.create-new-exercise-container, .create-new-plan-container{
 	width: 100%;
 	padding: 12px 24px;
 	margin-bottom: 32px;
 }
 
-#create-new-exercise-btn {
+#create-new-exercise-btn, #create-new-plan-btn {
 	width: 100%;
 	padding: 24px 36px;
 	border: none;
@@ -309,7 +309,7 @@
 	cursor: pointer;
 	font-size: 2rem;
 }
-#create-new-exercise-btn:hover {
+#create-new-exercise-btn:hover, #create-new-plan-btn:hover {
     background-color: var(--SECONDARY-BTN-COLOR);
     color: var(--PRIMARY-TXT-COLOR);
 }

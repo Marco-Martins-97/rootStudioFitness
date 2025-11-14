@@ -73,7 +73,7 @@
                     <option value="general" selected>Geral</option>
                     <option value="applications">Candidaturas</option>
                     <option value="exercises">Exercicios</option>
-                    <option value="training">Planos de Treino</option>
+                    <option value="trainingPlans">Planos de Treino</option>
                     <option value="nutrition">Planos Alimentares</option>
                     <option value="assessment">Avaliações Fisicas</option>
                     <option value="challenges">Desafios</option>
