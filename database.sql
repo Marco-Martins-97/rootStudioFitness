@@ -154,3 +154,8 @@ CREATE TABLE trainingPlans(
     FOREIGN KEY (userId) REFERENCES users(id),
     FOREIGN KEY (exerciseId) REFERENCES exercises(id)
 );
+
+
+
+
+X

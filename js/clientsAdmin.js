@@ -523,25 +523,45 @@ function validateField(input){
     });
 }
 
+function validateExercises(){
+    let isValid = true;
+
+    $('.exercise-container').each(function(){
+        const exContainer = $(this);
+        const exerciseSelect = exContainer.find('.trainingExercise');
+
+        if(!exerciseSelect.val()){
+            exContainer.find('.error').html('Selecione um exercício').addClass('invalid');
+            isValid = false;
+        } else {
+            exContainer.find('.error').html('').removeClass('invalid');
+        }
+
+        exContainer.find('.serie').each(function(){
+            const serie = $(this);
+            const rep = serie.find('.exerciseRep').val();
+            const weight = serie.find('.exerciseWeight').val();
+            const rest = serie.find('.exerciseRest').val();
+
+            if(rep <= 0 || weight < 0 || rest < 0){
+                serie.find('.error').html('Valores Invalidos').addClass('invalid');
+                isValid = false;
+            } else {
+                serie.find('.error').html('').removeClass('invalid');
+            }
+        });
+    });
+    return isValid;
+}
+
 function noEmptyFields(formId){
     let emptyFields = false;
-    $(formId).find('.field-container').each(function(){
+    $(formId).find('.field-container, .exercise-container').each(function(){
         let input = $(this).find('input, textarea, select').first();
-
-        /* // Radio Buttons
-        if (input.is('input[type="radio"]') && $(this).find('input[type="radio"]:checked').length === 0){
-            emptyFields = true;
-            $(this).closest('.field-container').addClass('invalid').find('.error').html('Preenchimento deste campo é obrigatório.');
-        }
-        // Ckeckbox
-        if (input.is('input[type="checkbox"]') && $(this).find('input[type="checkbox"]:checked').length === 0){
-            emptyFields = true;
-            $(this).closest('.field-container').addClass('invalid').find('.error').html('Preenchimento deste campo é obrigatório.');
-        } */
 
         if (input.val() === null || input.val().trim() === ''){
             emptyFields = true;
-            $(this).closest('.field-container').addClass('invalid').find('.error').html('Preenchimento deste campo é obrigatório.');
+            $(this).closest('.field-container, .field, .serie, .exercise-container').addClass('invalid').find('.error').html('Preenchimento deste campo é obrigatório.');
         }
     });
     return !emptyFields;
@@ -569,7 +589,7 @@ function isFormValid(formId){
 } */
 
 function createNewTrainingPlan(optionVal){
-    // let exercises = [];
+    let exercises = [];
     // const clients = loadClients();
 
     const modal =  `<div class='modal' id='createNewTrainingPlan'>
@@ -594,7 +614,7 @@ function createNewTrainingPlan(optionVal){
                                     <div class="error"></div>
                                 </div>
                                 <div class='btn-container'>
-                                    <button id='addExercise'>Exercicio</button>
+                                    <button class='addExercise'>Exercicio</button>
                                 </div>
                             </div>
                             <div class='btn-container'>
@@ -627,36 +647,117 @@ function createNewTrainingPlan(optionVal){
         console.error('Ocorreu um erro. Não foi possível carregar os clientes!');
     });
 
-    
+
+    $.post('includes/loadServerData.inc.php', {action: 'loadExercises'}, function(response){
+        console.log(response);
+        if (response.status !== 'success') {
+            console.error('Erro do servidor:', response.message || 'Erro desconhecido');
+        }
+        
+        exercises = response.data;
+        addExAuto();
 
 
-    $('#addExercise').on('click', function() {
-        $(this).parent().before(`
-            <div class="exercise-container">
-                NEW
-                <div class="error"></div>
-            </div>
-            `);
+
+    }, 'json').fail(function () {
+        console.error('Ocorreu um erro. Não foi possível carregar os clientes!');
     });
 
+    
+    const exerciseTemplate  = `
+        <div class="exercise-container">
+            <div class='field'>
+                <label for='trainingExercise'>Exercicio:</label>
+                <select name="trainingExercise" class="trainingExercise">
+                    <option value="" disabled selected>Selecione um Exercicio</option>
+                </select>
+            </div>
+            <div class="serie-container"></div>
+            <div class="error"></div>
+            <div class='btn-container'>
+                <button class='addSerie'>Serie</button>
+                <button class='removeEx'>Del Ex</button>
+            </div>
+        </div>
+        `;
 
-            // <div class="field">
-            //     <label for='exercise-name'>Nome:</label>
-            //     <input type='text' name='exercise-name' id='exerciseName' maxlength='255'>
-            // </div>
-            // <div class="field">
-            //     <label for='exercise-rep'>Repetições:</label>
-            //     <input type='number' name='exercise-rep' id='exerciseRep' min='1' value='1' step='1'>
-            // </div>
-            // <div class="field">
-            //     <label for='load-rep'>Carga:</label>Load' min='0' value='0' step='1'>
-            // </div>
+    const serieTemplate  = `
+        <div class='serie'>
+            <div class='field'>
+                <label for='exerciseRep'>Rep:</label>
+                <input type='number' name='exerciseRep' class='exerciseRep' min='1' value='1' step='1'>
+            </div>
+            <div class='field'>
+                <label for='exerciseWeight'>Peso(Kg):</label>
+                <input type='number' name='exerciseWeight' class='exerciseWeight' min='0' value='0' step='1'>
+            </div>
+            <div class='field'>
+                <label for='exerciseRest'>Descanso(s):</label>
+                <input type='number' name='exerciseRest' class='exerciseRest' min='0' value='0' step='1'>
+            </div>
+            <div class='btn-container'>
+                <button class='removeSerie'>Del Serie</button>
+            </div>
+        </div>
+        `;
 
+    function addExAuto(){
+        if (!exercises || exercises.length === 0) return;
 
+        const newExercise = $(exerciseTemplate);
 
+       $('.addExercise').parent().before(newExercise);
 
+        const select = newExercise.find('.trainingExercise');
 
+        exercises.forEach(exercise => {
+            select.append(
+                $("<option>", {
+                    value: exercise.id,
+                    text: exercise.exerciseName
+                })
+            ); 
+        });
 
+        newExercise.find('.serie-container').append(serieTemplate);
+    }
+
+    $(document).on('click', '.addExercise', function() {
+        const newExercise = $(exerciseTemplate);
+
+        $(this).parent().before(newExercise);
+
+        const select = newExercise.find('.trainingExercise');
+
+        exercises.forEach(exercise => {
+            select.append(
+                $("<option>", {
+                    value: exercise.id,
+                    text: exercise.exerciseName
+                })
+            ); 
+        });
+
+        newExercise.find('.serie-container').append(serieTemplate);
+    });
+
+    $(document).on('click', '.removeEx', function() {
+        $(this).closest('.exercise-container').remove();
+    });    
+
+    $(document).on('click', '.addSerie', function() {
+        const container = $(this).closest('.exercise-container').find('.serie-container');
+        container.append(serieTemplate);
+    });   
+
+    $(document).on('click', '.removeSerie', function() {
+        const exContainer = $(this).closest('.exercise-container'); 
+        const sContainer = exContainer.find('.serie-container'); 
+        $(this).closest('.serie').remove();
+        if(sContainer.children('.serie').length === 0){
+           exContainer.remove();
+        } 
+    });                       
 
     $('#close-add-modal, #cancelAdd').on('click', function() {
         $('#createNewTrainingPlan').remove(); // remove o modal
@@ -664,11 +765,31 @@ function createNewTrainingPlan(optionVal){
 
     $('#trainingPlanName').on('input', function(){ validateField(this); });
     $('#trainingPlanClients').on('change', function(){ $(this).closest('.field-container').removeClass('invalid').find('.error').html(''); });
+    $(document).on('change', '.trainingExercise', function() {
+        const container = $(this).closest('.exercise-container');
+        if(!$(this).val()) {
+            container.find('.error').html('Selecione um exercício').addClass('invalid');
+        } else {
+            container.find('.error').html('').removeClass('invalid');
+        }
+    });
+    $(document).on('input', '.exerciseRep, .exerciseWeight, .exerciseRest', function() {
+        const serie = $(this).closest('.serie');
+        const rep = parseInt(serie.find('.exerciseRep').val(), 10);
+        const weight = parseFloat(serie.find('.exerciseWeight').val());
+        const rest = parseFloat(serie.find('.exerciseRest').val());
+
+        if(rep <= 0 || weight < 0 || rest < 0) {
+            serie.find('.error').html('Valores inválidos').addClass('invalid');
+        } else {
+            serie.find('.error').html('').removeClass('invalid');
+        }
+    });
 
     $('#save').on('click', function() {
         const modalId = $('#createNewTrainingPlan');
 
-        if(noEmptyFields(modalId) && isFormValid(modalId)){
+        if(noEmptyFields(modalId) && isFormValid(modalId) && validateExercises()){
             // compact data to a json
             const data = {
                 planName: $('#trainingPlanName').val().trim(),
@@ -676,9 +797,40 @@ function createNewTrainingPlan(optionVal){
                 exercises: []
             }
 
+            // Recolher info exercicios
+            $('.exercise-container').each(function (){
+                const exContainer = $(this);
+                const exId = exContainer.find('.trainingExercise').val();
+
+                if (!exId) return;
+
+                const series = [];
+                let currentSerie = {};
+
+                exContainer.find('.serie-container .field').each(function(index){
+                    const input = $(this).find('input');
+
+                    if(input.hasClass('exerciseRep')) currentSerie.rep = input.val();
+                    if(input.hasClass('exerciseWeight')) currentSerie.weight = input.val();
+                    if(input.hasClass('exerciseRest')) currentSerie.rest = input.val();
+                
+                    if((index + 1) % 3 === 0){
+                        series.push(currentSerie);
+                        currentSerie = {};
+                    }
+                });
+                data.exercises.push({
+                    exerciseId: exId,
+                    series: series
+                })
+
+            });
+
 
             $.post('includes/saveServerData.inc.php', {action: 'saveTrainingPlan', planData: JSON.stringify(data)}, function(response){
-                if (response.status === 'error') {
+                console.log(response);
+
+                /* if (response.status === 'error') {
                     console.error('Erro do servidor:', response.message || 'Erro desconhecido');
                     return;
                 } else if (response.status !== 'success') {
@@ -691,7 +843,7 @@ function createNewTrainingPlan(optionVal){
                 setTimeout(function(){
                     $('#createNewTrainingPlan').remove();
                     updateContent(optionVal);
-                }, 1000);
+                }, 1000); */
 
             }, 'json').fail(function () {
                 console.error('Erro na ligação ao servidor.');

@@ -314,7 +314,8 @@ switch ($action) {
             $client = new Client();
             $res = $client->createTrainingPlan($planData);
             
-            echo json_encode($res);
+            // echo json_encode($res);
+            echo json_encode($planData);
             exit;
 
         } catch (PDOException $e) {
