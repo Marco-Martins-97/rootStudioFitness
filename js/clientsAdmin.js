@@ -537,7 +537,7 @@ function validateExercises(){
             exContainer.find('.error').html('').removeClass('invalid');
         }
 
-        exContainer.find('.serie').each(function(){
+        exContainer.find('.serie-container').each(function(){
             const serie = $(this);
             const rep = serie.find('.exerciseRep').val();
             const weight = serie.find('.exerciseWeight').val();
@@ -571,9 +571,6 @@ function isFormValid(formId){
     return $(formId).find('.field-container.invalid').length === 0;
 }
 
-  
-
-
 /* function showPopup(msg, delay = 2000, success = false) {
     $('.popup').remove();// Remove um popup antes de criar outro (se existir)
     
@@ -590,7 +587,6 @@ function isFormValid(formId){
 
 function createNewTrainingPlan(optionVal){
     let exercises = [];
-    // const clients = loadClients();
 
     const modal =  `<div class='modal' id='createNewTrainingPlan'>
                         <div class='modal-content'>
@@ -614,7 +610,7 @@ function createNewTrainingPlan(optionVal){
                                     <div class="error"></div>
                                 </div>
                                 <div class='btn-container'>
-                                    <button class='addExercise'>Exercicio</button>
+                                    <button class='addExercise'>Adicionar Exercício</button>
                                 </div>
                             </div>
                             <div class='btn-container'>
@@ -666,37 +662,41 @@ function createNewTrainingPlan(optionVal){
     
     const exerciseTemplate  = `
         <div class="exercise-container">
+            <div class='btn-container'>
+                <button class='removeEx'>&times;</button>
+            </div>
             <div class='field'>
                 <label for='trainingExercise'>Exercicio:</label>
                 <select name="trainingExercise" class="trainingExercise">
                     <option value="" disabled selected>Selecione um Exercicio</option>
                 </select>
             </div>
-            <div class="serie-container"></div>
+            <div class="series-container"></div>
             <div class="error"></div>
             <div class='btn-container'>
-                <button class='addSerie'>Serie</button>
-                <button class='removeEx'>Del Ex</button>
+                <button class='addSerie'>Adicionar Série</button>
             </div>
         </div>
         `;
 
     const serieTemplate  = `
-        <div class='serie'>
-            <div class='field'>
-                <label for='exerciseRep'>Rep:</label>
-                <input type='number' name='exerciseRep' class='exerciseRep' min='1' value='1' step='1'>
-            </div>
-            <div class='field'>
-                <label for='exerciseWeight'>Peso(Kg):</label>
-                <input type='number' name='exerciseWeight' class='exerciseWeight' min='0' value='0' step='1'>
-            </div>
-            <div class='field'>
-                <label for='exerciseRest'>Descanso(s):</label>
-                <input type='number' name='exerciseRest' class='exerciseRest' min='0' value='0' step='1'>
-            </div>
+        <div class='serie-container'>
             <div class='btn-container'>
-                <button class='removeSerie'>Del Serie</button>
+                <button class='removeSerie'>&times;</button>
+            </div>
+            <div class='serie'>
+                <div class='field'>
+                    <label for='exerciseRep'>Rep:</label>
+                    <input type='number' name='exerciseRep' class='exerciseRep' min='1' value='1' step='1'>
+                </div>
+                <div class='field'>
+                    <label for='exerciseWeight'>Peso(Kg):</label>
+                    <input type='number' name='exerciseWeight' class='exerciseWeight' min='0' value='0' step='1'>
+                </div>
+                <div class='field'>
+                    <label for='exerciseRest'>Descanso(s):</label>
+                    <input type='number' name='exerciseRest' class='exerciseRest' min='0' value='0' step='1'>
+                </div>
             </div>
         </div>
         `;
@@ -719,7 +719,7 @@ function createNewTrainingPlan(optionVal){
             ); 
         });
 
-        newExercise.find('.serie-container').append(serieTemplate);
+        newExercise.find('.series-container').append(serieTemplate);
     }
 
     $(document).on('click', '.addExercise', function() {
@@ -738,7 +738,7 @@ function createNewTrainingPlan(optionVal){
             ); 
         });
 
-        newExercise.find('.serie-container').append(serieTemplate);
+        newExercise.find('.series-container').append(serieTemplate);
     });
 
     $(document).on('click', '.removeEx', function() {
@@ -746,21 +746,23 @@ function createNewTrainingPlan(optionVal){
     });    
 
     $(document).on('click', '.addSerie', function() {
-        const container = $(this).closest('.exercise-container').find('.serie-container');
+        const container = $(this).closest('.exercise-container').find('.series-container');
         container.append(serieTemplate);
     });   
 
     $(document).on('click', '.removeSerie', function() {
         const exContainer = $(this).closest('.exercise-container'); 
-        const sContainer = exContainer.find('.serie-container'); 
-        $(this).closest('.serie').remove();
-        if(sContainer.children('.serie').length === 0){
+        const sContainer = exContainer.find('.series-container'); 
+        $(this).closest('.serie-container').remove();
+        if(sContainer.children('.serie-container').length === 0){
            exContainer.remove();
         } 
     });                       
 
     $('#close-add-modal, #cancelAdd').on('click', function() {
-        $('#createNewTrainingPlan').remove(); // remove o modal
+        if (confirm('Tem certeza que deseja cancelar.')) {
+            $('#createNewTrainingPlan').remove(); // remove o modal
+        }
     });
 
     $('#trainingPlanName').on('input', function(){ validateField(this); });
@@ -774,7 +776,7 @@ function createNewTrainingPlan(optionVal){
         }
     });
     $(document).on('input', '.exerciseRep, .exerciseWeight, .exerciseRest', function() {
-        const serie = $(this).closest('.serie');
+        const serie = $(this).closest('.serie-container');
         const rep = parseInt(serie.find('.exerciseRep').val(), 10);
         const weight = parseFloat(serie.find('.exerciseWeight').val());
         const rest = parseFloat(serie.find('.exerciseRest').val());
@@ -807,7 +809,7 @@ function createNewTrainingPlan(optionVal){
                 const series = [];
                 let currentSerie = {};
 
-                exContainer.find('.serie-container .field').each(function(index){
+                exContainer.find('.series-container .field').each(function(index){
                     const input = $(this).find('input');
 
                     if(input.hasClass('exerciseRep')) currentSerie.rep = input.val();

@@ -108,7 +108,7 @@
     font-size: 0.9rem;
 }
 
-.modal-content input{
+.modal-content input, .modal-content select{
 	width: 70%;
     padding: 8px;
     border: 1px solid var(--PRIMARY-BORDER-COLOR);
@@ -143,6 +143,8 @@
     font-weight: bold;
     text-align: center;
 }
+
+/* --------------------------------------- */
 
 .applications-container{
 	width: 100%;
@@ -290,7 +292,7 @@
 	background-color: var(--SECONDARY-BTN-COLOR);
 	color: var(--SECONDARY-TXT-COLOR);
 }
-
+/*-----------------------------------------------------*/
 .create-new-exercise-container, .create-new-plan-container{
 	width: 100%;
 	padding: 12px 24px;
@@ -378,6 +380,84 @@
 	background-color: var(--SECONDARY-BTN-COLOR);
 	color: var(--PRIMARY-TXT-COLOR);
 }
+/* -------------------------------------------------- */
+#createNewTrainingPlan{
+	overflow-y: scroll;
+}
+
+#createNewTrainingPlan .addExercise{
+	margin: 24px 0;
+	width: 80%;
+
+	background-color: transparent;
+	border: 2px solid var(--PRIMARY-TXT-COLOR);
+	color: var(--PRIMARY-TXT-COLOR);
+}
+
+#createNewTrainingPlan .addExercise:hover{
+	background-color: var(--SECONDARY-BG-COLOR);
+	color: var(--SECONDARY-TXT-COLOR);
+	border: 2px solid var(--SECONDARY-TXT-COLOR);
+}
+
+#createNewTrainingPlan .exercise-container{
+	margin: 12px 0;
+	background-color: var(--TERTIARY-BG-COLOR);
+	border-radius: 12px;
+	padding-bottom: 12px;
+}
+
+#createNewTrainingPlan .btn-container:has(.removeEx), #createNewTrainingPlan .btn-container:has(.removeSerie){
+	text-align: right;
+}
+
+#createNewTrainingPlan .removeEx{
+	background-color: transparent;
+	border: none;
+	color: var(--PRIMARY-TXT-COLOR);
+	font-size: 2rem;
+	padding: 0;
+	border-radius: 0;
+	width: 40px;
+	height: 40px;
+}
+
+#createNewTrainingPlan .removeSerie{
+	background-color: transparent;
+	border: none;
+	color: var(--PRIMARY-TXT-COLOR);
+	font-size: 1.5rem;
+	padding: 0;
+	border-radius: 0;
+	width: 30px;
+	height: 30px;
+}
+
+#createNewTrainingPlan .removeEx:hover, #createNewTrainingPlan .removeSerie:hover{
+	color: #f00;
+}
+
+#createNewTrainingPlan .series-container{
+	width: 80%;
+	margin: auto;
+	display: flex;
+	flex-direction: column;
+}
+#createNewTrainingPlan .serie-container{
+	background-color: var(--SECONDARY-BG-COLOR);
+	margin: 6px 0;
+	border-radius: 12px;
+}
+#createNewTrainingPlan .serie{
+	display: flex;
+	padding-bottom: 8px;
+}
+
+#createNewTrainingPlan .serie .field{
+	flex-direction: column;
+	gap: 4px;
+}
+
 
 
 
